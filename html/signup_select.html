@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | CiteApp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/theme.css">
+  <style>
+    .info-notice {
+      background: var(--primary-lightest);
+      border: 1px solid var(--primary-lighter);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .info-notice h4 {
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-notice p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .register-btn {
+      width: 100%;
+      padding: 16px 20px;
+      border: none;
+      border-radius: var(--radius-lg);
+      background: var(--gradient-blue);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: var(--transition);
+      text-decoration: none;
+      margin-top: 24px;
+    }
+
+    .register-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg), 0 0 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .register-btn i {
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body class="auth-page">
+
+  <!-- Background Decorations -->
+  <div class="bg-decoration decoration-1"></div>
+  <div class="bg-decoration decoration-2"></div>
+  <div class="bg-decoration decoration-3"></div>
+
+  <!-- Selection Box -->
+  <div class="login-box">
+    <div class="icon-wrapper">
+      <img src="../images/logo.png.png" alt="CITE Logo" class="brand-logo">
+    </div>
+
+    <h1>Student Registration</h1>
+
+    <div class="subtitle">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M4.26 10.147L12 15l7.74-4.853a4.5 4.5 0 00-4.897-7.407L12 4.5l-2.843-1.76a4.5 4.5 0 00-4.897 7.407z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v6M12 21H9m3 0h3" />
+      </svg>
+      <span>Join our academic community</span>
+    </div>
+
+    <a href="signup_student.html" class="register-btn">
+      <i class="fas fa-user-graduate"></i>
+      <span>Create Student Account</span>
+    </a>
+
+    <div class="info-notice">
+      <h4><i class="fas fa-info-circle"></i> Important Notice</h4>
+      <p>Only students can register through this portal. Admin and Instructor accounts are created by authorized
+        personnel. If you are an instructor or admin, please contact your system administrator.</p>
+    </div>
+
+    <p class="signup-text" style="text-align: center; margin-top: 20px;">
+      Already have an account? <a href="login.html">Sign In</a>
+    </p>
+
+    <div class="footer-badges">
+      <div class="badge">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Quick Setup</span>
+      </div>
+      <div class="badge">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+        </svg>
+        <span>Verified</span>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

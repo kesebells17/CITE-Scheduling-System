@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking System Diagnostic | CiteApp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <style>
+        .diagnostic-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .diagnostic-header {
+            padding: 16px 20px;
+            background: var(--bg-soft);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .diagnostic-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .diagnostic-body {
+            padding: 20px;
+        }
+
+        .result-box {
+            margin-top: 16px;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .status-pill.success {
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .status-pill.error {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .status-pill.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+
+<body class="dashboard-page">
+    <div class="main-content" style="margin-left: 0; padding: 40px 20px;">
+        <div style="max-width: 900px; margin: 0 auto;">
+            <header style="margin-bottom: 32px; text-align: center;">
+                <h1 style="font-size: 28px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+                    <i class="fas fa-microscope" style="color: var(--primary); margin-right: 12px;"></i>
+                    System Diagnostic Portal
+                </h1>
+                <p style="color: var(--text-muted);">Test core endpoints and database connectivity for CiteApp v16</p>
+            </header>
+
+            <div class="diagnostic-card">
+                <div class="diagnostic-body"
+                    style="background: var(--primary-lightest); border-left: 4px solid var(--primary);">
+                    <p style="font-size: 14px; color: var(--text-main); line-height: 1.6; margin: 0;">
+                        <strong>Purpose:</strong> This tool validates API endpoints needed for bookings.
+                        If any test fails, ensure XAMPP is running and the database <code>citeappdbhybrid</code> is
+                        correctly populated.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Test 1: Get Instructors -->
+            <div class="diagnostic-card">
+                <div class="diagnostic-header">
+                    <i class="fas fa-chalkboard-teacher" style="color: var(--primary);"></i>
+                    <h2>1. Instructor API Test</h2>
+                </div>
+                <div class="diagnostic-body">
+                    <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">Tests connectivity to
+                        <code>get_instructors.php</code>
+                    </p>
+                    <button class="btn btn-primary" onclick="testInstructors()">Run Instructor Test</button>
+                    <div id="instructorsStatus" class="status-pill pending" style="display:none; margin-top: 16px;">
+                        Testing...</div>
+                    <pre id="instructorsResult" class="result-box"></pre>
+                </div>
+            </div>
+
+            <!-- Test 2: Get Slots -->
+            <div class="diagnostic-card">
+                <div class="diagnostic-header">
+                    <i class="fas fa-calendar-check" style="color: var(--primary);"></i>
+                    <h2>2. Availability Slots API Test</h2>
+                </div>
+                <div class="diagnostic-body">
+                    <div class="form-group" style="margin-bottom: 16px; max-width: 200px;">
+                        <label class="form-label">Instructor ID</label>
+                        <input type="number" id="instructorId" value="1" class="form-control">
+                    </div>
+                    <button class="btn btn-primary" onclick="testSlots()">Run Slots Test</button>
+                    <div id="slotsStatus" class="status-pill pending" style="display:none; margin-top: 16px;">Testing...
+                    </div>
+                    <pre id="slotsResult" class="result-box"></pre>
+                </div>
+            </div>
+
+            <!-- Test 3: Common Checks -->
+            <div class="diagnostic-card">
+                <div class="diagnostic-header">
+                    <i class="fas fa-tools" style="color: var(--primary);"></i>
+                    <h2>Troubleshooting Guide</h2>
+                </div>
+                <div class="diagnostic-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h4 style="font-size: 14px; margin-bottom: 8px;">No Instructors?</h4>
+                            <p style="font-size: 13px; color: var(--text-muted);">Ensure row exists in
+                                <code>instructors</code> table and <code>is_active = 1</code>.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 14px; margin-bottom: 8px;">No Slots?</h4>
+                            <p style="font-size: 13px; color: var(--text-muted);">Instructors must manually add slots
+                                via their dedicated dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 CITE 2026 CITE Faculty & Staff Scheduling System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function testInstructors() {
+            const resultBox = document.getElementById('instructorsResult');
+            const statusPill = document.getElementById('instructorsStatus');
+
+            statusPill.style.display = 'inline-flex';
+            statusPill.className = 'status-pill pending';
+            statusPill.textContent = 'Contacting API...';
+            resultBox.style.display = 'none';
+
+            fetch('../php/get_instructors.php')
+                .then(r => {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
+                .then(data => {
+                    statusPill.className = 'status-pill success';
+                    statusPill.textContent = 'Success: Found ' + (Array.isArray(data) ? data.length : 0) + ' instructors';
+                    resultBox.style.display = 'block';
+                    resultBox.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(err => {
+                    statusPill.className = 'status-pill error';
+                    statusPill.textContent = 'Error: ' + err.message;
+                    resultBox.style.display = 'block';
+                    resultBox.textContent = 'Diagnostic failed. Path checked: ../php/get_instructors.php';
+                });
+        }
+
+        function testSlots() {
+            const instructorId = document.getElementById('instructorId').value;
+            const resultBox = document.getElementById('slotsResult');
+            const statusPill = document.getElementById('slotsStatus');
+
+            statusPill.style.display = 'inline-flex';
+            statusPill.className = 'status-pill pending';
+            statusPill.textContent = 'Contacting API...';
+            resultBox.style.display = 'none';
+
+            fetch('../php/get_slots.php?instructor_id=' + instructorId)
+                .then(r => {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                })
+                .then(data => {
+                    statusPill.className = 'status-pill success';
+                    statusPill.textContent = 'Success: Found ' + (Array.isArray(data) ? data.length : 0) + ' slots';
+                    resultBox.style.display = 'block';
+                    resultBox.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(err => {
+                    statusPill.className = 'status-pill error';
+                    statusPill.textContent = 'Error: ' + err.message;
+                    resultBox.style.display = 'block';
+                    resultBox.textContent = 'Diagnostic failed. Path checked: ../php/get_slots.php';
+                });
+        }
+    </script>
+</body>
+
+</html>

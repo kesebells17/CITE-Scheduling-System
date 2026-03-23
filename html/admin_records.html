@@ -1,0 +1,2867 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Records & Management | CiteApp Admin</title>
+    <meta name="description"
+        content="CITE Admin Dashboard - Manage students, instructors, appointments and archived transactions.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/professional_chat.css">
+    <link rel="stylesheet" href="../css/announcements.css">
+    <link rel="stylesheet" href="../css/consultation.css">
+    <style>
+        /* --- Page Landing Animation --- */
+        .dashboard-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeSlideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sequential animation for dashboard elements */
+        .card,
+        .tabs {
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeSlideIn 0.5s ease-out forwards;
+        }
+
+        .tabs {
+            animation-delay: 0.1s;
+        }
+
+        .card {
+            animation-delay: 0.2s;
+        }
+
+        /* ── Records Page Styles ─────────────────── */
+
+        /* ── Tabs ─────────────────────────────────── */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 24px;
+            padding-bottom: 0
+        }
+
+        .tab {
+            cursor: pointer;
+            padding: 10px 20px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-muted);
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+            transition: .2s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px
+        }
+
+        .tab.active {
+            color: var(--primary);
+            background: rgba(6, 95, 70, .06);
+            border-bottom-color: var(--primary)
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--bg-body);
+            color: var(--text-main)
+        }
+
+        .tab .tab-count {
+            background: var(--border);
+            color: var(--text-muted);
+            padding: 1px 8px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            margin-left: 6px
+        }
+
+        .tab.active .tab-count {
+            background: rgba(6, 95, 70, .15);
+            color: var(--primary)
+        }
+
+        .record-section {
+            display: none
+        }
+
+        .record-section.active {
+            display: block
+        }
+
+        /* ── Filter Bar ───────────────────────────── */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px
+        }
+
+        .filter-bar select,
+        .filter-bar input[type="date"] {
+            padding: 8px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-family: inherit;
+            background: #fff;
+            color: var(--text-main)
+        }
+
+        .filter-bar .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .3px
+        }
+
+        /* ── Form Validation ──────────────────────── */
+        .v-group {
+            margin-bottom: 16px;
+            position: relative
+        }
+
+        .v-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px
+        }
+
+        .v-group label .req {
+            color: var(--danger);
+            margin-left: 2px
+        }
+
+        .v-group .v-hint {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 4px
+        }
+
+        .v-group .v-error {
+            display: none;
+            font-size: 11px;
+            color: var(--danger);
+            margin-top: 4px;
+            align-items: center;
+            gap: 4px
+        }
+
+        .v-group.has-error .v-error {
+            display: flex
+        }
+
+        .v-group.has-error .v-hint {
+            display: none
+        }
+
+        .v-group.has-error input,
+        .v-group.has-error select {
+            border-color: var(--danger) !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, .1) !important
+        }
+
+        .v-group.is-valid input,
+        .v-group.is-valid select {
+            border-color: var(--success) !important;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, .1) !important
+        }
+
+        /* ── Table Tweaks ─────────────────────────── */
+        .table-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
+            vertical-align: middle;
+            margin-right: 10px
+        }
+
+        .avatar-mini {
+            width: 30px;
+            height: 30px;
+            margin-right: 8px
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px
+        }
+
+        .empty-state {
+            padding: 48px;
+            text-align: center;
+            color: var(--text-muted)
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: .3;
+            display: block
+        }
+
+        /* ── Modal Overrides ──────────────────────── */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, .5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center
+        }
+
+        .modal.show {
+            display: flex
+        }
+
+        .modal-content {
+            max-width: 560px;
+            width: 100%;
+            margin: 20px;
+            max-height: 90vh;
+            overflow-y: auto
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-muted);
+            line-height: 1
+        }
+
+        /* --- Bulk Action Bar --- */
+        .bulk-bar {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-2xl);
+            z-index: 900;
+            align-items: center;
+            gap: 20px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                bottom: -50px;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        .bulk-bar.show {
+            display: flex;
+        }
+
+        .bulk-count {
+            font-weight: 700;
+            color: var(--primary);
+            background: white;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-size: 13px;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 12px;
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            padding-left: 20px;
+        }
+
+        .bulk-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            transition: 0.2s;
+        }
+
+        .bulk-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .bulk-btn.danger:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        th input[type="checkbox"],
+        td input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* Enhanced Add Slot Styles */
+        .radio-card-mini {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .radio-card-mini input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-card-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .radio-card-mini input:checked+.radio-card-content {
+            border-color: var(--primary);
+            background: var(--primary-lightest);
+            color: var(--primary);
+        }
+
+        .days-selector-mini {
+            user-select: none;
+        }
+
+        .day-cb-mini {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .day-cb-mini input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .day-cb-mini span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 34px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            transition: 0.2s;
+            background: white;
+        }
+
+        .day-cb-mini input:checked+span {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+
+<body class="dashboard-page">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <img src="../images/citeneww.png" alt="CITE Logo" class="sidebar-logo">
+            <span class="logoAdmin">Admin</span>
+        </div>
+        <nav class="nav-links">
+            <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+            <a href="admin_manage_instructors.html" class="nav-item"><i
+                    class="fas fa-chalkboard-teacher"></i><span>Manage Instructors</span></a>
+            <a href="admin_manage_students.html" class="nav-item"><i class="fas fa-user-graduate"></i><span>Manage
+                    Students</span></a>
+            <a href="admin_announcements.html" class="nav-item"><i
+                    class="fas fa-bullhorn"></i><span>Announcements</span></a>
+            <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-user-plus"></i><span>Walk-in
+                    Booking</span></a>
+            <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-clipboard-list"></i><span>Manage
+                    Requests</span></a>
+            <a href="admin_records.html" class="nav-item active"><i class="fas fa-database"></i><span>Records</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <header class="top-header">
+            <div style="display:flex; align-items:center; gap:16px;">
+                <button class="menu-toggle" id="sidebarToggle" title="Toggle Sidebar">
+                    <i class="fas fa-bars"></i>
+                    <i class="fas fa-times" style="display:none;"></i>
+                </button>
+                <div class="page-title">Records & Management</div>
+            </div>
+
+            <div class="header-actions">
+                <span id="currentTime"
+                    style="color:var(--text-muted); font-size:13px; font-weight:500; margin-right:8px;"></span>
+
+                <div class="header-divider"></div>
+
+                <!-- Chat Icon -->
+                <button class="header-btn" onclick="toggleChatPanel()" title="Messages">
+                    <i class="fas fa-comments"></i>
+                    <span id="chatBadge" class="notif-badge-sleek has-count"
+                        style="display:none; background:var(--primary);"></span>
+                </button>
+
+                <!-- Notification Bell -->
+                <div style="position:relative;">
+                    <button class="header-btn" onclick="toggleNotifications()" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span id="notifBadge" class="notif-badge-sleek has-count" style="display:none;"></span>
+                    </button>
+                    <!-- Notifications Dropdown -->
+                    <div id="notificationsPanel"
+                        style="display:none; position:absolute; top:50px; right:0; width:340px; max-height:480px; background:white; border-radius:var(--radius-xl); box-shadow:var(--shadow-2xl); z-index:1100; border:1px solid var(--border); overflow:hidden;">
+                        <div
+                            style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700; font-size:15px; color:var(--text-main);">Notifications</span>
+                            <button onclick="markAllRead()"
+                                style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer; width:auto; padding:0; box-shadow:none;">Mark
+                                all as read</button>
+                        </div>
+                        <div id="notificationsList" style="max-height:380px; overflow-y:auto; padding:8px 0;">
+                            <div style="padding:40px 20px; text-align:center; color:var(--text-muted); font-size:13px;">
+                                <i class="fas fa-bell-slash"
+                                    style="display:block; font-size:24px; margin-bottom:12px; opacity:0.3;"></i>
+                                No new notifications
+                            </div>
+                        </div>
+                        <div style="padding:12px; border-top:1px solid var(--border); text-align:center;">
+                            <a href="admin_notifications.html"
+                                style="font-size:12px; color:var(--primary); font-weight:600; text-decoration:none;">View
+                                all activity</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-divider"></div>
+
+                <!-- User Profile Dropdown Area -->
+                <div style="position:relative;">
+                    <div class="header-user" id="profileDropdownBtn">
+                        <div class="header-user-info" style="text-align:right;">
+                            <span id="headerAdminName" class="header-user-name">Admin</span>
+                            <span class="header-user-role">System Administrator</span>
+                        </div>
+                        <img id="headerProfilePic" src="../images/default_avatar.png" alt="Profile">
+                        <i class="fas fa-chevron-down"
+                            style="font-size:10px; color:var(--text-light); transition: transform 0.2s;"
+                            id="profileChevron"></i>
+                    </div>
+
+                    <!-- Profile Dropdown Menu -->
+                    <div id="profileDropdown" class="dropdown-menu-sleek">
+                        <div style="padding: 12px 14px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--text-main);"
+                                id="dropdownAdminName">Admin Name</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">administrator@cite.edu</div>
+                        </div>
+                        <button class="dropdown-item-sleek" onclick="openEditProfile()">
+                            <i class="fas fa-user-circle"></i>Profile Settings
+                        </button>
+
+                        <div class="dropdown-divider-sleek"></div>
+                        <button class="dropdown-item-sleek danger" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <script>
+            // Dropdown Toggle Logic
+            document.addEventListener('DOMContentLoaded', () => {
+                const profileBtn = document.getElementById('profileDropdownBtn');
+                const profileDropdown = document.getElementById('profileDropdown');
+                const chevron = document.getElementById('profileChevron');
+
+                if (profileBtn && profileDropdown) {
+                    profileBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isShow = profileDropdown.classList.contains('show');
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                        if (!isShow) {
+                            profileDropdown.classList.add('show');
+                            if (chevron) chevron.style.transform = 'rotate(180deg)';
+                        } else {
+                            profileDropdown.classList.remove('show');
+                            if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        }
+                    });
+                }
+
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.dropdown-menu-sleek') && !e.target.closest('.header-user') && !e.target.closest('.header-btn')) {
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                        if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        const notifPanel = document.getElementById('notificationsPanel');
+                        if (notifPanel) notifPanel.style.display = 'none';
+                    }
+                });
+
+                // Sidebar Toggle logic
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                const barsIcon = sidebarToggle ? sidebarToggle.querySelector('.fa-bars') : null;
+                const timesIcon = sidebarToggle ? sidebarToggle.querySelector('.fa-times') : null;
+
+                if (sidebarToggle && sidebar) {
+                    sidebarToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (window.innerWidth > 768) {
+                            sidebar.classList.toggle('collapsed');
+                            if (mainContent) mainContent.classList.toggle('expanded');
+                        } else {
+                            sidebar.classList.toggle('mobile-open');
+                            if (barsIcon && timesIcon) {
+                                if (sidebar.classList.contains('mobile-open')) {
+                                    barsIcon.style.display = 'none';
+                                    timesIcon.style.display = 'block';
+                                } else {
+                                    barsIcon.style.display = 'block';
+                                    timesIcon.style.display = 'none';
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Close sidebar on outside click (mobile)
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.dropdown-menu-sleek') && !e.target.closest('.header-user') && !e.target.closest('.header-btn')) {
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                        if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        const notifPanel = document.getElementById('notificationsPanel');
+                        if (notifPanel) notifPanel.style.display = 'none';
+                    }
+
+                    if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('mobile-open') && !e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('mobile-open');
+                        if (barsIcon && timesIcon) {
+                            barsIcon.style.display = 'block';
+                            timesIcon.style.display = 'none';
+                        }
+                    }
+                });
+
+                // Clock logic
+                setInterval(() => {
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const dateStr = now.toLocaleDateString([], { month: 'short', day: '2-digit' });
+                    const clockEl = document.getElementById('currentTime');
+                    if (clockEl) clockEl.textContent = `${dateStr} | ${timeStr}`;
+                }, 1000);
+            });
+        </script>
+
+        <div class="dashboard-container">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('students')"><i class="fas fa-user-graduate"
+                        style="margin-right:6px"></i>Students<span class="tab-count" id="countStudents">0</span></div>
+                <div class="tab" onclick="switchTab('instructors')"><i class="fas fa-chalkboard-teacher"
+                        style="margin-right:6px"></i>Instructors<span class="tab-count" id="countInstructors">0</span>
+                </div>
+                <div class="tab" onclick="switchTab('appointments')"><i class="fas fa-calendar-check"
+                        style="margin-right:6px"></i>Appointments<span class="tab-count" id="countAppointments">0</span>
+                </div>
+                <div class="tab" onclick="switchTab('consultations')"><i class="fas fa-clipboard-check"
+                        style="margin-right:6px"></i>Consultations<span class="tab-count"
+                        id="countConsultations">0</span>
+                </div>
+                <div class="tab" onclick="switchTab('archives')"><i class="fas fa-archive"
+                        style="margin-right:6px"></i>Archived<span class="tab-count" id="countArchives">0</span></div>
+                <div class="tab" onclick="switchTab('bulk-upload')"><i class="fas fa-file-upload"
+                        style="margin-right:6px"></i>Bulk Upload</div>
+                <div style="margin-left:auto; display:flex; gap:8px;">
+                    <button class="btn btn-outline" onclick="runAutoArchive()"
+                        style="height:36px; width:36px; border-color:var(--primary); color:var(--primary); padding:0; display:flex; align-items:center; justify-content:center;"
+                        title="Run Auto-Archive">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Students Section -->
+            <div id="students" class="record-section active">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Registered Students</div>
+                        <input type="text" id="filterStudents" placeholder="Filter by name or ID..."
+                            oninput="filterTable('students')"
+                            style="padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius-md);font-size:13px;width:260px;">
+                    </div>
+                    <div class="table-responsive" id="studentsList">
+                        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructors Section -->
+            <div id="instructors" class="record-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Registered Instructors</div>
+                        <input type="text" id="filterInstructors" placeholder="Filter by name or ID..."
+                            oninput="filterTable('instructors')"
+                            style="padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius-md);font-size:13px;width:260px;">
+                    </div>
+                    <div class="table-responsive" id="instructorsList">
+                        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments Section -->
+            <div id="appointments" class="record-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">All Appointments</div>
+                    </div>
+                    <div class="filter-bar" style="padding:0 20px;">
+                        <span class="filter-label">Filter:</span>
+                        <select id="filterApptStatus" onchange="renderAppointments()">
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Accepted">Accepted</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Declined">Declined</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <input type="date" id="filterApptDateFrom" onchange="renderAppointments()">
+                        <span style="color:var(--text-muted);font-size:12px;">to</span>
+                        <input type="date" id="filterApptDateTo" onchange="renderAppointments()">
+                    </div>
+                    <div class="table-responsive" id="appointmentsList">
+                        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consultations Section -->
+            <div id="consultations" class="record-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Consultation records</div>
+                        <div style="margin-left:auto; display:flex; gap:8px;">
+                            <button class="btn btn-primary" onclick="exportConsultReport()" style="height:36px;">
+                                <i class="fas fa-file-pdf" style="margin-right:8px;"></i>Download Report
+                            </button>
+                        </div>
+                    </div>
+                    <div class="filter-bar" style="padding:0 20px 16px 20px;">
+                        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; width:100%;">
+                            <div class="form-group" style="margin:0;">
+                                <label class="filter-label" style="display:block; margin-bottom:4px;">Instructor</label>
+                                <select id="filterConsultInstructor" onchange="loadAdminConsultRecords()"
+                                    style="width:180px;">
+                                    <option value="">All Instructors</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label class="filter-label" style="display:block; margin-bottom:4px;">Status</label>
+                                <select id="filterConsultStatus" onchange="loadAdminConsultRecords()"
+                                    style="width:140px;">
+                                    <option value="">All Status</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Needs Follow-Up">Follow-Up</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label class="filter-label" style="display:block; margin-bottom:4px;">Date From</label>
+                                <input type="date" id="filterConsultDateFrom" onchange="loadAdminConsultRecords()">
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label class="filter-label" style="display:block; margin-bottom:4px;">Date To</label>
+                                <input type="date" id="filterConsultDateTo" onchange="loadAdminConsultRecords()">
+                            </div>
+                            <button class="btn btn-outline" onclick="clearConsultFilters()"
+                                style="height:36px;">Clear</button>
+                        </div>
+                    </div>
+                    <div id="adminConsultRecordsList" style="padding:0 20px 20px 20px;">
+                        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Loading records...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Archives Section -->
+            <div id="archives" class="record-section">
+                <div class="card">
+                    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="card-title">Archived Transactions</div>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn btn-outline"
+                                onclick="window.open('../php/export_current_records.php?type=all_appointments&is_archived=1')"
+                                title="Export Archived Records"
+                                style="height:34px; width:34px; padding:0; display:flex; align-items:center; justify-content:center; color:#3b82f6; border-color:#3b82f6;">
+                                <i class="fas fa-file-csv"></i>
+                            </button>
+                            <button class="btn btn-outline" onclick="window.print()" title="Print View"
+                                style="height:34px; width:34px; padding:0; display:flex; align-items:center; justify-content:center; color:#64748b; border-color:#64748b;">
+                                <i class="fas fa-print"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="filter-bar" style="padding:0 20px;">
+                        <span class="filter-label">Status:</span>
+                        <select id="filterArchStatus" onchange="renderArchives()">
+                            <option value="">All</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Declined">Declined</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <span class="filter-label" style="margin-left:8px">Date:</span>
+                        <input type="date" id="filterArchFrom" onchange="renderArchives()">
+                        <span style="color:var(--text-muted);font-size:12px;">to</span>
+                        <input type="date" id="filterArchTo" onchange="renderArchives()">
+                        <input type="text" id="filterArchUser" placeholder="Filter by name..."
+                            oninput="renderArchives()"
+                            style="padding:8px 14px;border:1px solid var(--border);border-radius:var(--radius-md);font-size:13px;margin-left:auto;width:200px;">
+                    </div>
+                    <div class="table-responsive" id="archivesList">
+                        <div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Loading...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bulk Upload Section -->
+            <div id="bulk-upload" class="record-section">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <!-- Student Bulk Upload -->
+                    <div class="card">
+                        <div class="card-header" style="background: rgba(6, 95, 70, 0.05);">
+                            <div class="card-title" style="color: var(--primary);">
+                                <i class="fas fa-user-graduate" style="margin-right: 10px;"></i>Bulk Student Upload
+                            </div>
+                        </div>
+                        <div style="padding: 24px;">
+                            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+                                Upload a CSV file containing student records. Ensure the columns match the template.
+                            </p>
+
+                            <form id="studentBulkForm" onsubmit="handleBulkUpload(event, 'student')"
+                                class="modern-form">
+                                <div class="v-group">
+                                    <label>Select CSV File</label>
+                                    <div style="border: 2px dashed var(--border); padding: 30px; border-radius: var(--radius-lg); text-align: center; background: var(--bg-body); transition: all 0.3s;"
+                                        id="studentDropZone">
+                                        <i class="fas fa-cloud-upload-alt"
+                                            style="font-size: 32px; color: var(--primary); opacity: 0.5; margin-bottom: 12px; display: block;"></i>
+                                        <input type="file" id="studentFile" accept=".csv" required
+                                            style="display: none;" onchange="updateFileName(this, 'studentFileName')">
+                                        <button type="button" class="btn btn-outline"
+                                            onclick="document.getElementById('studentFile').click()"
+                                            style="margin-bottom: 8px;">Browse Files</button>
+                                        <div id="studentFileName"
+                                            style="font-size: 12px; color: var(--text-main); font-weight: 500;">No file
+                                            selected</div>
+                                    </div>
+                                </div>
+
+                                <div id="studentBulkResult" style="margin-bottom: 15px;"></div>
+
+                                <div style="display: flex; gap: 8px;">
+                                    <button type="submit" class="btn btn-primary"
+                                        style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex: none; border-radius: 50%;"
+                                        title="Upload Students">
+                                        <i class="fas fa-upload"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline" onclick="clearFileUpload('student')"
+                                        style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex: none; border-radius: 50%; border-color: var(--danger); color: var(--danger);"
+                                        title="Clear Selection">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <a href="../php/generate_template.php?type=student" class="btn btn-outline"
+                                        style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex: none; border-radius: 50%; text-decoration: none;"
+                                        title="Download Template">
+                                        <i class="fas fa-file-code"></i>
+                                    </a>
+                                    <a href="../php/export_current_records.php?type=student" class="btn btn-outline"
+                                        style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex: none; border-radius: 50%; text-decoration: none;"
+                                        title="Download Current Records">
+                                        <i class="fas fa-file-csv"></i>
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Instructor Bulk Upload -->
+                    <div class="card">
+                        <div class="card-header" style="background: rgba(var(--primary-rgb), 0.05);">
+                            <div class="card-title" style="color: var(--primary);">
+                                <i class="fas fa-chalkboard-teacher" style="margin-right: 10px;"></i>Bulk Instructor
+                                Upload
+                            </div>
+                        </div>
+                        <div style="padding: 24px;">
+                            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+                                Upload a CSV file containing instructor records. Ensure the columns match the template.
+                            </p>
+
+                            <form id="instructorBulkForm" onsubmit="handleBulkUpload(event, 'instructor')"
+                                class="modern-form">
+                                <div class="v-group">
+                                    <label>Select CSV File</label>
+                                    <div style="border: 2px dashed var(--border); padding: 30px; border-radius: var(--radius-lg); text-align: center; background: var(--bg-body); transition: all 0.3s;"
+                                        id="instructorDropZone">
+                                        <i class="fas fa-cloud-upload-alt"
+                                            style="font-size: 32px; color: var(--primary); opacity: 0.5; margin-bottom: 12px; display: block;"></i>
+                                        <input type="file" id="instructorFile" accept=".csv" required
+                                            style="display: none;"
+                                            onchange="updateFileName(this, 'instructorFileName')">
+                                        <button type="button" class="btn btn-outline"
+                                            onclick="document.getElementById('instructorFile').click()"
+                                            style="margin-bottom: 8px;">Browse Files</button>
+                                        <div id="instructorFileName"
+                                            style="font-size: 12px; color: var(--text-main); font-weight: 500;">No file
+                                            selected</div>
+                                    </div>
+                                </div>
+
+                                <div id="instructorBulkResult" style="margin-bottom: 15px;"></div>
+
+                                <div style="display: flex; gap: 8px;">
+                                    <button type="submit" class="btn btn-primary"
+                                        style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex: none; border-radius: 50%;"
+                                        title="Upload Instructors">
+                                        <i class="fas fa-upload"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline"
+                                        onclick="clearFileUpload('instructor')"
+                                        style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex: none; border-radius: 50%; border-color: var(--danger); color: var(--danger);"
+                                        title="Clear Selection">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    <a href="../php/generate_template.php?type=instructor" class="btn btn-outline"
+                                        style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex: none; border-radius: 50%; text-decoration: none;"
+                                        title="Download Template">
+                                        <i class="fas fa-file-code"></i>
+                                    </a>
+                                    <a href="../php/export_current_records.php?type=instructor" class="btn btn-outline"
+                                        style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex: none; border-radius: 50%; text-decoration: none;"
+                                        title="Download Current Records">
+                                        <i class="fas fa-file-csv"></i>
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Notes Card -->
+                <div class="card mt-24">
+                    <div
+                        style="padding: 20px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: var(--radius-lg);">
+                        <h4 style="color: #92400e; margin-bottom: 8px; font-size: 15px;"><i
+                                class="fas fa-exclamation-triangle"></i> Important Notes</h4>
+                        <ul style="font-size: 13px; color: #92400e; margin: 0; padding-left: 20px;">
+                            <li>Files must be in <strong>CSV</strong> format.</li>
+                            <li>Passwords will be used as-is initially (Users will be asked to change them later).</li>
+                            <li>Existing usernames or school/faculty IDs will be <strong>skipped</strong>.</li>
+                            <li>Maximum file size is 2MB per upload.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Record Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Record</h3><button class="close-btn" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <div
+                    style="display:flex; align-items:center; gap:16px; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border);">
+                    <img id="editUserPic" src="../images/default_avatar.png"
+                        style="width:60px; height:60px; border-radius:14px; object-fit:cover; border:2px solid var(--border);">
+                    <div>
+                        <div id="editUserDisplayRole"
+                            style="font-size:11px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.05em;">
+                            Role</div>
+                        <div id="editUserDisplayID"
+                            style="font-size:13px; color:var(--text-muted); font-family:monospace;">ID: 000000</div>
+                    </div>
+                </div>
+                <input type="hidden" id="editUserId"><input type="hidden" id="editUserRole">
+                <div class="v-group" id="g-editName">
+                    <label>Full Name <span class="req">*</span></label>
+                    <div style="display:flex;gap:10px">
+                        <input type="text" id="editFirstname" placeholder="First Name" style="flex:1" required
+                            minlength="2">
+                        <input type="text" id="editLastname" placeholder="Last Name" style="flex:1" required
+                            minlength="2">
+                    </div>
+                    <div class="v-error" id="e-editName"><i class="fas fa-exclamation-triangle"></i><span>Letters,
+                            spaces, hyphens only</span></div>
+                </div>
+                <div class="v-group" id="g-editEmail">
+                    <label>Email <span class="req">*</span></label>
+                    <input type="email" id="editEmail" placeholder="e.g. j.doe.coc@phinmaed.com" required>
+                    <div class="v-hint">Student: xxxx.xxxxx.coc@phinmaed.com</div>
+                    <div class="v-error" id="e-editEmail"><i class="fas fa-exclamation-triangle"></i><span></span></div>
+                </div>
+                <div class="v-group" id="g-editContact">
+                    <label>Contact Number <span class="req">*</span></label>
+                    <input type="tel" id="editContact" placeholder="+639XXXXXXXXX" maxlength="13" required>
+                    <div class="v-hint">Philippine format: +639XXXXXXXXX</div>
+                    <div class="v-error" id="e-editContact"><i class="fas fa-exclamation-triangle"></i><span>Must start
+                            with +639 followed by 9 digits</span></div>
+                </div>
+                <div class="v-group" id="g-editDept">
+                    <label>Department / Course <span class="req">*</span></label>
+                    <input type="text" id="editDept" placeholder="e.g. CITE or BSIT" required>
+                    <div class="v-error" id="e-editDept"><i
+                            class="fas fa-exclamation-triangle"></i><span>Required</span></div>
+                </div>
+                <div class="v-group" id="g-editPosition" style="display:none;">
+                    <label>Position</label>
+                    <input type="text" id="editPosition" placeholder="e.g. Instructor I">
+                </div>
+                <div id="editResult" style="margin:12px 0"></div>
+                <button class="btn btn-primary" onclick="saveRecord()" style="width:100%"><i class="fas fa-save"
+                        style="margin-right:8px"></i>Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Book / Manage Appointment</h3><button class="close-btn"
+                    onclick="closeModal('bookingModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <input type="hidden" id="bookUserId">
+                <div class="v-group"
+                    style="display:flex; align-items:center; gap:12px; margin-bottom:20px; background:var(--bg-body); padding:12px; border-radius:12px;">
+                    <img id="bookUserPic" src="../images/default_avatar.png"
+                        style="width:48px; height:48px; border-radius:100%; object-fit:cover; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                    <div>
+                        <label style="margin:0; font-size:11px;">Appointment For</label>
+                        <div id="bookUserName" style="font-weight:700; font-size:15px; color:var(--text-main);"></div>
+                    </div>
+                </div>
+                <div class="v-group" id="g-bookInstructor">
+                    <label>Select Instructor <span class="req">*</span></label>
+                    <select id="bookInstructor" onchange="loadBookingSlots()" required
+                        style="width:100%;height:44px;padding:0 14px;border:2px solid var(--border);border-radius:var(--radius-lg);font-family:inherit;font-size:14px;">
+                        <option value="">-- Select Instructor --</option>
+                    </select>
+                    <div class="v-error" id="e-bookInstructor"><i class="fas fa-exclamation-triangle"></i><span>Please
+                            select an instructor</span></div>
+                </div>
+                <div class="v-group" id="g-bookSlot">
+                    <label>Available Slot <span class="req">*</span></label>
+                    <select id="bookSlot" required
+                        style="width:100%;height:44px;padding:0 14px;border:2px solid var(--border);border-radius:var(--radius-lg);font-family:inherit;font-size:14px;">
+                        <option value="">Select instructor first</option>
+                    </select>
+                    <div class="v-hint">Only future dates with available slots are shown</div>
+                    <div class="v-error" id="e-bookSlot"><i class="fas fa-exclamation-triangle"></i><span>Please
+                            select
+                            a time slot</span></div>
+                </div>
+                <div id="bookResult" style="margin:12px 0"></div>
+                <div style="display:flex;gap:10px">
+                    <button class="btn btn-primary" onclick="submitBooking()" style="flex:1"><i
+                            class="fas fa-calendar-check" style="margin-right:6px"></i>Book</button>
+                    <button class="btn btn-outline" onclick="closeModal('bookingModal')" style="flex:1">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Action Modal -->
+    <div id="apptActionModal" class="modal">
+        <div class="modal-content" style="max-width:440px">
+            <div class="modal-header">
+                <h3 id="apptActionTitle">Manage Appointment</h3><button class="close-btn"
+                    onclick="closeModal('apptActionModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <p id="apptActionMsg" style="margin-bottom:16px;font-size:14px;color:var(--text-main)"></p>
+                <div id="apptReasonGroup" style="display:none;margin-bottom:16px;">
+                    <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px">Reason</label>
+                    <textarea id="apptReason"
+                        style="width:100%;height:80px;padding:10px;border:1px solid var(--border);border-radius:var(--radius-md);resize:none;font-family:inherit;font-size:13px;"
+                        placeholder="Provide details for cancellation..."></textarea>
+                </div>
+                <input type="hidden" id="apptActionId"><input type="hidden" id="apptActionType">
+                <div id="apptActionResult" style="margin-bottom:12px"></div>
+                <div style="display:flex;gap:10px"><button class="btn btn-primary" onclick="executeApptAction()"
+                        style="flex:1">Confirm</button><button class="btn btn-outline"
+                        onclick="closeModal('apptActionModal')" style="flex:1">Nevermind</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Appointment Modal (with Report) -->
+    <div id="completeApptModal" class="modal">
+        <div class="modal-content" style="max-width:560px">
+            <div class="modal-header" style="background:var(--primary); color:white;">
+                <h3 style="color:white;"><i class="fas fa-clipboard-check" style="margin-right:8px;"></i>Complete
+                    Consultation</h3>
+                <button class="close-btn" onclick="closeModal('completeApptModal')"
+                    style="color:white;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <form id="completeApptForm" onsubmit="submitCompleteAppt(event)">
+                    <input type="hidden" id="completeApptId" name="appointment_id">
+
+                    <div
+                        style="background:rgba(var(--primary-rgb), 0.05); padding:12px; border-radius:8px; margin-bottom:20px; border-left:4px solid var(--primary); display:flex; align-items:center; gap:12px;">
+                        <img id="completeApptPic" src="../images/default_avatar.png"
+                            style="width:40px; height:40px; border-radius:8px; object-fit:cover;">
+                        <div>
+                            <div
+                                style="font-size:11px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">
+                                CONSULTATION DETAILS</div>
+                            <div id="completeApptDetails" style="font-size:14px; margin-top:2px; font-weight:600;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="v-group">
+                        <label>Summary of Discussion <span class="req">*</span></label>
+                        <textarea name="summary_of_discussion"
+                            style="width:100%; height:100px; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); resize:none; font-family:inherit;"
+                            required placeholder="What was discussed?"></textarea>
+                    </div>
+
+                    <div class="v-group">
+                        <label>Action Taken <span class="req">*</span></label>
+                        <textarea name="action_taken"
+                            style="width:100%; height:60px; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); resize:none; font-family:inherit;"
+                            required placeholder="Steps taken during or after session..."></textarea>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="v-group">
+                            <label>Consultation Type</label>
+                            <select name="consultation_type"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                                <option value="Face-to-Face">Face-to-Face</option>
+                                <option value="Online">Online</option>
+                            </select>
+                        </div>
+                        <div class="v-group">
+                            <label>Outcome</label>
+                            <select name="outcome_status"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                                <option value="Completed">Completed</option>
+                                <option value="Needs Follow-Up">Needs Follow-Up</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="v-group">
+                        <label>Recommendations (Optional)</label>
+                        <textarea name="recommendations"
+                            style="width:100%; height:60px; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); resize:none; font-family:inherit;"
+                            placeholder="Future steps for the student..."></textarea>
+                    </div>
+
+                    <div id="completeApptResult" style="margin-bottom:12px"></div>
+
+                    <div style="display:flex; gap:12px; margin-top:20px;">
+                        <button type="submit" class="btn btn-primary" style="flex:1">Submit Report & Complete</button>
+                        <button type="button" class="btn btn-outline" onclick="closeModal('completeApptModal')"
+                            style="flex:1">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Archived Transaction Modal -->
+    <div id="viewArchivedModal" class="modal">
+        <div class="modal-content" style="max-width:500px">
+            <div class="modal-header">
+                <h3>Transaction Details</h3>
+                <button class="close-btn" onclick="closeModal('viewArchivedModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <div style="display:grid; grid-template-columns:1fr; gap:16px;">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+                        <div style="position:relative;">
+                            <img id="viewStudentPic" src="../images/default_avatar.png"
+                                style="width:50px; height:50px; border-radius:12px; object-fit:cover; box-shadow:var(--shadow-sm);">
+                            <img id="viewInstructorPic" src="../images/default_avatar.png"
+                                style="width:30px; height:30px; border-radius:100%; object-fit:cover; border:2px solid white; position:absolute; bottom:-5px; right:-5px; box-shadow:var(--shadow-md);">
+                        </div>
+                        <div style="flex:1;">
+                            <div id="viewStudentName" style="font-weight:700; font-size:16px; color:var(--text-main);">
+                            </div>
+                            <div id="viewInstructorName" style="font-size:12px; color:var(--text-muted);">Instructor:
+                            </div>
+                        </div>
+                        <div id="viewApptId"
+                            style="font-size:11px; font-weight:700; background:var(--bg-body); padding:4px 10px; border-radius:20px; color:var(--text-muted);">
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="v-group">
+                            <label>Date</label>
+                            <div id="viewDate" style="font-weight:600;"></div>
+                        </div>
+                        <div class="v-group">
+                            <label>Status</label>
+                            <div id="viewStatus" style="font-weight:600;"></div>
+                        </div>
+                    </div>
+                    <!-- New Consultation Report Section -->
+                    <div id="viewReportSection"
+                        style="display:none; border-top:1px dashed var(--border); padding-top:16px; margin-top:8px;">
+                        <div class="v-group" style="margin-bottom:12px;">
+                            <label
+                                style="color:var(--primary); font-size:11px; font-weight:700; text-transform:uppercase;">Summary
+                                of Discussion</label>
+                            <div id="viewSummary"
+                                style="padding:10px; background:#f0fdf4; border:1px solid #dcfce7; border-radius:8px; font-size:13px;">
+                            </div>
+                        </div>
+                        <div class="v-group" style="margin-bottom:12px;">
+                            <label
+                                style="color:var(--primary); font-size:11px; font-weight:700; text-transform:uppercase;">Action
+                                Taken</label>
+                            <div id="viewAction"
+                                style="padding:10px; background:#f0fdf4; border:1px solid #dcfce7; border-radius:8px; font-size:13px;">
+                            </div>
+                        </div>
+                        <div class="v-group">
+                            <label
+                                style="color:var(--primary); font-size:11px; font-weight:700; text-transform:uppercase;">Recommendations</label>
+                            <div id="viewRecs"
+                                style="padding:10px; background:#f0fdf4; border:1px solid #dcfce7; border-radius:8px; font-size:13px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:24px; display:flex; gap:12px;">
+                    <button class="btn btn-primary" onclick="closeModal('viewArchivedModal')" style="flex:1">Close
+                        View</button>
+                    <button id="viewModalRestoreBtn" class="btn btn-outline"
+                        style="flex:1; border-color:var(--primary); color:var(--primary); display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-undo" style="margin-right:8px;"></i>Restore
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Professional Chat Panel -->
+    <div id="chatPanel" class="chat-panel">
+        <div class="chat-header">
+            <h3>Messages</h3>
+            <button onclick="toggleChatPanel()" class="chat-close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-body">
+            <div id="chatUserView" class="chat-user-view">
+                <div class="chat-search-bar">
+                    <div class="chat-search-input-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="chatSearchInput" class="chat-search-input"
+                            placeholder="Search conversations..." oninput="searchUsers(this.value)">
+                    </div>
+                </div>
+                <div id="chatUserListContainer" class="chat-user-list">
+                    <div class="empty-chat"><i class="fas fa-comments"></i>
+                        <p>Loading conversations...</p>
+                    </div>
+                </div>
+            </div>
+            <div id="chatConversation" class="conversation-view">
+                <div class="conv-header">
+                    <button onclick="backToUserList()" class="conv-back-btn"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <div class="conv-user-info">
+                        <img id="chatConvAvatar" src="../images/default_avatar.png" class="conv-avatar">
+                        <span id="chatConvName" class="conv-name">Select User</span>
+                    </div>
+                </div>
+                <div id="chatMessages" class="messages-container"></div>
+                <div class="chat-footer">
+                    <form id="chatForm" onsubmit="sendChatMessage(event)">
+                        <div class="input-container">
+                            <textarea id="chatInput" class="chat-input-textarea" placeholder="Type your message here..."
+                                rows="1" onkeydown="handleChatKeydown(event)"></textarea>
+                            <button type="submit" class="send-button"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Add Slot Modal (Enhanced) -->
+    <div id="addSlotModal" class="modal">
+        <div class="modal-content" style="max-width:500px">
+            <div class="modal-header">
+                <h3>Schedule Consultation Slots</h3>
+                <button class="close-btn" onclick="closeModal('addSlotModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <input type="hidden" id="addSlotInstructorId">
+                <div class="v-group" style="margin-bottom:20px;">
+                    <label>Instructor</label>
+                    <div id="addSlotInstructorName"
+                        style="font-weight:700; font-size:16px; padding:10px; background:var(--bg-body); border-radius:var(--radius-md); color:var(--primary); border-left:4px solid var(--primary);">
+                    </div>
+                </div>
+
+                <form id="addSlotForm" onsubmit="event.preventDefault(); submitAddSlot()">
+                    <!-- Presets -->
+                    <div class="v-group"
+                        style="margin-bottom:20px; background:var(--primary-lightest); padding:16px; border-radius:var(--radius-lg); border:1px solid var(--primary-lighter);">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                            <label style="margin:0; font-weight:700; color:var(--primary); font-size:14px;"><i
+                                    class="fas fa-magic"></i> Schedule Presets</label>
+                            <button type="button" onclick="saveAsPresetAdmin()"
+                                style="padding:4px 10px; font-size:11px; background:var(--primary); color:white; border-radius:6px; border:none; cursor:pointer;"><i
+                                    class="fas fa-save"></i> Save Current as Preset</button>
+                        </div>
+                        <select id="adminSchedulePresetDropdown" class="form-control"
+                            onchange="loadSelectedPresetAdmin(this.value)"
+                            style="border-color:var(--primary-light); height:40px; font-size:13px;">
+                            <option value="">-- Apply a Saved Preset (Optional) --</option>
+                        </select>
+                    </div>
+
+                    <!-- Schedule Type -->
+                    <div class="v-group">
+                        <label>Schedule Type</label>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                            <label class="radio-card-mini">
+                                <input type="radio" name="adminScheduleType" value="single" checked
+                                    onchange="toggleAdminScheduleFields()">
+                                <div class="radio-card-content">
+                                    <i class="fas fa-calendar-day"></i>
+                                    <span>Single Day</span>
+                                </div>
+                            </label>
+                            <label class="radio-card-mini">
+                                <input type="radio" name="adminScheduleType" value="recurring"
+                                    onchange="toggleAdminScheduleFields()">
+                                <div class="radio-card-content">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Recurring</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Single Date Field -->
+                    <div id="adminSingleDateField" class="v-group">
+                        <label>Select Date <span class="req">*</span></label>
+                        <input type="date" id="addSlotDate" class="form-control"
+                            style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                    </div>
+
+                    <!-- Recurring Fields -->
+                    <div id="adminRecurringDateFields" style="display:none;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                            <div class="v-group">
+                                <label>Start Date <span class="req">*</span></label>
+                                <input type="date" id="addSlotDateStart" class="form-control"
+                                    style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                            </div>
+                            <div class="v-group">
+                                <label>End Date <span class="req">*</span></label>
+                                <input type="date" id="addSlotDateEnd" class="form-control"
+                                    style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                            </div>
+                        </div>
+                        <div class="v-group">
+                            <label>Days <span class="req">*</span></label>
+                            <div class="days-selector-mini"
+                                style="display:flex; justify-content:space-between; gap:4px;">
+                                <label class="day-cb-mini"><input type="checkbox" name="adminDays"
+                                        value="1"><span>M</span></label>
+                                <label class="day-cb-mini"><input type="checkbox" name="adminDays"
+                                        value="2"><span>T</span></label>
+                                <label class="day-cb-mini"><input type="checkbox" name="adminDays"
+                                        value="3"><span>W</span></label>
+                                <label class="day-cb-mini"><input type="checkbox" name="adminDays"
+                                        value="4"><span>T</span></label>
+                                <label class="day-cb-mini"><input type="checkbox" name="adminDays"
+                                        value="5"><span>F</span></label>
+                                <label class="day-cb-mini"><input type="checkbox" name="adminDays"
+                                        value="6"><span>S</span></label>
+                                <label class="day-cb-mini"><input type="checkbox" name="adminDays"
+                                        value="0"><span>S</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style="border:0; border-top:1px solid var(--border); margin:16px 0;">
+
+                    <!-- Time & Interval -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="v-group">
+                            <label>Start Time <span class="req">*</span></label>
+                            <input type="time" id="addSlotStart" class="form-control"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="v-group">
+                            <label>End Time <span class="req">*</span></label>
+                            <input type="time" id="addSlotEnd" class="form-control"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="v-group">
+                            <label>Interval</label>
+                            <select id="addSlotInterval" class="form-control"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                                <option value="30">30 Mins</option>
+                                <option value="60" selected>1 Hour</option>
+                                <option value="120">2 Hours</option>
+                            </select>
+                        </div>
+                        <div class="v-group">
+                            <label>Capacity</label>
+                            <input type="number" id="addSlotCapacity" value="1" min="1" class="form-control"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                    </div>
+
+                    <div id="addSlotResult" style="margin-bottom:12px"></div>
+
+                    <div style="display:flex;gap:10px; margin-top:10px;">
+                        <button type="submit" class="btn btn-primary" id="adminAddSlotBtn" style="flex:1"><i
+                                class="fas fa-magic" style="margin-right:8px;"></i>Generate Slots</button>
+                        <button type="button" class="btn btn-outline" onclick="closeModal('addSlotModal')"
+                            style="flex:1">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal" style="z-index: 20001;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header"
+                style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <h3>Edit Profile</h3>
+                <button class="close-btn" onclick="closeEditProfile()"
+                    style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <form id="editProfileForm" onsubmit="submitAdminProfile(event)" enctype="multipart/form-data">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
+                        <div class="form-group">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">First
+                                Name</label>
+                            <input type="text" class="form-control" id="editAdminFirstname" name="firstname" required
+                                minlength="2" placeholder="e.g. John"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Middle
+                                Name</label>
+                            <input type="text" class="form-control" id="editAdminMiddlename" name="middlename"
+                                placeholder="Optional"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Last
+                                Name</label>
+                            <input type="text" class="form-control" id="editAdminLastname" name="lastname" required
+                                minlength="2" placeholder="e.g. Doe"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label"
+                            style="display:block; margin-bottom:8px; font-weight:500;">Username</label>
+                        <input type="text" class="form-control" id="editAdminUsername" name="username" required
+                            minlength="4" placeholder="Enter username"
+                            style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Email
+                            Address</label>
+                        <input type="email" class="form-control" id="editAdminEmail" name="email" required
+                            placeholder="admin@example.com"
+                            style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Contact
+                            Number</label>
+                        <input type="text" class="form-control" id="editAdminContactNumber" name="contact_number"
+                            placeholder="+639XXXXXXXXX"
+                            style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">New
+                            Password (leave blank to keep current)</label>
+                        <input type="password" class="form-control" id="editAdminPassword" name="new_password"
+                            minlength="8" placeholder="New password (min. 8 characters)"
+                            style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Profile
+                            Picture</label>
+                        <div onclick="document.getElementById('adminProfileUpload').click()"
+                            style="padding: 16px; border: 2px dashed var(--border); border-radius: 6px; text-align: center; cursor: pointer; transition: 0.2s;"
+                            onmouseover="this.style.borderColor='var(--primary)'"
+                            onmouseout="this.style.borderColor='var(--border)'">
+                            <i class="fas fa-cloud-upload-alt"
+                                style="color:var(--text-muted); font-size:24px; margin-bottom:8px;"></i>
+                            <div id="adminFileName" style="font-size:13px; color:var(--text-muted);">Click to
+                                upload new
+                                image</div>
+                            <input type="file" id="adminProfileUpload" name="profilePic" accept="image/*"
+                                style="display: none"
+                                onchange="document.getElementById('adminFileName').textContent = this.files[0].name">
+                        </div>
+                    </div>
+                    <div style="text-align:right;margin-top:24px;">
+                        <button type="button" class="btn btn-outline" onclick="closeEditProfile()"
+                            style="margin-right:8px;">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const V = {
+            name: /^[a-zA-Z\s\-]{2,}$/,
+            emailStudent: /^[a-z]+\.[a-z]+\.coc@phinmaed\.com$/,
+            contact: /^\+639\d{9}$/
+        };
+
+        // ══════════════════════════════════════════════
+        //  GLOBALS
+        // ══════════════════════════════════════════════
+        let allData = { students: [], instructors: [], appointments: [] };
+        let searchedUser = null;
+        let currentAdminData = {};
+        let currentChatUser = null;
+        let chatPollingInterval = null;
+        let searchTimeout = null;
+        let lastMessagesJson = '';
+
+        function resolveAvatar(pic, role) {
+            if (!pic || pic === '../images/default_avatar.png') return '../images/default_avatar.png';
+            if (pic.includes('/')) return pic;
+            const map = {
+                student: '../uploadsStudentProfilePic/',
+                instructor: '../uploadsInstructorProfilePic/',
+                admin: '../uploadsAdminProfilePic/',
+                super_admin: '../uploadsAdminProfilePic/'
+            };
+            return (map[role] || '../images/') + pic;
+        }
+
+        // ══════════════════════════════════════════════
+        //  UTILITY
+        // ══════════════════════════════════════════════
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer') || createToastContainer();
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-times-circle' : 'fa-exclamation-circle');
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <div class="toast-message">${message}</div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+            return container;
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            const overlay = document.createElement('div');
+            overlay.className = 'custom-confirm-overlay';
+            overlay.innerHTML = `
+                <div class="custom-confirm-content">
+                    <div class="custom-confirm-header">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="custom-confirm-body">${message}</div>
+                    <div class="custom-confirm-footer">
+                        <button class="btn-confirm-no">Cancel</button>
+                        <button class="btn-confirm-yes">Confirm</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            overlay.querySelector('.btn-confirm-no').onclick = () => overlay.remove();
+            overlay.querySelector('.btn-confirm-yes').onclick = () => {
+                onConfirm();
+                overlay.remove();
+            };
+        }
+
+        function logout() {
+            showConfirm('Sign Out', 'Are you sure you want to sign out of your account?', () => {
+                fetch('../php/logout.php').then(() => window.location.href = 'login.html').catch(() => window.location.href = '../html/admin_login.html');
+            });
+        }
+
+
+        // ══════════════════════════════════════════════
+        //  NOTIFICATION SYSTEM
+        // ══════════════════════════════════════════════
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationsPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            if (panel.style.display === 'block') loadNotifications();
+        }
+
+        function loadNotifications() {
+            fetch('../php/get_notifications.php')
+                .then(r => r.json())
+                .then(j => {
+                    const list = document.getElementById('notificationsList');
+                    const badge = document.getElementById('notifBadge');
+                    if (!j.notifications || j.notifications.length === 0) {
+                        list.innerHTML = '<div class="p-4 text-center text-muted">No notifications</div>';
+                        badge.style.display = 'none';
+                        return;
+                    }
+                    const unread = j.notifications.filter(n => !n.is_read).length;
+                    if (unread > 0) {
+                        badge.textContent = unread;
+                        badge.style.display = 'flex';
+                    } else { badge.style.display = 'none'; }
+
+                    let html = '';
+                    j.notifications.forEach(n => {
+                        html += `
+                        <div class="notification-item ${n.is_read ? '' : 'unread'}" onclick="handleNotificationClick('${n.id || n.notification_id}', '${n.sender_id}')">
+                            <div class="notification-content">
+                                <p class="notification-text">${n.message}</p>
+                                <span class="notification-time">${new Date(n.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </div>`;
+                    });
+                    list.innerHTML = html;
+                });
+        }
+
+        function handleNotificationClick(notifId, senderId) {
+            markNotificationRead(notifId);
+            if (senderId && senderId !== 'null') replyToNotification(senderId);
+        }
+
+        function markNotificationRead(id) {
+            fetch('../php/mark_notifications_read.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `notification_ids=${id}`
+            }).then(() => loadNotifications());
+        }
+
+        function markAllRead() {
+            fetch('../php/get_notifications.php')
+                .then(r => r.json())
+                .then(j => {
+                    if (j.notifications && j.notifications.length > 0) {
+                        const ids = j.notifications.map(n => n.id || n.notification_id).join(',');
+                        fetch('../php/mark_notifications_read.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `notification_ids=${ids}`
+                        }).then(() => loadNotifications());
+                    }
+                });
+        }
+
+
+
+        function toggleChatPanel() {
+            const panel = document.getElementById('chatPanel');
+            panel.classList.toggle('open');
+            if (panel.classList.contains('open')) {
+                loadChatUsers();
+                if (!chatPollingInterval) chatPollingInterval = setInterval(() => {
+                    if (currentChatUser) loadMessages(currentChatUser.user_id, false);
+                    if (!document.getElementById('chatSearchInput').value.trim()) loadChatUsers();
+                }, 2000);
+            } else if (chatPollingInterval) {
+                clearInterval(chatPollingInterval);
+                chatPollingInterval = null;
+            }
+        }
+
+        function loadChatUsers() {
+            fetch('../php/get_chat_users.php')
+                .then(r => r.json())
+                .then(j => {
+                    if (!j.success) return;
+                    const container = document.getElementById('chatUserListContainer');
+                    const badge = document.getElementById('chatBadge');
+                    const totalUnread = j.chat_users.reduce((sum, u) => sum + (u.unread_count || 0), 0);
+                    if (totalUnread > 0) {
+                        badge.textContent = totalUnread;
+                        badge.style.display = 'block';
+                    } else { badge.style.display = 'none'; }
+
+                    let html = '';
+                    j.chat_users.forEach(u => {
+                        const avatar = resolveAvatar(u.profile_picture, u.role);
+                        html += `
+                        <div class="user-item" onclick="openConversation('${u.user_id}', '${u.user_type}', '${escapeHtmlChat(u.name)}', '${avatar}')">
+                            <img src="${avatar}" class="user-avatar">
+                            <div class="user-info">
+                                <div class="user-name">${escapeHtmlChat(u.name)}</div>
+                                <div class="user-last-msg">${escapeHtmlChat(u.last_message || 'No messages yet')}</div>
+                            </div>
+                            ${u.unread_count > 0 ? `<div class="unread-badge">${u.unread_count}</div>` : ''}
+                        </div>`;
+                    });
+                    container.innerHTML = html || '<div class="empty-chat"><p>No conversations</p></div>';
+                });
+        }
+
+        function searchUsers(query) {
+            clearTimeout(searchTimeout);
+            if (!query.trim()) { loadChatUsers(); return; }
+            searchTimeout = setTimeout(() => {
+                fetch(`../php/search_users.php?q=${encodeURIComponent(query)}`)
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) return;
+                        const container = document.getElementById('chatUserListContainer');
+                        let html = '';
+                        j.users.forEach(u => {
+                            const avatar = resolveAvatar(u.profile_picture, u.role || u.user_type);
+                            html += `
+                            <div class="user-item" onclick="openConversation('${u.id || u.user_id}', '${u.user_type}', '${escapeHtmlChat(u.name)}', '${avatar}')">
+                                <img src="${avatar}" class="user-avatar">
+                                <div class="user-info">
+                                    <div class="user-name">${escapeHtmlChat(u.name)}</div>
+                                    <div class="user-last-msg" style="text-transform:capitalize;">${u.user_type}</div>
+                                </div>
+                            </div>`;
+                        });
+                        container.innerHTML = html || '<div class="empty-chat"><p>No results found</p></div>';
+                    });
+            }, 300);
+        }
+
+        function openConversation(userId, userType, userName, userAvatar) {
+            currentChatUser = { user_id: userId, name: userName, avatar: userAvatar };
+            document.getElementById('chatConvName').textContent = userName;
+            document.getElementById('chatConvAvatar').src = userAvatar;
+            document.getElementById('chatUserView').style.display = 'none';
+            document.getElementById('chatConversation').classList.add('active');
+            lastMessagesJson = ''; // Reset state for new conversation
+            loadMessages(userId, true);
+        }
+
+        function backToUserList() {
+            currentChatUser = null;
+            lastMessagesJson = ''; // Clear state
+            document.getElementById('chatConversation').classList.remove('active');
+            document.getElementById('chatUserView').style.display = 'flex';
+            loadChatUsers();
+        }
+
+        function loadMessages(userId, scroll = true) {
+            fetch(`../php/get_messages.php?other_user_id=${userId}`)
+                .then(r => r.json())
+                .then(j => {
+                    if (!j.success) return;
+
+                    const currentJson = JSON.stringify(j.messages);
+                    if (currentJson === lastMessagesJson && !scroll) return;
+                    lastMessagesJson = currentJson;
+
+                    const container = document.getElementById('chatMessages');
+                    let html = '';
+                    j.messages.forEach(m => {
+                        const isSent = String(m.sender_id) === String(currentAdminData.admin_id || currentAdminData.user_id);
+                        const senderAvatar = resolveAvatar(m.profile_picture, m.sender_type);
+
+                        html += `
+                        <div class="message-wrapper ${isSent ? 'sent' : 'received'}">
+                            ${!isSent ? `<img src="${senderAvatar}" class="msg-avatar">` : ''}
+                            <div class="msg-content">
+                                <div class="msg-bubble">${escapeHtmlChat(m.message_text)}</div>
+                                <div class="msg-time">${new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                            </div>
+                            ${isSent ? `<img src="${senderAvatar}" class="msg-avatar">` : ''}
+                        </div>`;
+                    });
+                    container.innerHTML = html;
+                    if (scroll) container.scrollTop = container.scrollHeight;
+                });
+        }
+
+        function sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg || !currentChatUser) return;
+            fetch('../php/send_message.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `receiver_id=${currentChatUser.user_id}&message=${encodeURIComponent(msg)}`
+            }).then(r => r.json()).then(j => {
+                if (j.success) { input.value = ''; loadMessages(currentChatUser.user_id, true); }
+            });
+        }
+
+        function handleChatKeydown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(e); }
+        }
+
+        function escapeHtmlChat(t) {
+            const d = document.createElement('div'); d.textContent = t; return d.innerHTML;
+        }
+
+        function replyToNotification(senderId) {
+            document.getElementById('notificationsPanel').style.display = 'none';
+            if (!document.getElementById('chatPanel').classList.contains('open')) toggleChatPanel();
+            fetch(`../php/get_user_info.php?senderId=${senderId}`)
+                .then(r => r.json())
+                .then(j => {
+                    if (j.success) openConversation(String(j.user_id), j.user_type, j.name, j.profile_picture);
+                });
+        }
+
+        // ══════════════════════════════════════════════
+        //  PROFILE MANAGEMENT
+        // ══════════════════════════════════════════════
+        function openEditProfile() {
+            if (!currentAdminData.Firstname) {
+                loadAdminInfo().then(() => {
+                    populateAdminProfileForm();
+                    openModal('editProfileModal');
+                });
+            } else {
+                populateAdminProfileForm();
+                openModal('editProfileModal');
+            }
+        }
+
+        function populateAdminProfileForm() {
+            document.getElementById('editAdminFirstname').value = currentAdminData.Firstname || '';
+            document.getElementById('editAdminMiddlename').value = currentAdminData.Middlename || '';
+            document.getElementById('editAdminLastname').value = currentAdminData.Lastname || '';
+            document.getElementById('editAdminUsername').value = currentAdminData.username || '';
+            document.getElementById('editAdminEmail').value = currentAdminData.email || '';
+            document.getElementById('editAdminContactNumber').value = currentAdminData.contact_number || '';
+        }
+
+        function closeEditProfile() { closeModal('editProfileModal'); }
+
+        function submitAdminProfile(e) {
+            e.preventDefault();
+            const formData = new FormData(document.getElementById('editProfileForm'));
+            fetch('../php/update_admin_profile.php', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(j => {
+                    if (j.success) { showToast('Profile updated'); closeEditProfile(); loadAdminInfo(); }
+                    else { showToast(j.message, 'error'); }
+                });
+        }
+
+
+
+        async function loadAdminInfo() {
+            try {
+                const res = await fetch('../php/admin_get_dashboard.php');
+                const j = await res.json();
+                if (j.success && j.adminInfo) {
+                    currentAdminData = j.adminInfo;
+                    const fullName = currentAdminData.Firstname + ' ' + currentAdminData.Lastname;
+                    const nameEl = document.getElementById('adminName');
+                    if (nameEl) nameEl.textContent = fullName;
+                    const headerNameEl = document.getElementById('headerAdminName');
+                    if (headerNameEl) headerNameEl.textContent = fullName;
+
+                    let pic = currentAdminData.profile_picture;
+                    if (pic && !pic.includes('/')) pic = '../uploadsAdminProfilePic/' + pic;
+                    else if (!pic) pic = '../images/default_avatar.png';
+                    const sidebarPic = document.getElementById('sidebarProfilePic');
+                    if (sidebarPic) sidebarPic.src = pic;
+                    const headerPic = document.getElementById('headerProfilePic');
+                    if (headerPic) headerPic.src = pic;
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadAllRecords() {
+            try {
+                const res = await fetch('../php/get_all_records.php');
+                const j = await res.json();
+                if (j.success) {
+                    allData = j.data;
+                    document.getElementById('countStudents').textContent = allData.students.length;
+                    document.getElementById('countInstructors').textContent = allData.instructors.length;
+                    document.getElementById('countAppointments').textContent = (allData.appointments || []).filter(a => a.is_archived == 0).length;
+                    document.getElementById('countArchives').textContent = (allData.appointments || []).filter(a => a.is_archived == 1).length;
+                    renderStudents(); renderInstructors(); renderAppointments(); renderArchives();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function renderStudents() {
+            const list = document.getElementById('studentsList');
+            const filtered = allData.students;
+            if (!list) return;
+            if (filtered.length === 0) { list.innerHTML = '<div class="empty-state">No students found</div>'; return }
+            let html = '<table class="data-table"><thead><tr><th style="width:40px"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAll(\'student\')"></th><th>Student</th><th>System ID</th><th>Course</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+            filtered.forEach(s => {
+                const pic = s.profile_picture ? (s.profile_picture.includes('/') ? s.profile_picture : '../uploadsStudentProfilePic/' + s.profile_picture) : '../images/default_avatar.png';
+                html += `<tr>
+                    <td><input type="checkbox" class="record-select student-select" value="${s.user_id}" onchange="updateBulkBar()"></td>
+                    <td>
+                        <div style="display:flex;align-items:center"><img src="${pic}" class="table-avatar">
+                            <div>
+                                <div style="font-weight:600">${s.name}</div>
+                                <div style="font-size:11px;color:var(--text-muted)">${s.SchoolID}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:12px">${s.user_id}</span></td>
+                    <td>${s.course} ${s.year_level}</td>
+                    <td><span class="status-dot" style="background:${s.account_status === 'Active' ? 'var(--success)' : 'var(--danger)'}"></span>${s.account_status}</td>
+                    <td>
+                        <button class="btn btn-outline" style="padding:6px 10px;font-size:12px" onclick="editRecord(${s.user_id}, 'student')"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-primary" style="padding:6px 10px;font-size:12px;margin-left:4px" onclick="openBooking(${s.user_id}, '${s.name}')"><i class="fas fa-calendar-plus"></i></button>
+                    </td>
+                </tr>`;
+            });
+            list.innerHTML = html + '</tbody></table>';
+        }
+
+        function renderInstructors() {
+            const list = document.getElementById('instructorsList');
+            const filtered = allData.instructors;
+            if (!list) return;
+
+            // Populate filterConsultInstructor for the consultations tab
+            const consultFilter = document.getElementById('filterConsultInstructor');
+            if (consultFilter && consultFilter.options.length <= 1) {
+                filtered.forEach(i => {
+                    const opt = document.createElement('option');
+                    opt.value = i.user_id;
+                    opt.textContent = i.name;
+                    consultFilter.appendChild(opt);
+                });
+            }
+
+            if (filtered.length === 0) { list.innerHTML = '<div class="empty-state">No instructors found</div>'; return }
+            let html = '<table class="data-table"><thead><tr><th style="width:40px"><input type="checkbox" id="selectAllInstructors" onchange="toggleSelectAll(\'instructor\')"></th><th>Instructor</th><th>Faculty ID</th><th>Department</th><th>Account</th><th>Actions</th></tr></thead><tbody>';
+            filtered.forEach(i => {
+                const pic = i.profile_picture ? (i.profile_picture.includes('/') ? i.profile_picture : '../uploadsInstructorProfilePic/' + i.profile_picture) : '../images/default_avatar.png';
+                html += `<tr>
+                    <td><input type="checkbox" class="record-select instructor-select" value="${i.instructor_id}" onchange="updateBulkBar()"></td>
+                    <td>
+                        <div style="display:flex;align-items:center"><img src="${pic}" class="table-avatar">
+                            <div>
+                                <div style="font-weight:600">${i.name}</div>
+                                <div style="font-size:11px;color:var(--text-muted)">${i.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span style="font-family:monospace;font-size:12px">${i.faculty_id}</span></td>
+                    <td>${i.department}</td>
+                    <td><span class="status-dot" style="background:${i.account_status === 'Active' ? 'var(--success)' : 'var(--danger)'}"></span>${i.account_status}</td>
+                    <td>
+                        <button class="btn btn-outline" style="padding:6px 10px;font-size:12px" onclick="editRecord(${i.instructor_id}, 'instructor')" title="Edit Instructor"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-primary" style="padding:6px 10px;font-size:12px;margin-left:4px" onclick="openAddSlot(${i.user_id}, '${escapeHtml(i.name)}')" title="Add Slot"><i class="fas fa-plus-circle"></i></button>
+                    </td>
+                </tr>`;
+            });
+            list.innerHTML = html + '</tbody></table>';
+        }
+
+        function renderAppointments() {
+            const list = document.getElementById('appointmentsList');
+            if (!list) return;
+            const status = document.getElementById('filterApptStatus').value;
+            const from = document.getElementById('filterApptDateFrom').value;
+            const to = document.getElementById('filterApptDateTo').value;
+            let filtered = allData.appointments.filter(a => (a.is_archived == 0 || !a.is_archived));
+            if (status) filtered = filtered.filter(a => a.status === status);
+            if (from) filtered = filtered.filter(a => a.slot_date >= from);
+            if (to) filtered = filtered.filter(a => a.slot_date <= to);
+            if (filtered.length === 0) { list.innerHTML = '<div class="empty-state">No active appointments found</div>'; return }
+            let html = '<table class="data-table"><thead><tr><th>Student</th><th>Instructor</th><th>Date & Time</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+            filtered.forEach(a => {
+                const formattedTime = formatTimeTo12Hour(a.time_range);
+                const sPic = a.student_profile_pic ? (a.student_profile_pic.includes('/') ? a.student_profile_pic : '../uploadsStudentProfilePic/' + a.student_profile_pic) : '../images/default_avatar.png';
+                const iPic = a.instructor_profile_pic ? (a.instructor_profile_pic.includes('/') ? a.instructor_profile_pic : '../uploadsInstructorProfilePic/' + a.instructor_profile_pic) : '../images/default_avatar.png';
+
+                html += `<tr>
+                    <td>
+                        <div style="display:flex;align-items:center">
+                            <img src="${sPic}" class="table-avatar">
+                            <div>
+                                <div style="font-weight:600">${a.student_name}</div>
+                                <div style="font-size:11px;color:var(--text-muted)">${a.student_id_number}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center">
+                            <img src="${iPic}" class="table-avatar">
+                            <div style="font-weight:600">${a.instructor_name}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>${a.slot_date}</div>
+                        <div style="font-size:11px;color:var(--text-muted)">${formattedTime}</div>
+                    </td>
+                    <td><span class="badge ${badgeClass(a.status)}">${a.status}</span></td>
+                    <td>
+                            ${a.status === 'Pending' ? `<button class="btn btn-outline" style="padding:4px 8px;font-size:11px;color:var(--success)" onclick="openApptAction(${a.appointment_id}, 'approve')" title="Approve"><i class="fas fa-check"></i></button>` : ''}
+                            ${['Accepted', 'Approved'].includes(a.status) ? `<button class="btn btn-outline" style="padding:4px 8px;font-size:11px;color:var(--primary)" onclick="openCompleteAppt(${a.appointment_id}, '${escapeHtml(a.student_name)}', '${escapeHtml(a.instructor_name)}')" title="Complete"><i class="fas fa-clipboard-check"></i></button>` : ''}
+                             <button class="btn btn-outline" style="padding:4px 8px;font-size:11px;color:var(--danger)" onclick="openApptAction(${a.appointment_id}, 'cancel')" title="Cancel"><i class="fas fa-ban"></i></button>
+                             <button class="btn btn-outline" style="padding:4px 8px;font-size:11px;color:var(--text-muted)" onclick="toggleArchiveStatus(${a.appointment_id}, 'archive')" title="Archive"><i class="fas fa-archive"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            list.innerHTML = html + '</tbody></table>';
+        }
+
+        function renderArchives() {
+            const list = document.getElementById('archivesList');
+            if (!list) return;
+            const status = document.getElementById('filterArchStatus').value;
+            const from = document.getElementById('filterArchFrom').value;
+            const to = document.getElementById('filterArchTo').value;
+            const user = document.getElementById('filterArchUser').value.toLowerCase();
+            let filtered = allData.appointments.filter(a => (a.is_archived == 1));
+            if (status) filtered = filtered.filter(a => a.status === status);
+            if (from) filtered = filtered.filter(a => a.slot_date >= from);
+            if (to) filtered = filtered.filter(a => a.slot_date <= to);
+            if (user) filtered = filtered.filter(a => a.student_name.toLowerCase().includes(user) || a.instructor_name.toLowerCase().includes(user));
+            if (filtered.length === 0) { list.innerHTML = '<div class="empty-state">No archived transactions found</div>'; return }
+            let html = '<table class="data-table"><thead><tr><th>Student</th><th>Instructor</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+            filtered.forEach(a => {
+                const sPic = a.student_profile_pic ? (a.student_profile_pic.includes('/') ? a.student_profile_pic : '../uploadsStudentProfilePic/' + a.student_profile_pic) : '../images/default_avatar.png';
+                const iPic = a.instructor_profile_pic ? (a.instructor_profile_pic.includes('/') ? a.instructor_profile_pic : '../uploadsInstructorProfilePic/' + a.instructor_profile_pic) : '../images/default_avatar.png';
+
+                html += `<tr>
+                    <td>
+                        <div style="display:flex;align-items:center">
+                            <img src="${sPic}" class="table-avatar">
+                            <div style="font-weight:600">${a.student_name}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display:flex;align-items:center">
+                            <img src="${iPic}" class="table-avatar">
+                            <div style="font-weight:600">${a.instructor_name}</div>
+                        </div>
+                    </td>
+                    <td>${a.slot_date}</td>
+                    <td><span class="badge ${badgeClass(a.status)}">${a.status}</span></td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn btn-outline" style="padding:6px 10px; font-size:12px; color:var(--text-main); min-width:34px;" onclick="viewArchivedRecord(${a.appointment_id})" title="View Details"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-outline" style="padding:6px 10px; font-size:12px; color:var(--primary); min-width:34px;" onclick="toggleArchiveStatus(${a.appointment_id}, 'restore')" title="Restore to Active"><i class="fas fa-undo"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            });
+            list.innerHTML = html + '</tbody></table>';
+        }
+
+        // ══════════════════════════════════════════════
+        //  RECORDS MANAGEMENT ACTIONS
+        // ══════════════════════════════════════════════
+        function switchTab(id) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.record-section').forEach(s => s.classList.remove('active'));
+            const tabBtn = document.querySelector(`.tab[onclick*="switchTab('${id}')"]`);
+            if (tabBtn) tabBtn.classList.add('active');
+            const section = document.getElementById(id);
+            if (section) section.classList.add('active');
+            if (id === 'consultations') loadAdminConsultRecords();
+        }
+
+        function filterTable(type) {
+            const q = document.getElementById(`filter${type.charAt(0).toUpperCase() + type.slice(1)}`).value.toLowerCase();
+            const rows = document.querySelectorAll(`#${type}List tbody tr`);
+            rows.forEach(r => { r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none' });
+        }
+
+        function resolvePic(pic, role) {
+            if (!pic) return '../images/default_avatar.png';
+            if (pic.includes('/')) return pic;
+            const folder = { student: 'Student', instructor: 'Instructor', admin: 'Admin' }[role] || 'Student';
+            return `../uploads${folder}ProfilePic/${pic}`;
+        }
+
+        function editRecord(id, role) {
+            const u = role === 'student' ? allData.students.find(x => x.user_id == id) : allData.instructors.find(x => x.instructor_id == id);
+            if (!u) return;
+
+            document.getElementById('editUserPic').src = resolvePic(u.profile_picture, role);
+            document.getElementById('editUserDisplayRole').textContent = role;
+            document.getElementById('editUserDisplayID').textContent = 'ID: ' + (u.SchoolID || u.faculty_id || u.user_id);
+
+            document.getElementById('editUserId').value = id;
+            document.getElementById('editUserRole').value = role;
+            document.getElementById('editFirstname').value = u.name.split(' ')[0] || '';
+            document.getElementById('editLastname').value = u.name.split(' ').slice(1).join(' ') || '';
+            document.getElementById('editEmail').value = u.email || '';
+            document.getElementById('editContact').value = u.contact_number || '';
+            document.getElementById('editDept').value = u.course || u.department || '';
+            document.getElementById('editPosition').value = u.position || '';
+            document.getElementById('editPosition').parentElement.style.display = role === 'instructor' ? 'block' : 'none';
+            document.querySelectorAll('.v-group').forEach(g => g.classList.remove('has-error', 'is-valid'));
+            document.getElementById('editResult').innerHTML = '';
+            openModal('editModal');
+        }
+
+        async function saveRecord() {
+            const id = document.getElementById('editUserId').value;
+            const role = document.getElementById('editUserRole').value;
+            const data = {
+                action: 'update_user', user_id: id, role: role,
+                firstname: document.getElementById('editFirstname').value,
+                lastname: document.getElementById('editLastname').value,
+                email: document.getElementById('editEmail').value,
+                contact: document.getElementById('editContact').value,
+                dept: document.getElementById('editDept').value,
+                position: document.getElementById('editPosition').value
+            };
+            try {
+                const res = await fetch('../php/admin_manage_records.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(data).toString()
+                });
+                const j = await res.json();
+                resultMsg('editResult', j.message, j.success);
+                if (j.success) setTimeout(() => { closeModal('editModal'); loadAllRecords() }, 1500);
+            } catch (e) { resultMsg('editResult', 'Network error', false) }
+        }
+
+        function openBooking(userId, name) {
+            const s = allData.students.find(x => x.user_id == userId);
+            document.getElementById('bookUserId').value = userId;
+            document.getElementById('bookUserName').textContent = name;
+            document.getElementById('bookUserPic').src = s ? resolvePic(s.profile_picture, 'student') : '../images/default_avatar.png';
+            document.getElementById('bookInstructor').value = '';
+            document.getElementById('bookSlot').innerHTML = '<option value="">Select instructor first</option>';
+            document.getElementById('bookResult').innerHTML = '';
+            loadAvailableInstructors();
+            openModal('bookingModal');
+        }
+
+        function loadAvailableInstructors() {
+            const sel = document.getElementById('bookInstructor');
+            if (!sel) return;
+            sel.innerHTML = '<option value="">-- Select Instructor --</option>';
+            allData.instructors.forEach(i => { sel.innerHTML += `<option value="${i.instructor_id}">${i.name}</option>`; });
+        }
+
+        function formatTimeTo12Hour(t) {
+            if (!t) return '--:--';
+            if (t.includes(' - ')) {
+                const parts = t.split(' - ');
+                return formatSingleTime(parts[0]) + ' - ' + formatSingleTime(parts[1]);
+            }
+            return formatSingleTime(t);
+        }
+
+        function formatSingleTime(t) {
+            if (!t || !t.includes(':')) return t;
+            let [h, m] = t.split(':');
+            h = parseInt(h);
+            const a = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            return `${h}:${m.substring(0, 2)} ${a}`;
+        }
+
+        async function loadBookingSlots() {
+            const instId = document.getElementById('bookInstructor').value;
+            const sel = document.getElementById('bookSlot');
+            if (!instId) { sel.innerHTML = '<option value="">Select instructor first</option>'; return }
+            sel.innerHTML = '<option value="">Loading slots...</option>';
+            try {
+                const res = await fetch(`../php/get_slots.php?instructor_id=${instId}`);
+                const data = await res.json();
+                const slots = Array.isArray(data) ? data : [];
+                if (slots.length === 0) { sel.innerHTML = '<option value="">No available slots</option>'; return }
+                sel.innerHTML = '<option value="">-- Select Slot --</option>';
+                slots.forEach(s => {
+                    const formattedTime = formatTimeTo12Hour(s.time_range);
+                    sel.innerHTML += `<option value="${s.slot_id}">${s.slot_date} at ${formattedTime} (${s.day_of_week})</option>`;
+                });
+            } catch (e) { sel.innerHTML = '<option value="">Error loading slots</option>' }
+        }
+
+        async function submitBooking() {
+            let ok = true;
+            if (!document.getElementById('bookInstructor').value) { setError('g-bookInstructor', 'Please select an instructor'); ok = false } else setValid('g-bookInstructor');
+            if (!document.getElementById('bookSlot').value) { setError('g-bookSlot', 'Please select a time slot'); ok = false } else setValid('g-bookSlot');
+            if (!ok) return;
+            try {
+                const res = await fetch('../php/admin_book_appointment.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `student_id=${document.getElementById('bookUserId').value}&slot_id=${document.getElementById('bookSlot').value}`
+                });
+                const j = await res.json();
+                resultMsg('bookResult', j.message || 'Done', j.success);
+                if (j.success) setTimeout(() => { closeModal('bookingModal'); loadAllRecords() }, 1500);
+            } catch (e) { resultMsg('bookResult', 'Network error', false) }
+        }
+
+        function openApptAction(id, action) {
+            document.getElementById('apptActionId').value = id;
+            document.getElementById('apptActionType').value = action;
+            const titles = { approve: 'Approve Appointment', cancel: 'Cancel Appointment' };
+            const msgs = { approve: 'Are you sure you want to approve this appointment?', cancel: 'Are you sure you want to cancel this appointment?' };
+
+            if (action === 'complete') {
+                showToast('Please use the consultation report form to complete appointments.', 'info');
+                return;
+            }
+
+            document.getElementById('apptActionTitle').textContent = titles[action] || 'Manage';
+            document.getElementById('apptActionMsg').textContent = msgs[action] || '';
+            document.getElementById('apptReasonGroup').style.display = action === 'cancel' ? 'block' : 'none';
+            document.getElementById('apptReason').value = '';
+            document.getElementById('apptActionResult').innerHTML = '';
+            openModal('apptActionModal');
+        }
+
+        function openCompleteAppt(id, studentName, instructorName) {
+            const a = allData.appointments.find(x => x.appointment_id == id);
+            document.getElementById('completeApptId').value = id;
+            document.getElementById('completeApptDetails').textContent = `${studentName} ➔ ${instructorName}`;
+            document.getElementById('completeApptPic').src = a ? resolvePic(a.student_profile_pic, 'student') : '../images/default_avatar.png';
+            document.getElementById('completeApptForm').reset();
+            document.getElementById('completeApptResult').innerHTML = '';
+            openModal('completeApptModal');
+        }
+
+        async function submitCompleteAppt(e) {
+            e.preventDefault();
+            const form = document.getElementById('completeApptForm');
+            const fd = new FormData(form);
+            const resDiv = document.getElementById('completeApptResult');
+
+            resDiv.innerHTML = '<div style="color:var(--primary); font-size:13px;"><i class="fas fa-spinner fa-spin"></i> Submitting report...</div>';
+
+            try {
+                const res = await fetch('../php/submit_session_report.php', { method: 'POST', body: fd });
+                const j = await res.json();
+                if (j.success) {
+                    showToast('Appointment completed and report saved.');
+                    closeModal('completeApptModal');
+                    loadAllRecords();
+                    loadAdminConsultRecords(); // Refresh consultation list
+                    switchTab('consultations'); // Switch to view the record
+                } else {
+                    resDiv.innerHTML = `<div style="color:var(--danger); font-size:13px;"><i class="fas fa-exclamation-circle"></i> ${j.message}</div>`;
+                }
+            } catch (err) {
+                resDiv.innerHTML = '<div style="color:var(--danger); font-size:13px;">Network error.</div>';
+            }
+        }
+
+        let adminSavedPresets = [];
+
+        function fetchSchedulePresetsAdmin() {
+            return fetch('../php/get_schedule_presets.php')
+                .then(r => r.json())
+                .then(j => {
+                    if (j.success) {
+                        adminSavedPresets = j.presets;
+                        const dropdown = document.getElementById('adminSchedulePresetDropdown');
+                        dropdown.innerHTML = '<option value="">-- Apply a Saved Preset (Optional) --</option>';
+                        j.presets.forEach(p => {
+                            const opt = document.createElement('option');
+                            opt.value = p.preset_id;
+                            opt.textContent = p.preset_name;
+                            dropdown.appendChild(opt);
+                        });
+                    }
+                });
+        }
+
+        function loadSelectedPresetAdmin(presetId) {
+            if (!presetId) return;
+            const p = adminSavedPresets.find(x => x.preset_id == presetId);
+            if (!p) return;
+
+            // Set times
+            document.getElementById('addSlotStart').value = p.start_time.substring(0, 5);
+            document.getElementById('addSlotEnd').value = p.end_time.substring(0, 5);
+            document.getElementById('addSlotInterval').value = p.slot_interval;
+            document.getElementById('addSlotCapacity').value = p.capacity;
+
+            // Set days
+            const days = p.days.split(',');
+            const checkboxes = document.querySelectorAll('input[name="adminDays"]');
+            checkboxes.forEach(cb => {
+                cb.checked = days.includes(cb.value);
+            });
+
+            // Switch to recurring view if preset has multiple days
+            if (days.length > 0) {
+                document.querySelector('input[name="adminScheduleType"][value="recurring"]').checked = true;
+                toggleAdminScheduleFields();
+            }
+
+            showToast(`Applied preset: ${p.preset_name}`, 'success');
+        }
+
+        function saveAsPresetAdmin() {
+            // We can reuse the showPrompt logic if we had one in Admin too, but Admin has resultMsg/etc instead.
+            // Let's use a simple prompt for now or implement a better modal if needed.
+            const name = prompt('Enter a name for this schedule preset:');
+            if (!name) return;
+
+            const startTime = document.getElementById('addSlotStart').value;
+            const endTime = document.getElementById('addSlotEnd').value;
+            const interval = document.getElementById('addSlotInterval').value;
+            const capacity = document.getElementById('addSlotCapacity').value;
+            const days = Array.from(document.querySelectorAll('input[name="adminDays"]:checked')).map(cb => cb.value);
+
+            if (!startTime || !endTime || days.length === 0) {
+                return showToast('Set times and select days first!', 'warning');
+            }
+
+            const data = new FormData();
+            data.append('presetName', name);
+            data.append('startTime', startTime);
+            data.append('endTime', endTime);
+            data.append('interval', interval);
+            data.append('capacity', capacity);
+            data.append('days', days.join(','));
+
+            fetch('../php/save_schedule_preset.php', {
+                method: 'POST',
+                body: data
+            }).then(r => r.json()).then(j => {
+                if (j.success) {
+                    showToast(j.message);
+                    fetchSchedulePresetsAdmin();
+                } else {
+                    showToast(j.message, 'error');
+                }
+            });
+        }
+
+        async function openAddSlot(instructorId, instructorName) {
+            document.getElementById('addSlotInstructorId').value = instructorId;
+            document.getElementById('addSlotInstructorName').textContent = instructorName;
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('addSlotDate').value = today;
+            document.getElementById('addSlotDate').min = today;
+            document.getElementById('addSlotDateStart').value = today;
+            document.getElementById('addSlotDateStart').min = today;
+            document.getElementById('addSlotDateEnd').value = today;
+            document.getElementById('addSlotDateEnd').min = today;
+
+            document.getElementById('addSlotForm').reset();
+            document.querySelector('input[name="adminScheduleType"][value="single"]').checked = true;
+            toggleAdminScheduleFields();
+
+            // 1. Fetch presets
+            await fetchSchedulePresetsAdmin();
+
+            // 2. Fetch instructor default preset
+            try {
+                const res = await fetch(`../php/get_user_info.php?user_id=${instructorId}`);
+                const j = await res.json();
+                if (j.success && j.default_preset_id) {
+                    document.getElementById('adminSchedulePresetDropdown').value = j.default_preset_id;
+                    loadSelectedPresetAdmin(j.default_preset_id);
+                }
+            } catch (e) {
+                console.error("Error fetching instructor info:", e);
+            }
+
+            document.getElementById('addSlotResult').innerHTML = '';
+            openModal('addSlotModal');
+        }
+
+        function toggleAdminScheduleFields() {
+            const type = document.querySelector('input[name="adminScheduleType"]:checked').value;
+            document.getElementById('adminSingleDateField').style.display = type === 'single' ? 'block' : 'none';
+            document.getElementById('adminRecurringDateFields').style.display = type === 'recurring' ? 'block' : 'none';
+        }
+
+        function submitAddSlot() {
+            const id = document.getElementById('addSlotInstructorId').value;
+            const type = document.querySelector('input[name="adminScheduleType"]:checked').value;
+            const start = document.getElementById('addSlotStart').value;
+            const end = document.getElementById('addSlotEnd').value;
+            const interval = document.getElementById('addSlotInterval').value;
+            const cap = document.getElementById('addSlotCapacity').value;
+            const res = document.getElementById('addSlotResult');
+
+            if (!start || !end) {
+                res.innerHTML = '<div style="color:var(--danger); font-size:13px;"><i class="fas fa-exclamation-circle"></i> Please fill times</div>';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('instructor_id', id);
+            formData.append('scheduleType', type);
+            formData.append('startTime', start);
+            formData.append('endTime', end);
+            formData.append('interval', interval);
+            formData.append('capacity', cap);
+
+            if (type === 'single') {
+                formData.append('date', document.getElementById('addSlotDate').value);
+            } else {
+                formData.append('startDate', document.getElementById('addSlotDateStart').value);
+                formData.append('endDate', document.getElementById('addSlotDateEnd').value);
+                const days = Array.from(document.querySelectorAll('input[name="adminDays"]:checked')).map(cb => cb.value);
+                if (days.length === 0) return showToast('Select at least one day', 'warning');
+                formData.append('days', days.join(','));
+            }
+
+            res.innerHTML = '<div style="color:var(--primary); font-size:13px;"><i class="fas fa-spinner fa-spin"></i> Generating slots...</div>';
+
+            fetch('../php/add_instructor_slot_v2.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(r => r.json())
+                .then(j => {
+                    if (j.success) {
+                        showToast(j.message);
+                        closeModal('addSlotModal');
+                        loadAllRecords();
+                    } else {
+                        res.innerHTML = `<div style="color:var(--danger); font-size:13px;"><i class="fas fa-exclamation-circle"></i> ${j.message}</div>`;
+                    }
+                }).catch(e => {
+                    res.innerHTML = '<div style="color:var(--danger); font-size:13px;">Network error</div>';
+                });
+        }
+
+        async function executeApptAction() {
+            const id = document.getElementById('apptActionId').value;
+            const action = document.getElementById('apptActionType').value;
+            const reason = document.getElementById('apptReason').value;
+            const map = { approve: 'approve', complete: 'complete', cancel: 'reject' };
+            try {
+                const res = await fetch('../php/manage_appointment_request.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `appointment_id=${id}&action=${map[action] || action}&reason=${encodeURIComponent(reason)}`
+                });
+                const j = await res.json();
+                resultMsg('apptActionResult', j.message || 'Done', j.success);
+                if (j.success) setTimeout(() => { closeModal('apptActionModal'); loadAllRecords() }, 1200);
+            } catch (e) { resultMsg('apptActionResult', 'Network error', false) }
+        }
+
+        // ══════════════════════════════════════════════
+        //  HELPERS
+        // ══════════════════════════════════════════════
+        function setError(gId, msg) {
+            const g = document.getElementById(gId); if (!g) return;
+            g.classList.add('has-error'); g.classList.remove('is-valid');
+            const s = g.querySelector('.v-error span'); if (s && msg) s.textContent = msg;
+        }
+        function setValid(gId) { const g = document.getElementById(gId); if (!g) return; g.classList.remove('has-error'); g.classList.add('is-valid') }
+        function clearState(gId) { const g = document.getElementById(gId); if (!g) return; g.classList.remove('has-error', 'is-valid') }
+        function resultMsg(elId, msg, ok) {
+            const e = document.getElementById(elId);
+            if (!e) return;
+            e.innerHTML = `<div style="padding:10px 14px;border-radius:var(--radius-md);font-size:13px;font-weight:500;color:${ok ? 'var(--success-text)' : 'var(--danger)'};background:${ok ? 'var(--success-bg)' : '#fef2f2'};border:1px solid ${ok ? 'var(--success)' : '#fee2e2'}">${msg}</div>`;
+        }
+        function openModal(id) { const m = document.getElementById(id); if (m) m.classList.add('show'); }
+        function closeModal(id) { const m = document.getElementById(id); if (m) m.classList.remove('show'); }
+        function badgeClass(st) {
+            if (['Accepted', 'Approved', 'Completed'].includes(st)) return 'badge-success';
+            if (st === 'Pending') return 'badge-warning';
+            return 'badge-danger';
+        }
+
+        // ══════════════════════════════════════════════
+        //  CONSULTATION RECORDS
+        // ══════════════════════════════════════════════
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function loadAdminConsultRecords() {
+            const inst = document.getElementById('filterConsultInstructor')?.value || '';
+            const status = document.getElementById('filterConsultStatus')?.value || '';
+            const dateFrom = document.getElementById('filterConsultDateFrom')?.value || '';
+            const dateTo = document.getElementById('filterConsultDateTo')?.value || '';
+
+            let url = '../php/get_consultation_records.php?limit=50';
+            if (inst) url += `&instructor_id=${inst}`;
+            if (status) url += `&status=${encodeURIComponent(status)}`;
+            if (dateFrom) url += `&date_from=${dateFrom}`;
+            if (dateTo) url += `&date_to=${dateTo}`;
+
+            fetch(url)
+                .then(r => r.json())
+                .then(j => {
+                    const container = document.getElementById('adminConsultRecordsList');
+                    const countEl = document.getElementById('countConsultations');
+                    if (countEl && j.records) countEl.textContent = j.records.length;
+
+                    if (!j.success || !j.records || j.records.length === 0) {
+                        container.innerHTML = '<div class="empty-state"><i class="fas fa-clipboard-list"></i><p>No consultation records found.</p></div>';
+                        return;
+                    }
+
+                    let html = '';
+                    j.records.forEach(r => {
+                        const isFollowup = r.outcome_status === 'Needs Follow-Up';
+                        const instructorPic = r.instructor_picture ? (r.instructor_picture.includes('/') ? r.instructor_picture : '../uploadsInstructorProfilePic/' + r.instructor_picture) : '../images/default_avatar.png';
+                        const formattedTime = formatTimeTo12Hour(r.time_range);
+
+                        html += `
+                            <div class="record-view-card ${isFollowup ? 'followup-record' : 'completed-record'}" style="margin-bottom:16px;">
+                                <div class="record-meta" style="display:flex; align-items:center;">
+                                    <img src="${instructorPic}" alt="" style="width:40px; height:40px; border-radius:12px; object-fit:cover;">
+                                    <div class="record-meta-info" style="margin-left:12px;">
+                                        <h4 style="margin:0; font-size:15px; color:var(--text-main);">${escapeHtml(r.instructor_name)} → ${escapeHtml(r.student_name)}</h4>
+                                        <span style="font-size:12px; color:var(--text-muted);">${r.slot_date} • ${r.day_of_week} • ${formattedTime}</span>
+                                    </div>
+                                    <div style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+                                        <span class="instructor-status-badge ${isFollowup ? 'near' : 'completed'}">
+                                            ${isFollowup ? '🔁 Follow-Up' : '✅ Completed'}
+                                        </span>
+                                        <button class="btn btn-outline" style="padding:6px; font-size:12px; height:32px; width:32px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); border-color:var(--border);" onclick="toggleArchiveStatus(${r.appointment_id}, 'archive')" title="Archive this Record">
+                                            <i class="fas fa-archive"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="record-fields" style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:16px; padding:16px; background:var(--bg-body); border-radius:var(--radius-lg);">
+                                    <div style="grid-column: 1 / -1;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Summary</label><p style="margin:4px 0 0 0; font-size:14px; line-height:1.5;">${escapeHtml(r.summary_of_discussion)}</p></div>
+                                    <div style="grid-column: 1 / -1;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Action Taken</label><p style="margin:4px 0 0 0; font-size:14px; line-height:1.5;">${escapeHtml(r.action_taken)}</p></div>
+                                    ${r.recommendations ? `<div style="grid-column: 1 / -1;"><label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Recommendations</label><p style="margin:4px 0 0 0; font-size:14px; line-height:1.5;">${escapeHtml(r.recommendations)}</p></div>` : ''}
+                                    <div><label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Type</label><p style="margin:4px 0 0 0; font-size:14px;">${r.consultation_type === 'Face-to-Face' ? '👤 ' : '💻 '}${r.consultation_type}</p></div>
+                                    <div><label style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Duration</label><p style="margin:4px 0 0 0; font-size:14px;">${r.duration_minutes || '—'} min</p></div>
+                                </div>
+                            </div>`;
+                    });
+
+                    container.innerHTML = html;
+                });
+        }
+
+        function exportConsultReport() {
+            const inst = document.getElementById('filterConsultInstructor')?.value || '';
+            const status = document.getElementById('filterConsultStatus')?.value || '';
+            const dateFrom = document.getElementById('filterConsultDateFrom')?.value || '';
+            const dateTo = document.getElementById('filterConsultDateTo')?.value || '';
+
+            let url = `../reports/export_consultation.php?instructor_id=${inst}&status=${encodeURIComponent(status)}&date_from=${dateFrom}&date_to=${dateTo}`;
+            window.open(url, '_blank');
+        }
+
+        function clearConsultFilters() {
+            document.getElementById('filterConsultInstructor').value = '';
+            document.getElementById('filterConsultStatus').value = '';
+            document.getElementById('filterConsultDateFrom').value = '';
+            document.getElementById('filterConsultDateTo').value = '';
+            loadAdminConsultRecords();
+        }
+
+        // ══════════════════════════════════════════════
+        //  INITIALIZATION
+        // ══════════════════════════════════════════════
+        window.onload = () => {
+            const p = new URLSearchParams(location.search);
+            if (p.get('tab')) switchTab(p.get('tab'));
+            loadAdminInfo();
+            loadAllRecords();
+            loadAdminConsultRecords();
+            setTimeout(loadNotifications, 1000);
+
+            // Re-bind validation listeners
+            ['editFirstname', 'editLastname'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', () => {
+                    const fn = document.getElementById('editFirstname').value.trim();
+                    const ln = document.getElementById('editLastname').value.trim();
+                    if (fn && ln && V.name.test(fn) && V.name.test(ln)) {
+                        setValid('g-editName');
+                    } else {
+                        setError('g-editName', 'Letters, spaces, hyphens only');
+                    }
+                });
+            });
+        };
+
+        // ══════════════════════════════════════════════
+        //  BULK UPLOAD ACTIONS
+        // ══════════════════════════════════════════════
+        function updateFileName(input, elId) {
+            const el = document.getElementById(elId);
+            if (input.files && input.files[0]) {
+                el.textContent = input.files[0].name;
+                el.style.color = 'var(--primary)';
+            } else {
+                el.textContent = 'No file selected';
+                el.style.color = 'var(--text-main)';
+            }
+        }
+
+        function clearFileUpload(type) {
+            const input = document.getElementById(`${type}File`);
+            if (input) input.value = '';
+            const nameEl = document.getElementById(`${type}FileName`);
+            if (nameEl) {
+                nameEl.textContent = 'No file selected';
+                nameEl.style.color = 'var(--text-main)';
+            }
+            const resEl = document.getElementById(`${type}BulkResult`);
+            if (resEl) resEl.innerHTML = '';
+        }
+
+        async function handleBulkUpload(event, type) {
+            event.preventDefault();
+            const form = event.target;
+            const fileInput = document.getElementById(`${type}File`);
+            const resultDiv = document.getElementById(`${type}BulkResult`);
+
+            if (!fileInput.files.length) {
+                resultMsg(`${type}BulkResult`, 'Please select a file first', false);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('csv_file', fileInput.files[0]);
+            formData.append('type', type);
+
+            resultDiv.innerHTML = '<div style="color:var(--primary); font-size:13px;"><i class="fas fa-spinner fa-spin"></i> Processing upload...</div>';
+
+            try {
+                const response = await fetch('../php/admin_bulk_upload.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    resultMsg(`${type}BulkResult`, result.message, true);
+                    form.reset();
+                    document.getElementById(`${type}FileName`).textContent = 'No file selected';
+                    // Refresh records
+                    loadAllRecords();
+                    if (type === 'student') switchTab('students');
+                    if (type === 'instructor') switchTab('instructors');
+                } else {
+                    let errorHtml = `<div style="font-weight:700;">${result.message}</div>`;
+                    if (result.errors && result.errors.length > 0) {
+                        errorHtml += `<ul style="margin: 8px 0 0 0; padding-left: 15px; font-size: 11px; max-height: 120px; overflow-y: auto; text-align: left;">`;
+                        result.errors.slice(0, 10).forEach(err => {
+                            errorHtml += `<li>Row ${err.row}: ${err.error}</li>`;
+                        });
+                        if (result.errors.length > 10) errorHtml += `<li>...and ${result.errors.length - 10} more errors</li>`;
+                        errorHtml += `</ul>`;
+                    }
+                    resultMsg(`${type}BulkResult`, errorHtml, false);
+                }
+            } catch (error) {
+                resultMsg(`${type}BulkResult`, 'Upload failed. Network error or server error.', false);
+            }
+        }
+
+        // Bulk Actions Logic
+        function toggleSelectAll(type) {
+            const master = document.getElementById(type === 'student' ? 'selectAllStudents' : 'selectAllInstructors');
+            const checkboxes = document.querySelectorAll(`.${type}-select`);
+            checkboxes.forEach(cb => {
+                if (cb.offsetParent !== null) cb.checked = master.checked;
+            });
+            updateBulkBar();
+        }
+
+        function updateBulkBar() {
+            const selected = document.querySelectorAll('.record-select:checked');
+            const bar = document.getElementById('bulkBar');
+            const countEl = document.getElementById('bulkSelectedCount');
+
+            if (selected.length > 0) {
+                bar.style.display = 'flex';
+                countEl.textContent = selected.length;
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        function clearBulkSelection() {
+            document.querySelectorAll('.record-select').forEach(cb => cb.checked = false);
+            const masterStudents = document.getElementById('selectAllStudents');
+            const masterInstructors = document.getElementById('selectAllInstructors');
+            if (masterStudents) masterStudents.checked = false;
+            if (masterInstructors) masterInstructors.checked = false;
+            updateBulkBar();
+        }
+
+        function bulkDelete() {
+            const selected = document.querySelectorAll('.record-select:checked');
+            if (selected.length === 0) return;
+            document.getElementById('bulkDeleteConfirmCount').textContent = selected.length;
+            document.getElementById('bulkDeleteResult').innerHTML = '';
+            openModal('bulkDeleteModal');
+        }
+
+        async function executeBulkDelete() {
+            const selected = document.querySelectorAll('.record-select:checked');
+            const type = selected[0].classList.contains('student-select') ? 'student' : 'instructor';
+            const ids = Array.from(selected).map(cb => cb.value);
+
+            const resDiv = document.getElementById('bulkDeleteResult');
+            resDiv.innerHTML = '<div style="color:var(--primary); font-size:13px;"><i class="fas fa-spinner fa-spin"></i> Deleting records...</div>';
+
+            try {
+                const res = await fetch('../php/admin_bulk_delete.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `type=${type}&ids=${ids.join(',')}`
+                });
+                const j = await res.json();
+                if (j.success) {
+                    showToast(j.message);
+                    closeModal('bulkDeleteModal');
+                    clearBulkSelection();
+                    loadAllRecords();
+                } else {
+                    resDiv.innerHTML = `<div style="color:var(--danger); font-size:13px;"><i class="fas fa-exclamation-circle"></i> ${j.message}</div>`;
+                }
+            } catch (e) {
+                resDiv.innerHTML = '<div style="color:var(--danger); font-size:13px;">Network error</div>';
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer') || createToastContainer();
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.style.cssText = "background:white; padding:12px 20px; border-radius:8px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom:10px; display:flex; align-items:center; gap:12px; border-left:4px solid " + (type === 'success' ? '#10b981' : '#ef4444') + "; animation: slideIn 0.3s ease-out; z-index:9999;";
+            t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'}" style="color:${type === 'success' ? '#10b981' : '#ef4444'}"></i><span>${message}</span>`;
+            container.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(20px)'; setTimeout(() => t.remove(), 300); }, 3000);
+        }
+
+        function createToastContainer() {
+            const c = document.createElement('div');
+            c.id = 'toastContainer';
+            c.style.cssText = "position:fixed; top:20px; right:20px; z-index:99999;";
+            document.body.appendChild(c);
+            return c;
+        }
+
+        async function toggleArchiveStatus(id, action) {
+            try {
+                const res = await fetch('../php/manage_archive.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `action=${action}&appointment_id=${id}`
+                });
+                const j = await res.json();
+                if (j.success) {
+                    showToast(j.message);
+
+                    // Determine if we should switch tab on restore
+                    let targetTab = null;
+                    if (action === 'restore') {
+                        const appt = allData.appointments.find(a => a.appointment_id == id);
+                        if (appt && (appt.status === 'Completed' || appt.status === 'Needs Follow-Up')) {
+                            targetTab = 'consultations';
+                        }
+                    }
+
+                    loadAllRecords().then(() => {
+                        if (targetTab) switchTab(targetTab);
+                    });
+                } else {
+                    showToast(j.message, 'error');
+                }
+            } catch (e) {
+                showToast('Network error while archiving', 'error');
+            }
+        }
+
+        async function runAutoArchive() {
+            try {
+                const res = await fetch('../php/auto_archive_appointments.php');
+                const j = await res.json();
+                if (j.success) {
+                    showToast(j.message);
+                    loadAllRecords();
+                } else {
+                    showToast(j.message, 'error');
+                }
+            } catch (e) {
+                showToast('Network error while auto-archiving', 'error');
+            }
+        }
+
+        function viewArchivedRecord(id) {
+            const a = allData.appointments.find(x => x.appointment_id == id);
+            if (!a) return;
+
+            document.getElementById('viewApptId').textContent = 'TRX-' + String(a.appointment_id).padStart(6, '0');
+            document.getElementById('viewStudentName').textContent = a.student_name;
+            document.getElementById('viewInstructorName').textContent = 'Instructor: ' + a.instructor_name;
+            document.getElementById('viewStudentPic').src = resolvePic(a.student_profile_pic, 'student');
+            document.getElementById('viewInstructorPic').src = resolvePic(a.instructor_profile_pic, 'instructor');
+            document.getElementById('viewDate').textContent = a.slot_date;
+            document.getElementById('viewStatus').innerHTML = `<span class="badge ${badgeClass(a.status)}">${a.status}</span>`;
+
+            // Populate consultation report if available
+            const reportSection = document.getElementById('viewReportSection');
+            if (a.summary_of_discussion || a.action_taken || a.recommendations) {
+                reportSection.style.display = 'block';
+                document.getElementById('viewSummary').textContent = a.summary_of_discussion || 'None';
+                document.getElementById('viewAction').textContent = a.action_taken || 'None';
+                document.getElementById('viewRecs').textContent = a.recommendations || 'None';
+            } else {
+                reportSection.style.display = 'none';
+            }
+
+            // Set up restore button in modal
+            const restoreBtn = document.getElementById('viewModalRestoreBtn');
+            if (restoreBtn) {
+                restoreBtn.onclick = () => {
+                    closeModal('viewArchivedModal');
+                    toggleArchiveStatus(a.appointment_id, 'restore');
+                };
+            }
+
+            openModal('viewArchivedModal');
+        }
+
+        setInterval(() => {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString([], { month: 'short', day: '2-digit' });
+            const ct = document.getElementById('currentTime');
+            if (ct) ct.textContent = `${dateStr} | ${timeStr}`;
+        }, 1000);
+    </script>
+
+    <!-- Bulk Action Bar -->
+    <div id="bulkBar" class="bulk-bar"
+        style="display:none; position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#1e293b; color:white; padding:12px 24px; border-radius:100px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.2); z-index:900; align-items:center; gap:20px;">
+        <div style="font-size:14px; font-weight:600; display:flex; align-items:center;">
+            <span id="bulkSelectedCount"
+                style="color:#065f46; background:white; padding:2px 10px; border-radius:20px; font-size:13px; margin-right:8px; font-weight:800;">0</span>
+            Selected
+        </div>
+        <div style="display:flex; gap:12px; border-left:1px solid rgba(255,255,255,0.2); padding-left:20px;">
+            <button onclick="bulkDelete()"
+                style="background:none; border:none; color:white; font-size:13px; font-weight:600; cursor:pointer;"><i
+                    class="fas fa-trash-alt"></i> Delete Selected</button>
+            <button onclick="clearBulkSelection()"
+                style="background:none; border:none; color:white; font-size:13px; font-weight:600; cursor:pointer;"><i
+                    class="fas fa-times"></i> Clear Selection</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal for Bulk Delete -->
+    <div id="bulkDeleteModal" class="modal">
+        <div class="modal-content" style="max-width:400px">
+            <div class="modal-header">
+                <h3>Confirm Bulk Delete</h3><button class="close-btn"
+                    onclick="closeModal('bulkDeleteModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <p style="margin-bottom:20px;">Are you sure you want to delete <b id="bulkDeleteConfirmCount">0</b>
+                    selected records? This action cannot be undone.</p>
+                <div id="bulkDeleteResult" style="margin-bottom:12px"></div>
+                <div style="display:flex;gap:10px;">
+                    <button class="btn btn-primary" onclick="executeBulkDelete()"
+                        style="flex:1; background:#ef4444; border-color:#ef4444;">Yes, Delete</button>
+                    <button class="btn btn-outline" onclick="closeModal('bulkDeleteModal')"
+                        style="flex:1">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

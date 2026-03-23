@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Announcements | Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/professional_chat.css">
+    <link rel="stylesheet" href="../css/announcements.css">
+    <style>
+        /* --- Page Landing Animation --- */
+        .dashboard-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeSlideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sequential animation for dashboard elements */
+        .card {
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeSlideIn 0.5s ease-out forwards;
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .avatar-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            vertical-align: middle;
+            margin-right: 12px;
+        }
+
+        .management-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-light);
+        }
+    </style>
+</head>
+
+<body class="dashboard-page">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <img src="../images/citeneww.png" alt="CITE Logo" class="sidebar-logo">
+            <span class="logoAdmin">Admin</span>
+        </div>
+
+        <nav class="nav-links">
+            <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+            <a href="admin_manage_instructors.html" class="nav-item"><i
+                    class="fas fa-chalkboard-teacher"></i><span>Manage Instructors</span></a>
+            <a href="admin_manage_students.html" class="nav-item"><i class="fas fa-user-graduate"></i><span>Manage
+                    Students</span></a>
+            <a href="admin_announcements.html" class="nav-item active"><i
+                    class="fas fa-bullhorn"></i><span>Announcements</span></a>
+            <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-user-plus"></i><span>Walk-in
+                    Booking</span></a>
+            <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-clipboard-list"></i><span>Manage
+                    Requests</span></a>
+            <a href="admin_records.html" class="nav-item"><i class="fas fa-database"></i><span>Records</span></a>
+            <a href="admin_reports.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Report
+                    Summary</span></a>
+        </nav>
+
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <header class="top-header">
+            <div style="display:flex; align-items:center; gap:16px;">
+                <button class="menu-toggle" id="sidebarToggle" title="Toggle Sidebar">
+                    <i class="fas fa-bars"></i>
+                    <i class="fas fa-times" style="display:none;"></i>
+                </button>
+                <div class="page-title">Announcements</div>
+            </div>
+
+            <div class="header-actions">
+                <span id="currentTime"
+                    style="color:var(--text-muted); font-size:13px; font-weight:500; margin-right:8px;"></span>
+
+                <div class="header-divider"></div>
+
+                <!-- Chat Icon -->
+                <button class="header-btn" onclick="toggleChatPanel()" title="Messages">
+                    <i class="fas fa-comments"></i>
+                    <span id="chatBadge" class="notif-badge-sleek has-count"
+                        style="display:none; background:var(--primary);"></span>
+                </button>
+
+                <!-- Notification Bell -->
+                <div style="position:relative;">
+                    <button class="header-btn" onclick="toggleNotifications()" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span id="notifBadge" class="notif-badge-sleek has-count" style="display:none;"></span>
+                    </button>
+                    <!-- Notifications Dropdown -->
+                    <div id="notificationsPanel"
+                        style="display:none; position:absolute; top:50px; right:0; width:340px; max-height:480px; background:white; border-radius:var(--radius-xl); box-shadow:var(--shadow-2xl); z-index:1100; border:1px solid var(--border); overflow:hidden;">
+                        <div
+                            style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700; font-size:15px; color:var(--text-main);">Notifications</span>
+                            <button onclick="markAllRead()"
+                                style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer; width:auto; padding:0; box-shadow:none;">Mark
+                                all as read</button>
+                        </div>
+                        <div id="notificationsList" style="max-height:380px; overflow-y:auto; padding:8px 0;">
+                            <div style="padding:40px 20px; text-align:center; color:var(--text-muted); font-size:13px;">
+                                <i class="fas fa-bell-slash"
+                                    style="display:block; font-size:24px; margin-bottom:12px; opacity:0.3;"></i>
+                                No new notifications
+                            </div>
+                        </div>
+                        <div style="padding:12px; border-top:1px solid var(--border); text-align:center;">
+                            <a href="admin_notifications.html"
+                                style="font-size:12px; color:var(--primary); font-weight:600; text-decoration:none;">View
+                                all activity</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-divider"></div>
+
+                <!-- User Profile Dropdown Area -->
+                <div style="position:relative;">
+                    <div class="header-user" id="profileDropdownBtn">
+                        <div class="header-user-info" style="text-align:right;">
+                            <span id="headerAdminName" class="header-user-name">Admin</span>
+                            <span class="header-user-role">System Administrator</span>
+                        </div>
+                        <img id="headerProfilePic" src="../images/default_avatar.png" alt="Profile">
+                        <i class="fas fa-chevron-down"
+                            style="font-size:10px; color:var(--text-light); transition: transform 0.2s;"
+                            id="profileChevron"></i>
+                    </div>
+
+                    <!-- Profile Dropdown Menu -->
+                    <div id="profileDropdown" class="dropdown-menu-sleek">
+                        <div style="padding: 12px 14px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--text-main);"
+                                id="dropdownAdminName">Admin Name</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">administrator@cite.edu</div>
+                        </div>
+                        <button class="dropdown-item-sleek" onclick="openEditProfile()">
+                            <i class="fas fa-user-circle"></i>Profile Settings
+                        </button>
+
+                        <div class="dropdown-divider-sleek"></div>
+                        <button class="dropdown-item-sleek danger" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const profileBtn = document.getElementById('profileDropdownBtn');
+                const profileDropdown = document.getElementById('profileDropdown');
+                const chevron = document.getElementById('profileChevron');
+
+                if (profileBtn && profileDropdown) {
+                    profileBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isShow = profileDropdown.classList.contains('show');
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                        if (!isShow) {
+                            profileDropdown.classList.add('show');
+                            if (chevron) chevron.style.transform = 'rotate(180deg)';
+                        } else {
+                            profileDropdown.classList.remove('show');
+                            if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        }
+                    });
+                }
+
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.dropdown-menu-sleek') && !e.target.closest('.header-user') && !e.target.closest('.header-btn')) {
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                        if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        const notifPanel = document.getElementById('notificationsPanel');
+                        if (notifPanel) notifPanel.style.display = 'none';
+                    }
+                });
+
+                // Sidebar Toggle logic
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                const barsIcon = sidebarToggle ? sidebarToggle.querySelector('.fa-bars') : null;
+                const timesIcon = sidebarToggle ? sidebarToggle.querySelector('.fa-times') : null;
+
+                if (sidebarToggle && sidebar) {
+                    sidebarToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (window.innerWidth > 768) {
+                            sidebar.classList.toggle('collapsed');
+                            if (mainContent) mainContent.classList.toggle('expanded');
+                        } else {
+                            sidebar.classList.toggle('mobile-open');
+                            if (barsIcon && timesIcon) {
+                                if (sidebar.classList.contains('mobile-open')) {
+                                    barsIcon.style.display = 'none';
+                                    timesIcon.style.display = 'block';
+                                } else {
+                                    barsIcon.style.display = 'block';
+                                    timesIcon.style.display = 'none';
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Close sidebar on outside click (mobile)
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.dropdown-menu-sleek') && !e.target.closest('.header-user') && !e.target.closest('.header-btn')) {
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                        if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        const notifPanel = document.getElementById('notificationsPanel');
+                        if (notifPanel) notifPanel.style.display = 'none';
+                    }
+
+                    if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('mobile-open') && !e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('mobile-open');
+                        if (barsIcon && timesIcon) {
+                            barsIcon.style.display = 'block';
+                            timesIcon.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        </script>
+
+        <!-- Announcement Post & Announcements Feed aligned -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 24px; margin-top: 24px;">
+            <div
+                style="background:white; padding:24px; max-width:600px; width:100%; border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); border:1px solid var(--border);">
+                <div style="font-weight:700; font-size:18px; color:var(--text-main); margin-bottom:20px;">
+                    <i class="fas fa-edit" style="color:var(--primary); margin-right:8px;"></i> Create Announcement
+                </div>
+                <!-- Announcement Post -->
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" id="annTitle" placeholder="e.g. Important Project Deadline" class="form-control"
+                        required minlength="4"
+                        style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:16px;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Content</label>
+                    <textarea id="annContent" required minlength="10"
+                        style="width:100%; min-height:120px; padding:12px; border:1px solid var(--border); border-radius:var(--radius-md); font-family:inherit; font-size:14px; margin-bottom:12px;"
+                        placeholder="Provide details about this announcement..."></textarea>
+                </div>
+
+                <!-- Image upload removed -->
+
+                <div class="form-group" style="margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" id="annPinned" style="width:16px; height:16px; cursor:pointer;">
+                    <label for="annPinned" style="font-size:14px; cursor:pointer;">Pin this announcement</label>
+                </div>
+                <div id="postResult" style="margin-bottom:16px;"></div>
+                <button class="btn btn-primary" onclick="postAnnouncement()"
+                    style="width:100%; justify-content:center;">
+                    <i class="fas fa-paper-plane" style="margin-right:8px;"></i> Post Announcement
+                </button>
+            </div>
+
+            <!-- Announcements Feed -->
+            <div style="display: flex; justify-content: center; margin-top: 24px;">
+                <div class="card">
+                    <div class="card-header" style="flex-direction:column; align-items:flex-start; gap:16px;">
+                        <div class="card-title">All Announcements</div>
+                        <div class="moderation-tabs"
+                            style="display:flex; gap:8px; width:100%; border-top:1px solid var(--border-light); padding-top:16px;">
+                            <button class="filter-tab active" onclick="setStatusFilter('Approved', this)">
+                                <i class="fas fa-check-circle"></i> Approved
+                            </button>
+                            <button class="filter-tab" onclick="setStatusFilter('Pending', this)">
+                                <i class="fas fa-clock"></i> Pending
+                            </button>
+                            <button class="filter-tab" onclick="setStatusFilter('Rejected', this)">
+                                <i class="fas fa-times-circle"></i> Rejected
+                            </button>
+                            <button class="filter-tab" onclick="setStatusFilter('All', this)">
+                                All Posts
+                            </button>
+                        </div>
+                    </div>
+                    <div id="announcementsFeed" class="announcements-feed" style="padding:24px;">
+                        <div style="text-align:center; color:var(--text-muted);">Loading announcements...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcement View Modal -->
+        <div id="announcementModal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(4px);"
+            onclick="if(event.target===this) closeAnnouncementModal()">
+            <div
+                style="background:white; width:90%; max-width:700px; max-height:85vh; border-radius:16px; overflow-y:auto; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);">
+                <div
+                    style="padding:24px 24px 0; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:white; z-index:1; border-bottom:1px solid var(--border-light); padding-bottom:16px;">
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-main);">Announcement</h3>
+                    <button onclick="closeAnnouncementModal()"
+                        style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-muted); padding:4px; border-radius:6px; line-height: 1;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="announcementModalBody" style="padding:24px;"></div>
+            </div>
+        </div>
+
+        <!-- Repost Modal -->
+        <div id="repostModal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(4px);"
+            onclick="if(event.target===this) closeRepostModal()">
+            <div
+                style="background:white; width:90%; max-width:500px; border-radius:16px; overflow:hidden; box-shadow:var(--shadow-xl);">
+                <div
+                    style="padding:20px; border-bottom:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="font-size:18px; font-weight:700;">Repost Announcement</h3>
+                    <button onclick="closeRepostModal()"
+                        style="background:none; border:none; font-size:10px; cursor:pointer; color:var(--text-muted);"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div style="padding:20px;">
+                    <label class="form-label">Add a caption (optional)</label>
+                    <textarea id="repostCaption" placeholder="What's on your mind?"
+                        style="width:100%; min-height:100px; padding:12px; border:1px solid var(--border); border-radius:var(--radius-md); font-family:inherit; margin-bottom:16px;"></textarea>
+
+                    <div id="originalPostPreview"
+                        style="background:#f8fafc; padding:15px; border-radius:var(--radius-md); border:1px solid var(--border-light); margin-bottom:20px;">
+                        <div id="repostOriginalTitle" style="font-weight:700; margin-bottom:5px; font-size:14px;"></div>
+                        <div id="repostOriginalContent"
+                            style="font-size:13px; color:var(--text-muted); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="confirmRepostBtn" style="width:100%; justify-content:center;">
+                        <i class="fas fa-share" style="margin-right:8px;"></i> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+
+
+        <script>
+            let currentUserId = null;
+            let allAnnouncements = [];
+            let currentStatusFilter = 'Approved';
+
+            // Initialized after DOM loads below
+
+            // Preview image before upload
+            function previewImage(input) {
+                const container = document.getElementById('imagePreviewContainer');
+                const preview = document.getElementById('imagePreview');
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        container.style.display = 'block';
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            function clearImageInput() {
+                const input = document.getElementById('annImage');
+                input.value = '';
+                document.getElementById('imagePreviewContainer').style.display = 'none';
+            }
+
+            async function setStatusFilter(status, el) {
+                currentStatusFilter = status;
+                document.querySelectorAll('.moderation-tabs .filter-tab').forEach(t => t.classList.remove('active'));
+                el.classList.add('active');
+                loadAnnouncements();
+            }
+
+            // Load announcements
+            async function loadAnnouncements() {
+                try {
+                    const res = await fetch(`../php/get_announcements.php?limit=50&status=${currentStatusFilter}`);
+                    const data = await res.json();
+
+                    const feed = document.getElementById('announcementsFeed');
+                    if (!data.success || !data.announcements || data.announcements.length === 0) {
+                        feed.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:40px;">No announcements yet. Be the first to post!</div>';
+                        return;
+                    }
+
+                    feed.innerHTML = data.announcements.map(ann => renderAnnouncementCard(ann)).join('');
+
+                    allAnnouncements = data.announcements;
+
+                    if (!window.announcementSyncInterval) {
+                        window.announcementSyncInterval = setInterval(syncAnnouncementStats, 10000);
+                    }
+                } catch (e) {
+                    console.error('Error loading announcements:', e);
+                }
+            }
+
+            function renderAnnouncementCard(ann) {
+                const isOwn = String(ann.author_id) === String(currentUserId);
+                const isAdmin = true; // Since this is admin page
+
+                let statusBadge = '';
+                if (ann.status === 'Pending') {
+                    statusBadge = `<span class="announcement-status status-pending"><i class="fas fa-clock"></i> Pending Approval</span>`;
+                } else if (ann.status === 'Rejected') {
+                    statusBadge = `<span class="announcement-status status-rejected"><i class="fas fa-times-circle"></i> Rejected</span>`;
+                }
+
+                let moderationActions = '';
+                if (ann.status === 'Pending') {
+                    moderationActions = `
+                        <div class="moderation-actions" style="margin-top:12px; padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; display:flex; gap:8px;">
+                            <button class="btn btn-primary btn-sm" onclick="moderateAnnouncement(${ann.announcement_id}, 'approve')" style="flex:1;">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-outline btn-sm" onclick="moderateAnnouncement(${ann.announcement_id}, 'reject')" style="flex:1; border-color:#ef4444; color:#ef4444;">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                    `;
+                }
+
+                const mgmtActions = isOwn || isAdmin ? `
+                    <div class="management-actions">
+                        ${isOwn ? `
+                        <button class="action-btn" onclick="openEditPost(${ann.announcement_id})" style="color:var(--primary);">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>` : ''}
+                        <button class="action-btn" onclick="deleteAnnouncement(${ann.announcement_id})" style="color:var(--danger);">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </div>
+                ` : '';
+
+                // Image display removed
+                const imageHtml = '';
+
+                return `
+                    <div class="announcement-card ${ann.is_pinned ? 'pinned' : ''}" data-id="${ann.announcement_id}">
+                        <div class="announcement-header">
+                            <img src="${ann.author_picture || '../images/default_avatar.png'}" class="announcement-avatar" alt="">
+                            <div class="announcement-meta">
+                                <div class="announcement-author">
+                                    ${escapeHtml(ann.author_name)}
+                                    <span class="announcement-badge ${ann.author_type}">${ann.author_type.replace('_', ' ')}</span>
+                                </div>
+                                <div class="announcement-time" title="${ann.created_at}">
+                                    <i class="far fa-clock"></i>
+                                    ${ann.time_ago}
+                                    ${ann.is_pinned ? '<i class="fas fa-thumbtack" title="Pinned" style="margin-left:8px; color:var(--primary); font-size:12px;"></i>' : ''}
+                                </div>
+                            </div>
+                            
+                            <div class="post-options-container">
+                                <button class="post-options-btn" onclick="toggleOptionsMenu(event, ${ann.announcement_id})">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </button>
+                                <div id="post-menu-${ann.announcement_id}" class="post-options-menu">
+                                    <button class="post-option-item" onclick="togglePin(${ann.announcement_id})">
+                                        <i class="fas fa-thumbtack" style="${ann.is_pinned ? 'color:var(--primary);' : ''}"></i> 
+                                        ${ann.is_pinned ? 'Unpin Post' : 'Pin Post'}
+                                    </button>
+                                    
+                                    ${isOwn || isAdmin ? `
+                                        ${isOwn ? `
+                                        <button class="post-option-item" onclick="openEditPost(${ann.announcement_id})">
+                                            <i class="fas fa-edit"></i> Edit Post
+                                        </button>` : ''}
+                                        <button class="post-option-item danger" onclick="deleteAnnouncement(${ann.announcement_id})">
+                                            <i class="fas fa-trash-alt"></i> Delete Post
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="announcement-body" id="ann-body-${ann.announcement_id}">
+                            <div class="announcement-title" style="cursor:pointer;" onclick="viewAnnouncement(${ann.announcement_id})">${escapeHtml(ann.title || '')}</div>
+                            <div class="announcement-content" style="cursor:pointer;" onclick="viewAnnouncement(${ann.announcement_id})">${escapeHtml(ann.content)}</div>
+                        </div>
+                        
+                        ${statusBadge}
+                        ${moderationActions}
+
+                        <div class="announcement-actions">
+                            <button class="action-btn like-btn ${ann.user_liked ? 'liked' : ''}" onclick="toggleLike(this, ${ann.announcement_id})">
+                                <i class="${ann.user_liked ? 'fas' : 'far'} fa-heart"></i>
+                                <span class="count">${ann.likes || 0}</span> <span>Likes</span>
+                            </button>
+                            <button class="action-btn comment-btn" onclick="toggleComments(${ann.announcement_id})">
+                                <i class="far fa-comment-alt"></i>
+                                <span class="count">${ann.comments || 0}</span> <span>Comments</span>
+                            </button>
+                            <button class="action-btn share-btn" onclick="shareAnnouncement(this, ${ann.announcement_id})">
+                                <i class="far fa-share-square"></i>
+                                <span class="count">${ann.shares || 0}</span> <span>Shares</span>
+                            </button>
+                        </div>
+
+                        <div id="comment-section-${ann.announcement_id}" class="comment-section">
+                            <div id="comment-list-${ann.announcement_id}" class="comment-list"></div>
+                            <div class="comment-input-group">
+                                <img src="${document.getElementById('sidebarProfilePic')?.src || '../images/default_avatar.png'}" class="comment-pfp">
+                                <input type="text" class="comment-input" placeholder="Write a comment..." id="comment-input-${ann.announcement_id}"
+                                    onkeyup="if(event.key==='Enter') postComment(${ann.announcement_id})">
+                                <button class="comment-send-btn" onclick="postComment(${ann.announcement_id})">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function openEditPost(id) {
+                const ann = allAnnouncements.find(a => a.announcement_id == id);
+                if (!ann) return;
+
+                const body = document.getElementById(`ann-body-${id}`);
+                const originalHtml = body.innerHTML;
+
+                body.innerHTML = `
+                    <div class="edit-form-container">
+                        <div class="form-group">
+                            <label class="form-label">Title</label>
+                            <input type="text" id="edit-title-${id}" class="form-control" value="${escapeHtml(ann.title)}" style="margin-bottom:8px; font-weight:700; width:100%;">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Content</label>
+                            <textarea id="edit-content-${id}" class="form-control" style="min-height:100px; margin-bottom:12px; width:100%; font-family:inherit;">${escapeHtml(ann.content)}</textarea>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom:12px;">
+                            <label class="form-label" style="display:flex; align-items:center; gap:8px; cursor:pointer; width:fit-content; background:#f1f5f9; padding:6px 10px; border-radius:6px; border:1px dashed #cbd5e1;">
+                                <i class="fas fa-image" style="color:var(--primary);"></i>
+                                <span style="font-size:12px; font-weight:600;">Change Image</span>
+                                <input type="file" id="edit-image-${id}" accept="image/*" style="display:none;" onchange="previewEditImage(this, ${id})">
+                            </label>
+                            
+                            <div id="edit-image-preview-container-${id}" style="margin-top:10px; ${ann.image_path ? '' : 'display:none;'}">
+                                <div class="image-preview-wrapper" style="position:relative; display:inline-block;">
+                                    <img id="edit-image-preview-${id}" src="${ann.image_path || ''}" style="max-width:150px; border-radius:6px;">
+                                    <div class="remove-btn" onclick="removeEditImage(${id})" style="position:absolute; top:-8px; right:-8px; background:#ef4444; color:white; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; border:2px solid white;">&times;</div>
+                                </div>
+                                <input type="hidden" id="edit-remove-image-${id}" value="0">
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:8px; margin-top:16px;">
+                            <button class="btn btn-primary btn-sm" onclick="saveEdit(${id})">
+                                <i class="fas fa-save" style="margin-right:4px;"></i> Save Changes
+                            </button>
+                            <button class="btn btn-light btn-sm" onclick="cancelEdit(${id}, \`${originalHtml.replace(/`/g, '\\`').replace(/\${/g, '\\${')}\`)">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function previewEditImage(input, id) {
+                const preview = document.getElementById(`edit-image-preview-${id}`);
+                const container = document.getElementById(`edit-image-preview-container-${id}`);
+                const removeInput = document.getElementById(`edit-remove-image-${id}`);
+
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        container.style.display = 'block';
+                        removeInput.value = "0";
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            function removeEditImage(id) {
+                document.getElementById(`edit-image-${id}`).value = '';
+                document.getElementById(`edit-image-preview-container-${id}`).style.display = 'none';
+                document.getElementById(`edit-remove-image-${id}`).value = "1";
+            }
+
+            async function saveEdit(id) {
+                const title = document.getElementById(`edit-title-${id}`).value.trim();
+                const content = document.getElementById(`edit-content-${id}`).value.trim();
+                const imageFile = document.getElementById(`edit-image-${id}`).files[0];
+                const removeImage = document.getElementById(`edit-remove-image-${id}`).value;
+
+                if (!title || !content) {
+                    showToast('Title and content are required', 'error');
+                    return;
+                }
+
+                try {
+                    const formData = new FormData();
+                    formData.append('action', 'update');
+                    formData.append('announcement_id', id);
+                    formData.append('title', title);
+                    formData.append('content', content);
+                    formData.append('remove_image', removeImage);
+                    if (imageFile) formData.append('ann_image', imageFile);
+
+                    const res = await fetch('../php/manage_announcement.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('Announcement updated');
+                        loadAnnouncements();
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                } catch (e) {
+                    console.error('Error saving edit:', e);
+                    showToast('Network error', 'error');
+                }
+            }
+
+            function cancelEdit(id, originalHtml) {
+                document.getElementById(`ann-body-${id}`).innerHTML = originalHtml;
+            }
+
+            async function postAnnouncement() {
+                const title = document.getElementById('annTitle').value.trim();
+                const content = document.getElementById('annContent').value.trim();
+                const is_pinned = document.getElementById('annPinned').checked ? 1 : 0;
+                const result = document.getElementById('postResult');
+
+                if (!title || !content) {
+                    result.innerHTML = '<div style="color:var(--danger); padding:8px; background:#fef2f2; border-radius:6px;">Please fill in both title and content</div>';
+                    return;
+                }
+
+                try {
+                    const res = await fetch('../php/post_announcement.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `title=${encodeURIComponent(title)}&content=${encodeURIComponent(content)}&is_pinned=${is_pinned}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        result.innerHTML = '<div style="color:var(--primary); padding:8px; background:var(--primary-lightest); border-radius:6px;">Posted successfully!</div>';
+                        document.getElementById('annTitle').value = '';
+                        document.getElementById('annContent').value = '';
+                        document.getElementById('annPinned').checked = false;
+                        loadAnnouncements();
+                        setTimeout(() => result.innerHTML = '', 3000);
+                    } else {
+                        result.innerHTML = `<div style="color:var(--danger); padding:8px; background:#fef2f2; border-radius:6px;">${data.message}</div>`;
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            async function toggleLike(btn, id) {
+                try {
+                    const res = await fetch('../php/like_announcement.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `announcement_id=${id}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        const countSpan = btn.querySelector('.count');
+                        let currentCount = parseInt(countSpan.textContent);
+                        if (data.liked) {
+                            btn.classList.add('liked');
+                            btn.querySelector('i').className = 'fas fa-heart';
+                            countSpan.textContent = currentCount + 1;
+                        } else {
+                            btn.classList.remove('liked');
+                            btn.querySelector('i').className = 'far fa-heart';
+                            countSpan.textContent = currentCount - 1;
+                        }
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            function toggleComments(id) {
+                const section = document.getElementById(`comment-section-${id}`);
+                if (section.style.display === 'block') {
+                    section.style.display = 'none';
+                } else {
+                    section.style.display = 'block';
+                    loadComments(id);
+                }
+            }
+
+            async function loadComments(id) {
+                const list = document.getElementById(`comment-list-${id}`);
+                if (!list) return;
+                list.innerHTML = '<div style="text-align:center; padding:10px; font-size:12px; color:var(--text-muted);">Loading comments...</div>';
+                try {
+                    const res = await fetch(`../php/get_announcement_comments.php?announcement_id=${id}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        if (data.comments.length === 0) {
+                            list.innerHTML = '<div style="text-align:center; padding:10px; font-size:12px; color:var(--text-muted);">No comments yet.</div>';
+                            return;
+                        }
+
+                        // Organize comments into parent-child structure
+                        const commentMap = {};
+                        const mainComments = [];
+
+                        data.comments.forEach(c => {
+                            commentMap[c.id] = { ...c, replies: [] };
+                        });
+
+                        data.comments.forEach(c => {
+                            if (c.parent_id && commentMap[c.parent_id]) {
+                                commentMap[c.parent_id].replies.push(commentMap[c.id]);
+                            } else {
+                                mainComments.push(commentMap[c.id]);
+                            }
+                        });
+
+                        list.innerHTML = mainComments.map(c => renderCommentItem(c, id)).join('');
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            function renderCommentItem(c, annId, isReply = false) {
+                const isOwnComment = String(c.user_id) === String(currentUserId);
+                const replyHtml = !isReply ? `
+                    <div class="comment-replies" id="replies-${c.id}">
+                        ${c.replies.map(r => renderCommentItem(r, annId, true)).join('')}
+                    </div>
+                ` : '';
+
+                return `
+                    <div class="comment-item" id="comment-${c.id}">
+                        <img src="${c.user_pic || '../images/default_avatar.png'}" class="comment-pfp">
+                        <div style="flex:1;">
+                            <div class="comment-bubble">
+                                <div class="comment-author">${escapeHtml(c.user_name)}</div>
+                                <div class="comment-text">${escapeHtml(c.text)}</div>
+                            </div>
+                            <div class="comment-actions">
+                                <span class="comment-action-btn ${c.user_liked ? 'comment-liked' : ''}" onclick="toggleLikeComment(${c.id}, ${annId})">
+                                    ${c.user_liked ? 'Liked' : 'Like'}
+                                </span>
+                                ${!isReply ? `<span class="comment-action-btn" onclick="showReplyInput(${c.id}, ${annId})">Reply</span>` : ''}
+                                <span style="font-size:11px; color:var(--text-muted);">${c.time_ago}</span>
+                                ${isOwnComment ? `<span class="comment-action-btn" style="color:var(--danger);" onclick="deleteComment(${c.id}, ${annId})">Delete</span>` : ''}
+                                ${c.likes > 0 ? `
+                                    <div class="comment-like-count">
+                                        <i class="fas fa-thumbs-up"></i> ${c.likes}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div id="reply-input-container-${c.id}" style="display:none; margin-top:10px;">
+                                <div class="comment-input-group">
+                                    <input type="text" class="comment-input" placeholder="Write a reply..." id="reply-input-${c.id}"
+                                        onkeyup="if(event.key==='Enter') postComment(${annId}, ${c.id})">
+                                    <button class="comment-send-btn" onclick="postComment(${annId}, ${c.id})">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            ${replyHtml}
+                        </div>
+                    </div>
+                `;
+            }
+
+            function showReplyInput(commentId, annId) {
+                const container = document.getElementById(`reply-input-container-${commentId}`);
+                const isHidden = container.style.display === 'none';
+
+                // Hide all other reply inputs first
+                document.querySelectorAll('[id^="reply-input-container-"]').forEach(c => c.style.display = 'none');
+
+                if (isHidden) {
+                    container.style.display = 'block';
+                    document.getElementById(`reply-input-${commentId}`).focus();
+                }
+            }
+
+            async function toggleLikeComment(commentId, annId) {
+                try {
+                    const res = await fetch('../php/like_comment.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `comment_id=${commentId}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        loadComments(annId);
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            async function postComment(annId, parentId = null) {
+                const inputId = parentId ? `reply-input-${parentId}` : `comment-input-${annId}`;
+                const input = document.getElementById(inputId);
+                const text = input.value.trim();
+                if (!text) return;
+
+                try {
+                    const body = new URLSearchParams();
+                    body.append('announcement_id', annId);
+                    body.append('comment_text', text);
+                    if (parentId) body.append('parent_id', parentId);
+
+                    const res = await fetch('../php/post_comment.php', {
+                        method: 'POST',
+                        body: body
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        input.value = '';
+                        loadComments(annId);
+                        const card = document.querySelector(`.announcement-card[data-id="${annId}"]`);
+                        if (card && !parentId) {
+                            const countSpan = card.querySelector('button[onclick*="toggleComments"] .count');
+                            if (countSpan) countSpan.textContent = parseInt(countSpan.textContent) + 1;
+                        }
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            function shareAnnouncement(btn, id) {
+                const ann = allAnnouncements.find(a => a.announcement_id == id);
+                if (!ann) return;
+
+                document.getElementById('repostOriginalTitle').textContent = ann.title || 'Announcement';
+                document.getElementById('repostOriginalContent').textContent = ann.content;
+                document.getElementById('repostCaption').value = '';
+                document.getElementById('repostModal').style.display = 'flex';
+
+                document.getElementById('confirmRepostBtn').onclick = () => confirmRepost(id);
+            }
+
+            async function confirmRepost(id) {
+                const caption = document.getElementById('repostCaption').value.trim();
+                const btn = document.getElementById('confirmRepostBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sharing...';
+
+                try {
+                    const res = await fetch('../php/share_announcement.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `announcement_id=${id}&caption=${encodeURIComponent(caption)}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast(data.message);
+                        closeRepostModal();
+                        loadAnnouncements();
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    showToast('Repost failed', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-share" style="margin-right:8px;"></i> Share';
+                }
+            }
+
+            function closeRepostModal() {
+                document.getElementById('repostModal').style.display = 'none';
+            }
+
+            async function syncAnnouncementStats() {
+                const cards = document.querySelectorAll('.announcement-card');
+                const ids = Array.from(cards).map(c => c.dataset.id);
+                if (ids.length === 0) return;
+                try {
+                    const res = await fetch(`../php/get_interaction_updates.php?ids=${ids.join(',')}`);
+                    const data = await res.json();
+                    if (data.success && data.updates) {
+                        data.updates.forEach(upd => {
+                            const card = document.querySelector(`.announcement-card[data-id="${upd.id}"]`);
+                            if (!card) return;
+                            const likeBtn = card.querySelector('button[onclick*="toggleLike"]');
+                            if (likeBtn) {
+                                const countSpan = likeBtn.querySelector('.count');
+                                if (countSpan && parseInt(countSpan.textContent) !== upd.likes) countSpan.textContent = upd.likes;
+                            }
+                            const commBtn = card.querySelector('button[onclick*="toggleComments"]');
+                            if (commBtn) {
+                                const countSpan = commBtn.querySelector('.count');
+                                if (countSpan && parseInt(countSpan.textContent) !== upd.comments) {
+                                    countSpan.textContent = upd.comments;
+                                    const section = document.getElementById(`comment-section-${upd.id}`);
+                                    if (section && section.style.display === 'block') refreshCommentsSilent(upd.id);
+                                }
+                            }
+                            const shareBtn = card.querySelector('button[onclick*="shareAnnouncement"]');
+                            if (shareBtn) {
+                                const countSpan = shareBtn.querySelector('.count');
+                                if (countSpan && parseInt(countSpan.textContent) !== upd.shares) countSpan.textContent = upd.shares;
+                            }
+                        });
+                    }
+                } catch (e) { console.error('Sync error:', e); }
+            }
+
+            async function refreshCommentsSilent(id) {
+                try {
+                    const res = await fetch(`../php/get_announcement_comments.php?announcement_id=${id}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        const list = document.getElementById(`comment-list-${id}`);
+                        if (!list) return;
+
+                        // Just reload for structure consistency
+                        loadComments(id);
+                    }
+                } catch (e) { }
+            }
+
+            async function deleteComment(commentId, annId) {
+                if (!confirm('Are you sure you want to delete your comment?')) return;
+                try {
+                    const res = await fetch('../php/manage_comment.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `action=delete&comment_id=${commentId}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        loadComments(annId);
+                        const card = document.querySelector(`.announcement-card[data-id="${annId}"]`);
+                        if (card) {
+                            const countSpan = card.querySelector('.comment-btn .count');
+                            if (countSpan) countSpan.textContent = Math.max(0, parseInt(countSpan.textContent) - 1);
+                        }
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            function moderateAnnouncement(id, action) {
+                showConfirm(
+                    action.charAt(0).toUpperCase() + action.slice(1) + ' Announcement',
+                    `Are you sure you want to ${action} this announcement?`,
+                    async () => {
+                        try {
+                            const res = await fetch('../php/manage_announcement.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: `action=${action}&announcement_id=${id}`
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                                showToast(`Announcement ${action}d successfully`);
+                                loadAnnouncements();
+                            } else {
+                                showToast(data.message, 'error');
+                            }
+                        } catch (e) {
+                            console.error('Moderation error:', e);
+                            showToast('Network error', 'error');
+                        }
+                    }
+                );
+            }
+
+            async function deleteAnnouncement(id) {
+                showConfirm('Delete Announcement', 'Are you sure you want to delete this announcement?', async () => {
+                    try {
+                        const res = await fetch('../php/manage_announcement.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `action=delete&announcement_id=${id}`
+                        });
+                        const data = await res.json();
+                        if (data.success) { showToast('Announcement deleted'); loadAnnouncements(); }
+                        else showToast(data.message, 'error');
+                    } catch (e) { console.error('Error deleting:', e); }
+                });
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function toggleOptionsMenu(e, id) {
+                e.stopPropagation();
+                const menu = document.getElementById(`post-menu-${id}`);
+                const allMenus = document.querySelectorAll('.post-options-menu');
+
+                const isShow = menu.classList.contains('show');
+                allMenus.forEach(m => m.classList.remove('show'));
+
+                if (!isShow) {
+                    menu.classList.add('show');
+                }
+            }
+
+            async function togglePin(id) {
+                try {
+                    const res = await fetch('../php/manage_announcement.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `action=toggle_pin&announcement_id=${id}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast(data.message);
+                        loadAnnouncements();
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                } catch (e) {
+                    console.error('Pin error:', e);
+                }
+            }
+
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.post-options-menu').forEach(m => m.classList.remove('show'));
+            });
+
+            // View full announcement in modal
+            function viewAnnouncement(id) {
+                const ann = allAnnouncements.find(a => a.announcement_id == id);
+                if (!ann) return;
+                const modal = document.getElementById('announcementModal');
+                const body = document.getElementById('announcementModalBody');
+                body.innerHTML = `
+                    <div class="announcement-header" style="margin-bottom:20px;">
+                        <img src="${ann.author_picture || '../images/default_avatar.png'}" class="announcement-avatar" alt="">
+                        <div class="announcement-meta">
+                            <div class="announcement-author">
+                                ${escapeHtml(ann.author_name)}
+                                <span class="announcement-badge ${ann.author_type}">${ann.author_type.replace('_', ' ')}</span>
+                            </div>
+                            <div class="announcement-time" title="${ann.created_at}">
+                                <i class="far fa-clock"></i>
+                                ${ann.time_ago}
+                            </div>
+                        </div>
+                        ${ann.is_pinned ? '<i class="fas fa-thumbtack announcement-pin"></i>' : ''}
+                    </div>
+                    
+                    <div class="announcement-body">
+                        ${ann.title ? `<div class="announcement-title" style="font-size:1.8rem;">${escapeHtml(ann.title)}</div>` : ''}
+                        <div class="announcement-content" style="font-size:16px; line-height:1.8; white-space:pre-wrap;">${escapeHtml(ann.content)}</div>
+                    </div>
+
+                    <div class="announcement-actions" style="margin-top:20px;">
+                        <button class="action-btn like-btn ${ann.user_liked ? 'liked' : ''}" onclick="toggleLike(this, ${ann.announcement_id})">
+                            <i class="${ann.user_liked ? 'fas' : 'far'} fa-heart"></i>
+                            <span class="count">${ann.likes || 0}</span> <span>Likes</span>
+                        </button>
+                        <button class="action-btn comment-btn" onclick="toggleComments(${ann.announcement_id})">
+                            <i class="far fa-comment-alt"></i>
+                            <span class="count">${ann.comments || 0}</span> <span>Comments</span>
+                        </button>
+                        <button class="action-btn share-btn" onclick="shareAnnouncement(this, ${ann.announcement_id})">
+                            <i class="far fa-share-square"></i>
+                            <span class="count">${ann.shares || 0}</span> <span>Shares</span>
+                        </button>
+                    </div>
+                    
+                    <div id="modal-comment-section" class="comment-section" style="display:block;">
+                        <div id="comment-list-${ann.announcement_id}" class="comment-list"></div>
+                        <div class="comment-input-group">
+                            <img src="${document.getElementById('sidebarProfilePic')?.src || '../images/default_avatar.png'}" class="comment-pfp">
+                            <input type="text" class="comment-input" placeholder="Write a comment..." id="comment-input-${ann.announcement_id}"
+                                onkeyup="if(event.key==='Enter') postComment(${ann.announcement_id})">
+                            <button class="comment-send-btn" onclick="postComment(${ann.announcement_id})">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                modal.style.display = 'flex';
+                loadComments(ann.announcement_id);
+            }
+
+            function closeAnnouncementModal() {
+                document.getElementById('announcementModal').style.display = 'none';
+            }
+
+            // Notification System
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toastContainer') || createToastContainer();
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-times-circle' : 'fa-exclamation-circle');
+                toast.innerHTML = `
+                    <i class="fas ${icon}"></i>
+                    <div class="toast-message">${message}</div>
+                `;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            }
+
+            function createToastContainer() {
+                const container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+                return container;
+            }
+
+            function showConfirm(title, message, onConfirm) {
+                const overlay = document.createElement('div');
+                overlay.className = 'custom-confirm-overlay';
+                overlay.innerHTML = `
+                    <div class="custom-confirm-content">
+                        <div class="custom-confirm-header">
+                            <i class="fas fa-question-circle"></i>
+                            <h3>${title}</h3>
+                        </div>
+                        <div class="custom-confirm-body">${message}</div>
+                        <div class="custom-confirm-footer">
+                            <button class="btn-confirm-no">Cancel</button>
+                            <button class="btn-confirm-yes">Confirm</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                overlay.querySelector('.btn-confirm-no').onclick = () => overlay.remove();
+                overlay.querySelector('.btn-confirm-yes').onclick = () => {
+                    onConfirm();
+                    overlay.remove();
+                };
+            }
+
+            function logout() {
+                showConfirm('Sign Out', 'Are you sure you want to sign out of your account?', () => {
+                    fetch('../php/logout.php').then(() => {
+                        window.location.href = 'login.html';
+                    }).catch(() => {
+                        window.location.href = '../html/login.html';
+                    });
+                });
+            }
+        </script>
+
+        <!-- Edit Profile Modal -->
+        <div id="editProfileModal" class="modal"
+            style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.4);justify-content:center;align-items:center;z-index:20001;">
+            <div class="modal-content"
+                style="background:white;width:100%;max-width:500px;border-radius:8px;overflow:hidden;margin:20px;">
+                <div class="modal-header"
+                    style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                    <h3>Edit Profile</h3>
+                    <button class="close-btn" onclick="closeEditProfile()"
+                        style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:24px;">
+                    <form id="editProfileForm" onsubmit="submitAdminProfile(event)" enctype="multipart/form-data">
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
+                            <div class="form-group">
+                                <label class="form-label"
+                                    style="display:block; margin-bottom:8px; font-weight:500;">First
+                                    Name</label>
+                                <input type="text" class="form-control" id="editAdminFirstname" name="firstname"
+                                    required minlength="2" placeholder="e.g. John"
+                                    style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"
+                                    style="display:block; margin-bottom:8px; font-weight:500;">Middle
+                                    Name</label>
+                                <input type="text" class="form-control" id="editAdminMiddlename" name="middlename"
+                                    placeholder="Optional"
+                                    style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"
+                                    style="display:block; margin-bottom:8px; font-weight:500;">Last
+                                    Name</label>
+                                <input type="text" class="form-control" id="editAdminLastname" name="lastname" required
+                                    minlength="2" placeholder="e.g. Doe"
+                                    style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label class="form-label"
+                                style="display:block; margin-bottom:8px; font-weight:500;">Username</label>
+                            <input type="text" class="form-control" id="editAdminUsername" name="username" required
+                                minlength="4" placeholder="Enter username"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Email
+                                Address</label>
+                            <input type="email" class="form-control" id="editAdminEmail" name="email" required
+                                placeholder="admin@example.com"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Contact
+                                Number</label>
+                            <input type="text" class="form-control" id="editAdminContactNumber" name="contact_number"
+                                placeholder="+639XXXXXXXXX"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">New
+                                Password (leave blank to keep current)</label>
+                            <input type="password" class="form-control" id="editAdminPassword" name="new_password"
+                                minlength="8" placeholder="New password (min. 8 characters)"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Profile
+                                Picture</label>
+                            <div onclick="document.getElementById('adminProfileUpload').click()"
+                                style="padding: 16px; border: 2px dashed var(--border); border-radius: 6px; text-align: center; cursor: pointer; transition: 0.2s;"
+                                onmouseover="this.style.borderColor='var(--primary)'"
+                                onmouseout="this.style.borderColor='var(--border)'">
+                                <i class="fas fa-cloud-upload-alt"
+                                    style="color:var(--text-muted); font-size:24px; margin-bottom:8px;"></i>
+                                <div id="adminFileName" style="font-size:13px; color:var(--text-muted);">Click
+                                    to upload new
+                                    image</div>
+                                <input type="file" id="adminProfileUpload" name="profilePic" accept="image/*"
+                                    style="display: none"
+                                    onchange="document.getElementById('adminFileName').textContent = this.files[0].name">
+                            </div>
+                        </div>
+                        <div style="text-align:right;margin-top:24px;">
+                            <button type="button" class="btn btn-outline" onclick="closeEditProfile()"
+                                style="margin-right:8px;">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Chat Panel -->
+        <div id="chatPanel" class="chat-panel">
+            <div class="chat-header">
+                <h3>Messages</h3>
+                <button onclick="toggleChatPanel()" class="chat-close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-body">
+                <div id="chatUserView" class="chat-user-view">
+                    <div class="chat-search-bar">
+                        <div class="chat-search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="chatSearchInput" class="chat-search-input"
+                                placeholder="Search conversations..." oninput="searchUsers(this.value)">
+                        </div>
+                    </div>
+                    <div id="chatUserListContainer" class="chat-user-list">
+                        <div class="empty-chat"><i class="fas fa-comments"></i>
+                            <p>Loading conversations...</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="chatConversation" class="conversation-view">
+                    <div class="conv-header">
+                        <button onclick="backToUserList()" class="conv-back-btn"><i
+                                class="fas fa-chevron-left"></i></button>
+                        <div class="conv-user-info">
+                            <img id="chatConvAvatar" src="default_avatar.png" class="conv-avatar">
+                            <span id="chatConvName" class="conv-name">Select User</span>
+                        </div>
+                    </div>
+                    <div id="chatMessages" class="messages-container"></div>
+                    <div class="chat-footer">
+                        <form id="chatForm" onsubmit="sendChatMessage(event)">
+                            <div class="input-container">
+                                <textarea id="chatInput" class="chat-input-textarea"
+                                    placeholder="Type your message here..." rows="1"
+                                    onkeydown="handleChatKeydown(event)"></textarea>
+                                <button type="submit" class="send-button"><i class="fas fa-paper-plane"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let currentAdminData = {};
+            let currentChatUser = null;
+            let chatPollingInterval = null;
+            let searchTimeout = null;
+
+            // Notification System
+            function toggleNotifications() {
+                const panel = document.getElementById('notificationsPanel');
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                if (panel.style.display === 'block') loadNotifications();
+            }
+
+            function loadNotifications() {
+                fetch('../php/get_notifications.php')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) return;
+                        const badge = document.getElementById('notifBadge');
+                        const list = document.getElementById('notificationsList');
+                        if (j.unread_count > 0) {
+                            badge.textContent = j.unread_count;
+                            badge.style.display = 'block';
+                        } else { badge.style.display = 'none'; }
+                        if (j.notifications.length === 0) {
+                            list.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text-muted);">No notifications</div>';
+                            return;
+                        }
+                        let html = '';
+                        j.notifications.forEach(n => {
+                            const isUnread = n.is_read == 0;
+                            const avatar = n.sender_picture || '../images/default_avatar.png';
+                            html += `
+                            <div style="display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border); ${isUnread ? 'background:rgba(6,95,70,0.03);' : ''} cursor:pointer; align-items:flex-start;" onclick="handleNotificationClick(${n.id}, ${n.notification_type === 'new_message' ? n.sender_id : 'null'})">
+                                <img src="${avatar}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--border); flex-shrink:0;">
+                                <div style="flex:1;">
+                                    <div style="font-size:13px; color:var(--text-main); line-height:1.4; ${isUnread ? 'font-weight:600;' : ''}">${n.message}</div>
+                                    <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${n.time_ago}</div>
+                                </div>
+                                ${isUnread ? '<div style="width:8px; height:8px; background:var(--primary); border-radius:50%; margin-top:4px; flex-shrink:0;"></div>' : ''}
+                            </div>`;
+                        });
+                        list.innerHTML = html;
+                    });
+            }
+
+            function handleNotificationClick(notifId, senderId) {
+                markNotificationRead(notifId);
+                if (senderId) replyToNotification(senderId);
+            }
+
+            function markNotificationRead(id) {
+                fetch('../php/mark_notifications_read.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `notification_ids=${id}`
+                }).then(() => loadNotifications());
+            }
+
+            function markAllRead() {
+                fetch('../php/get_notifications.php')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (j.notifications && j.notifications.length > 0) {
+                            const ids = j.notifications.map(n => n.id || n.notification_id).join(',');
+                            fetch('../php/mark_notifications_read.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: `notification_ids=${ids}`
+                            }).then(() => loadNotifications());
+                        }
+                    });
+            }
+
+            // Chat System
+            let lastMessagesJson = '';
+
+            function resolveAvatar(pic, role) {
+                if (!pic || pic === '../images/default_avatar.png') return '../images/default_avatar.png';
+                if (pic.includes('/')) return pic;
+                const map = {
+                    student: '../uploadsStudentProfilePic/',
+                    instructor: '../uploadsInstructorProfilePic/',
+                    admin: '../uploadsAdminProfilePic/',
+                    super_admin: '../uploadsAdminProfilePic/'
+                };
+                return (map[role] || '../images/') + pic;
+            }
+
+            function toggleChatPanel() {
+                const panel = document.getElementById('chatPanel');
+                panel.classList.toggle('open');
+                if (panel.classList.contains('open')) {
+                    loadChatUsers();
+                    if (!chatPollingInterval) chatPollingInterval = setInterval(() => {
+                        if (currentChatUser) loadMessages(currentChatUser.user_id, false);
+                        if (!document.getElementById('chatSearchInput').value.trim()) loadChatUsers();
+                    }, 2000);
+                } else if (chatPollingInterval) {
+                    clearInterval(chatPollingInterval);
+                    chatPollingInterval = null;
+                }
+            }
+
+            function loadChatUsers() {
+                fetch('../php/get_chat_users.php')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) return;
+                        const container = document.getElementById('chatUserListContainer');
+                        const badge = document.getElementById('chatBadge');
+                        const totalUnread = j.chat_users.reduce((sum, u) => sum + (u.unread_count || 0), 0);
+                        if (totalUnread > 0) {
+                            badge.textContent = totalUnread;
+                            badge.style.display = 'block';
+                        } else { badge.style.display = 'none'; }
+
+                        let html = '';
+                        j.chat_users.forEach(u => {
+                            const avatar = resolveAvatar(u.profile_picture, u.role);
+                            html += `
+                            <div class="user-item" onclick="openConversation('${u.user_id}', '${u.user_type}', '${escapeHtmlChat(u.name)}', '${avatar}')">
+                                <img src="${avatar}" class="user-avatar">
+                                <div class="user-info">
+                                    <div class="user-name">${escapeHtmlChat(u.name)}</div>
+                                    <div class="user-last-msg">${escapeHtmlChat(u.last_message || 'No messages yet')}</div>
+                                </div>
+                                ${u.unread_count > 0 ? `<div class="unread-badge">${u.unread_count}</div>` : ''}
+                            </div>`;
+                        });
+                        container.innerHTML = html || '<div class="empty-chat"><p>No conversations</p></div>';
+                    });
+            }
+
+            function searchUsers(query) {
+                clearTimeout(searchTimeout);
+                if (!query.trim()) { loadChatUsers(); return; }
+                searchTimeout = setTimeout(() => {
+                    fetch(`../php/search_users.php?q=${encodeURIComponent(query)}`)
+                        .then(r => r.json())
+                        .then(j => {
+                            if (!j.success) return;
+                            const container = document.getElementById('chatUserListContainer');
+                            let html = '';
+                            j.users.forEach(u => {
+                                html += `
+                                <div class="user-item" onclick="openConversation('${u.id}', '${u.user_type}', '${escapeHtmlChat(u.name)}', '${u.profile_picture}')">
+                                    <img src="${u.profile_picture}" class="user-avatar">
+                                    <div class="user-info">
+                                        <div class="user-name">${escapeHtmlChat(u.name)}</div>
+                                        <div class="user-last-msg" style="text-transform:capitalize;">${u.user_type}</div>
+                                    </div>
+                                </div>`;
+                            });
+                            container.innerHTML = html || '<div class="empty-chat"><p>No results found</p></div>';
+                        });
+                }, 300);
+            }
+
+            function openConversation(userId, userType, userName, userAvatar) {
+                currentChatUser = { user_id: userId, name: userName, avatar: userAvatar };
+                document.getElementById('chatConvName').textContent = userName;
+                document.getElementById('chatConvAvatar').src = userAvatar;
+                document.getElementById('chatUserView').style.display = 'none';
+                document.getElementById('chatConversation').classList.add('active');
+                loadMessages(userId, true);
+            }
+
+            function backToUserList() {
+                currentChatUser = null;
+                document.getElementById('chatConversation').classList.remove('active');
+                document.getElementById('chatUserView').style.display = 'flex';
+                loadChatUsers();
+            }
+
+            function loadMessages(userId, scroll = true) {
+                fetch(`../php/get_messages.php?other_user_id=${userId}`)
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) return;
+
+                        const currentJson = JSON.stringify(j.messages);
+                        if (currentJson === lastMessagesJson && !scroll) return;
+                        lastMessagesJson = currentJson;
+
+                        const container = document.getElementById('chatMessages');
+                        let html = '';
+                        j.messages.forEach(m => {
+                            const isSent = String(m.sender_id) === String(currentAdminData.admin_id || currentAdminData.user_id);
+                            const senderAvatar = resolveAvatar(m.profile_picture, m.sender_type);
+
+                            html += `
+                            <div class="message-wrapper ${isSent ? 'sent' : 'received'}">
+                                ${!isSent ? `<img src="${senderAvatar}" class="msg-avatar">` : ''}
+                                <div class="msg-content">
+                                    <div class="msg-bubble">${escapeHtmlChat(m.message_text)}</div>
+                                    <div class="msg-time">${new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                </div>
+                                ${isSent ? `<img src="${senderAvatar}" class="msg-avatar">` : ''}
+                            </div>`;
+                        });
+                        container.innerHTML = html;
+                        if (scroll) container.scrollTop = container.scrollHeight;
+                    });
+            }
+
+            function sendChatMessage(e) {
+                e.preventDefault();
+                const input = document.getElementById('chatInput');
+                const msg = input.value.trim();
+                if (!msg || !currentChatUser) return;
+                fetch('../php/send_message.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `receiver_id=${currentChatUser.user_id}&message=${encodeURIComponent(msg)}`
+                }).then(r => r.json()).then(j => {
+                    if (j.success) { input.value = ''; loadMessages(currentChatUser.user_id, true); }
+                });
+            }
+
+            function handleChatKeydown(e) {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(e); }
+            }
+
+            function escapeHtmlChat(t) {
+                const d = document.createElement('div'); d.textContent = t; return d.innerHTML;
+            }
+
+            function replyToNotification(senderId) {
+                document.getElementById('notificationsPanel').style.display = 'none';
+                if (!document.getElementById('chatPanel').classList.contains('open')) toggleChatPanel();
+                fetch(`../php/get_user_info.php?senderId=${senderId}`)
+                    .then(r => r.json())
+                    .then(j => {
+                        if (j.success) openConversation(String(j.user_id), j.user_type, j.name, j.profile_picture);
+                    });
+            }
+
+            // Profile Management
+            function openEditProfile() {
+                if (!currentAdminData.Firstname) {
+                    loadAdminInfo().then(() => {
+                        populateAdminProfileForm();
+                        document.getElementById('editProfileModal').style.display = 'flex';
+                    });
+                } else {
+                    populateAdminProfileForm();
+                    document.getElementById('editProfileModal').style.display = 'flex';
+                }
+            }
+
+            function populateAdminProfileForm() {
+                document.getElementById('editAdminFirstname').value = currentAdminData.Firstname || '';
+                document.getElementById('editAdminMiddlename').value = currentAdminData.Middlename || '';
+                document.getElementById('editAdminLastname').value = currentAdminData.Lastname || '';
+                document.getElementById('editAdminUsername').value = currentAdminData.username || '';
+                document.getElementById('editAdminEmail').value = currentAdminData.email || '';
+                document.getElementById('editAdminContactNumber').value = currentAdminData.contact_number || '';
+            }
+
+            function closeEditProfile() { document.getElementById('editProfileModal').style.display = 'none'; }
+
+            function submitAdminProfile(e) {
+                e.preventDefault();
+                const formData = new FormData(document.getElementById('editProfileForm'));
+                fetch('../php/update_admin_profile.php', { method: 'POST', body: formData })
+                    .then(r => r.json())
+                    .then(j => {
+                        if (j.success) { showToast('Profile updated'); closeEditProfile(); loadAdminInfo(); }
+                        else { showToast(j.message, 'error'); }
+                    });
+            }
+
+            async function loadAdminInfo() {
+                try {
+                    const res = await fetch('../php/admin_get_dashboard.php');
+                    const j = await res.json();
+                    if (j.success && j.adminInfo) {
+                        currentAdminData = j.adminInfo;
+                        currentUserId = currentAdminData.user_id;
+                        const fullName = currentAdminData.Firstname + ' ' + currentAdminData.Lastname;
+                        const nameEl = document.getElementById('adminName');
+                        if (nameEl) nameEl.textContent = fullName;
+                        const headerNameEl = document.getElementById('headerAdminName');
+                        if (headerNameEl) headerNameEl.textContent = fullName;
+
+                        let profilePic = currentAdminData.profile_picture;
+                        if (profilePic && !profilePic.includes('/')) {
+                            profilePic = '../uploadsAdminProfilePic/' + profilePic;
+                        } else if (!profilePic) {
+                            profilePic = '../images/default_avatar.png';
+                        }
+                        const sidebarPic = document.getElementById('sidebarProfilePic');
+                        if (sidebarPic) sidebarPic.src = profilePic;
+                        const headerPic = document.getElementById('headerProfilePic');
+                        if (headerPic) headerPic.src = profilePic;
+                    }
+                } catch (e) {
+                    console.error('Error loading admin info:', e);
+                }
+            }
+
+            setInterval(() => {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateStr = now.toLocaleDateString([], { month: 'short', day: '2-digit' });
+                document.getElementById('currentTime').textContent = `${dateStr} | ${timeStr}`;
+            }, 1000);
+
+            // Initialize
+            document.addEventListener('DOMContentLoaded', () => {
+                loadAdminInfo();
+                loadAnnouncements();
+                setTimeout(loadNotifications, 1000);
+            });
+        </script>
+    </div>
+
+</body>
+
+</html>

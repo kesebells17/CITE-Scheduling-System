@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Announcements | Student Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/announcements.css">
+    <style>
+        /* --- Page Landing Animation --- */
+        .dashboard-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeSlideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sequential animation for elements */
+        .card {
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeSlideIn 0.5s ease-out forwards;
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+    </style>
+</head>
+
+<body class="dashboard-page">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo-container">
+            <img src="../images/citeneww.png" alt="CITE Logo" class="sidebar-logo">
+            <a href="#" class="logoStudent">Student</a>
+        </div>
+        <nav class="nav-links">
+            <a href="student_dashboard.html" class="nav-item"><i class="fas fa-home"></i> Home</a>
+            <a href="student_announcements.html" class="nav-item active"><i class="fas fa-bullhorn"></i>
+                Announcements</a>
+            <a href="student_dashboard.html" class="nav-item"><i class="fas fa-calendar-plus"></i> Book Appointment</a>
+            <a href="student_dashboard.html#historySection" class="nav-item"><i class="fas fa-history"></i> Appointment
+                History</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="#" onclick="logout()"
+                style="display:block; margin-top:12px; color:var(--sidebar-text); font-size:13px; text-decoration:none;">
+                <i class="fas fa-sign-out-alt"></i> Sign out
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="top-header">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <a href="student_dashboard.html" class="btn-back"><i class="fas fa-arrow-left"></i></a>
+                <div class="page-title">Announcements</div>
+            </div>
+            <div class="header-actions">
+                <span class="role-badge student">Student</span>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <!-- Post Announcement -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fas fa-edit"
+                            style="margin-right:8px; color:var(--primary);"></i>Post Announcement</div>
+                </div>
+                <div style="padding:24px;">
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" id="annTitle" placeholder="Announcement title..." class="form-control"
+                            style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:16px;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Content</label>
+                        <textarea id="annContent"
+                            style="width:100%; min-height:120px; padding:12px; border:1px solid var(--border); border-radius:var(--radius-md); font-family:inherit; font-size:14px; margin-bottom:12px; resize:vertical;"
+                            placeholder="Write your announcement here..."></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label"
+                            style="display:flex; align-items:center; gap:8px; cursor:pointer; width:fit-content; background:#f8fafc; padding:8px 12px; border-radius:var(--radius-md); border:1px dashed var(--border);">
+                            <i class="fas fa-image" style="color:var(--primary);"></i>
+                            <span style="font-size:13px; font-weight:600;">Add Image</span>
+                            <input type="file" id="annImage" accept="image/*" style="display:none;"
+                                onchange="previewImage(this)">
+                        </label>
+                        <div id="imagePreviewContainer" style="display:none; margin-top:10px;">
+                            <div class="image-preview-wrapper">
+                                <img id="imagePreview" src="" alt="Preview">
+                                <div class="remove-btn" onclick="clearImageInput()">&times;</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="postResult" style="margin-bottom:16px;"></div>
+                    <button class="btn btn-primary" onclick="postAnnouncement()"
+                        style="width:100%; justify-content:center;">
+                        <i class="fas fa-paper-plane" style="margin-right:8px;"></i> Post Announcement
+                    </button>
+                </div>
+            </div>
+
+            <!-- Announcements Feed -->
+            <div class="card" style="margin-top:24px;">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-bullhorn" style="margin-right:8px; color:var(--primary);"></i>
+                        Latest Announcements
+                    </div>
+                </div>
+                <!-- Filter Tabs -->
+                <div class="announcement-filters" style="padding: 12px 24px 0;">
+                    <button class="filter-tab active" onclick="filterAnnouncements('all')">All</button>
+                    <button class="filter-tab" onclick="filterAnnouncements('pinned')">Pinned</button>
+                    <button class="filter-tab" onclick="filterAnnouncements('recent')">Recent</button>
+                </div>
+                <div id="announcementsFeed" class="announcements-feed">
+                    <!-- Loading skeleton -->
+                    <div class="announcement-loading" id="loadingSkeleton">
+                        <div class="announcement-skeleton">
+                            <div class="skeleton-header">
+                                <div class="skeleton-avatar"></div>
+                                <div class="skeleton-info">
+                                    <div class="skeleton-line short"></div>
+                                    <div class="skeleton-line medium"></div>
+                                </div>
+                            </div>
+                            <div class="skeleton-line long"></div>
+                            <div class="skeleton-line long"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcement View Modal -->
+        <div id="announcementModal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(4px);"
+            onclick="if(event.target===this) closeAnnouncementModal()">
+            <div
+                style="background:white; width:90%; max-width:700px; max-height:85vh; border-radius:16px; overflow-y:auto; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);">
+                <div
+                    style="padding:24px 24px 0; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:white; z-index:1; border-bottom:1px solid var(--border-light); padding-bottom:16px;">
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-main);">Announcement</h3>
+                    <button onclick="closeAnnouncementModal()"
+                        style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text-muted); padding:4px; border-radius:6px; line-height: 1;"
+                        onmouseover="this.style.background='var(--bg-body)'" onmouseout="this.style.background='none'">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="announcementModalBody" style="padding:24px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 CITE 2026 CITE Faculty & Staff Scheduling System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentUserId = null;
+        let allAnnouncements = [];
+        let currentFilter = 'all';
+
+        // Preview image before upload
+        function previewImage(input) {
+            const container = document.getElementById('imagePreviewContainer');
+            const preview = document.getElementById('imagePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    container.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function clearImageInput() {
+            const input = document.getElementById('annImage');
+            input.value = '';
+            document.getElementById('imagePreviewContainer').style.display = 'none';
+        }
+
+        // Get current user info
+        async function getCurrentUser() {
+            try {
+                const res = await fetch('../php/get_student_info.php');
+                const data = await res.json();
+                if (data.success) {
+                    currentUserId = data.user_id;
+                }
+            } catch (e) { console.error('Error getting user info:', e); }
+        }
+
+        // Load announcements
+        async function loadAnnouncements() {
+            try {
+                const res = await fetch('../php/get_announcements.php?limit=50');
+                const data = await res.json();
+
+                const feed = document.getElementById('announcementsFeed');
+                const skeleton = document.getElementById('loadingSkeleton');
+
+                if (skeleton) skeleton.remove();
+
+                if (!data.success || !data.announcements || data.announcements.length === 0) {
+                    feed.innerHTML = `
+                        <div class="announcement-empty">
+                            <i class="fas fa-bullhorn"></i>
+                            <h3>No announcements yet</h3>
+                            <p>Check back later for updates from your instructors and administrators.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                allAnnouncements = data.announcements;
+                renderAnnouncements();
+                if (!window.announcementSyncInterval) {
+                    window.announcementSyncInterval = setInterval(syncAnnouncementStats, 10000);
+                }
+            } catch (e) {
+                console.error('Error loading announcements:', e);
+            }
+        }
+
+        function renderAnnouncementCard(ann) {
+            const isOwn = ann.author_id == currentUserId;
+
+            let statusBadge = '';
+            if (ann.status === 'Pending') {
+                statusBadge = `<span class="announcement-status status-pending"><i class="fas fa-clock"></i> Pending Approval</span>`;
+            } else if (ann.status === 'Rejected') {
+                statusBadge = `<span class="announcement-status status-rejected"><i class="fas fa-times-circle"></i> Rejected</span>`;
+            }
+
+            const mgmtActionsHtml = isOwn ? `
+                <div class="management-actions">
+                    ${statusBadge}
+                    <button class="action-btn" onclick="openEditPost(${ann.announcement_id})" style="color:var(--primary);">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="action-btn" onclick="deleteAnnouncement(${ann.announcement_id})" style="color:var(--danger);">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </div>
+            ` : '';
+
+            const imageHtml = ann.image_path ? `
+                <div class="announcement-image-container" onclick="viewAnnouncement(${ann.announcement_id})">
+                    <img src="${ann.image_path}" class="announcement-image" alt="Announcement Image">
+                </div>
+            ` : '';
+
+            return `
+                <div class="announcement-card ${ann.is_pinned ? 'pinned' : ''}" data-id="${ann.announcement_id}">
+                    <div class="announcement-header">
+                        <img src="${ann.author_picture || '../images/default_avatar.png'}" class="announcement-avatar" alt="">
+                        <div class="announcement-meta">
+                            <div class="announcement-author">
+                                ${escapeHtml(ann.author_name)}
+                                <span class="announcement-badge ${ann.author_type}">${ann.author_type.replace('_', ' ')}</span>
+                            </div>
+                            <div class="announcement-time" title="${ann.created_at}">
+                                <i class="far fa-clock"></i>
+                                ${ann.time_ago}
+                            </div>
+                        </div>
+                        ${ann.is_pinned ? '<i class="fas fa-thumbtack announcement-pin" title="Pinned announcement"></i>' : ''}
+                    </div>
+
+                    <div class="announcement-body" id="ann-body-${ann.announcement_id}">
+                        ${ann.title ? `<div class="announcement-title" style="cursor:pointer;" onclick="viewAnnouncement(${ann.announcement_id})">${escapeHtml(ann.title)}</div>` : ''}
+                        <div class="announcement-content" style="cursor:pointer;" onclick="viewAnnouncement(${ann.announcement_id})">${escapeHtml(ann.content)}</div>
+                        ${imageHtml}
+                    </div>
+                    
+                    ${mgmtActionsHtml}
+
+                    <div class="announcement-actions">
+                        <button class="action-btn like-btn ${ann.user_liked ? 'liked' : ''}" onclick="toggleLike(this, ${ann.announcement_id})">
+                            <i class="${ann.user_liked ? 'fas' : 'far'} fa-heart"></i>
+                            <span class="count">${ann.likes || 0}</span> <span>Likes</span>
+                        </button>
+                        <button class="action-btn comment-btn" onclick="toggleComments(${ann.announcement_id})">
+                            <i class="far fa-comment-alt"></i>
+                            <span class="count">${ann.comments || 0}</span> <span>Comments</span>
+                        </button>
+                        <button class="action-btn share-btn" onclick="shareAnnouncement(this, ${ann.announcement_id})">
+                            <i class="far fa-share-square"></i>
+                            <span class="count">${ann.shares || 0}</span> <span>Shares</span>
+                        </button>
+                    </div>
+
+                    <div id="comment-section-${ann.announcement_id}" class="comment-section">
+                        <div id="comment-list-${ann.announcement_id}" class="comment-list"></div>
+                        <div class="comment-input-group">
+                            <img src="${document.getElementById('headerProfilePic')?.src || '../images/default_avatar.png'}" class="comment-pfp">
+                            <input type="text" class="comment-input" placeholder="Write a comment..." id="comment-input-${ann.announcement_id}"
+                                onkeyup="if(event.key==='Enter') postComment(${ann.announcement_id})">
+                            <button class="comment-send-btn" onclick="postComment(${ann.announcement_id})">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openEditPost(id) {
+            const ann = allAnnouncements.find(a => a.announcement_id == id);
+            if (!ann) return;
+
+            const body = document.getElementById(`ann-body-${id}`);
+            const originalHtml = body.innerHTML;
+
+            body.innerHTML = `
+                <div class="edit-form-container">
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" id="edit-title-${id}" class="form-control" value="${escapeHtml(ann.title)}" style="margin-bottom:8px; font-weight:700; width:100%;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Content</label>
+                        <textarea id="edit-content-${id}" class="form-control" style="min-height:100px; margin-bottom:12px; width:100%; font-family:inherit;">${escapeHtml(ann.content)}</textarea>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom:12px;">
+                        <label class="form-label" style="display:flex; align-items:center; gap:8px; cursor:pointer; width:fit-content; background:var(--bg-body); padding:6px 10px; border-radius:6px; border:1px dashed var(--border);">
+                            <i class="fas fa-image" style="color:var(--primary);"></i>
+                            <span style="font-size:12px; font-weight:600;">Change Image</span>
+                            <input type="file" id="edit-image-${id}" accept="image/*" style="display:none;" onchange="previewEditImage(this, ${id})">
+                        </label>
+                        
+                        <div id="edit-image-preview-container-${id}" style="margin-top:10px; ${ann.image_path ? '' : 'display:none;'}">
+                            <div class="image-preview-wrapper" style="position:relative; display:inline-block;">
+                                <img id="edit-image-preview-${id}" src="${ann.image_path || ''}" style="max-width:150px; border-radius:6px;">
+                                <div class="remove-btn" onclick="removeEditImage(${id})" style="position:absolute; top:-8px; right:-8px; background:#ef4444; color:white; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; border:2px solid white;">&times;</div>
+                            </div>
+                            <input type="hidden" id="edit-remove-image-${id}" value="0">
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:8px; margin-top:16px;">
+                        <button class="btn btn-primary btn-sm" onclick="saveEdit(${id})">
+                            <i class="fas fa-save" style="margin-right:4px;"></i> Save Changes
+                        </button>
+                        <button class="btn btn-light btn-sm" onclick="cancelEdit(${id}, \`${originalHtml.replace(/`/g, '\\`').replace(/\${/g, '\\${')}\`)">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function previewEditImage(input, id) {
+            const preview = document.getElementById(`edit-image-preview-${id}`);
+            const container = document.getElementById(`edit-image-preview-container-${id}`);
+            const removeInput = document.getElementById(`edit-remove-image-${id}`);
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    container.style.display = 'block';
+                    removeInput.value = "0";
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeEditImage(id) {
+            document.getElementById(`edit-image-${id}`).value = '';
+            document.getElementById(`edit-image-preview-container-${id}`).style.display = 'none';
+            document.getElementById(`edit-remove-image-${id}`).value = "1";
+        }
+
+        async function saveEdit(id) {
+            const title = document.getElementById(`edit-title-${id}`).value.trim();
+            const content = document.getElementById(`edit-content-${id}`).value.trim();
+            const imageFile = document.getElementById(`edit-image-${id}`).files[0];
+            const removeImage = document.getElementById(`edit-remove-image-${id}`).value;
+
+            if (!title || !content) {
+                showToast('Title and content are required', 'error');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('action', 'update');
+                formData.append('announcement_id', id);
+                formData.append('title', title);
+                formData.append('content', content);
+                formData.append('remove_image', removeImage);
+                if (imageFile) formData.append('ann_image', imageFile);
+
+                const res = await fetch('../php/manage_announcement.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Announcement updated');
+                    loadAnnouncements();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (e) {
+                console.error('Error saving edit:', e);
+                showToast('Network error', 'error');
+            }
+        }
+
+        function cancelEdit(id, originalHtml) {
+            document.getElementById(`ann-body-${id}`).innerHTML = originalHtml;
+        }
+
+        async function deleteAnnouncement(id) {
+            showConfirm('Delete Announcement', 'Are you sure you want to delete this announcement?', async () => {
+                try {
+                    const res = await fetch('../php/manage_announcement.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `action=delete&announcement_id=${id}`
+                    });
+                    const data = await res.json();
+                    if (data.success) loadAnnouncements();
+                    else showToast(data.message, 'error');
+                } catch (e) { console.error('Error deleting:', e); }
+            });
+        }
+
+        // Render announcements based on filter
+        function renderAnnouncements() {
+            const feed = document.getElementById('announcementsFeed');
+            let filtered = [...allAnnouncements];
+
+            if (currentFilter === 'pinned') {
+                filtered = filtered.filter(a => a.is_pinned);
+            } else if (currentFilter === 'recent') {
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                filtered = filtered.filter(a => new Date(a.created_at) > weekAgo);
+            }
+
+            if (filtered.length === 0) {
+                feed.innerHTML = `
+                    <div class="announcement-empty">
+                        <i class="fas fa-filter"></i>
+                        <h3>No ${currentFilter} announcements</h3>
+                        <p>Try selecting a different filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            feed.innerHTML = filtered.map(ann => renderAnnouncementCard(ann)).join('');
+        }
+
+        async function toggleLike(btn, id) {
+            try {
+                const res = await fetch('../php/like_announcement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `announcement_id=${id}`
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const countSpan = btn.querySelector('.count');
+                    let currentCount = parseInt(countSpan.textContent);
+                    if (data.liked) {
+                        btn.classList.add('liked');
+                        btn.querySelector('i').className = 'fas fa-heart';
+                        countSpan.textContent = currentCount + 1;
+                    } else {
+                        btn.classList.remove('liked');
+                        btn.querySelector('i').className = 'far fa-heart';
+                        countSpan.textContent = currentCount - 1;
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function toggleComments(id) {
+            const section = document.getElementById(`comment-section-${id}`);
+            if (section.style.display === 'block') {
+                section.style.display = 'none';
+            } else {
+                section.style.display = 'block';
+                loadComments(id);
+            }
+        }
+
+        async function loadComments(id) {
+            const list = document.getElementById(`comment-list-${id}`);
+            if (!list) return;
+            list.innerHTML = '<div style="text-align:center; padding:10px; font-size:12px; color:var(--text-muted);">Loading comments...</div>';
+            try {
+                const res = await fetch(`../php/get_announcement_comments.php?announcement_id=${id}`);
+                const data = await res.json();
+                if (data.success) {
+                    if (data.comments.length === 0) {
+                        list.innerHTML = '<div style="text-align:center; padding:10px; font-size:12px; color:var(--text-muted);">No comments yet.</div>';
+                        return;
+                    }
+
+                    // Organize comments into parent-child structure
+                    const commentMap = {};
+                    const mainComments = [];
+
+                    data.comments.forEach(c => {
+                        commentMap[c.id] = { ...c, replies: [] };
+                    });
+
+                    data.comments.forEach(c => {
+                        if (c.parent_id && commentMap[c.parent_id]) {
+                            commentMap[c.parent_id].replies.push(commentMap[c.id]);
+                        } else {
+                            mainComments.push(commentMap[c.id]);
+                        }
+                    });
+
+                    list.innerHTML = mainComments.map(c => renderCommentItem(c, id)).join('');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function renderCommentItem(c, annId, isReply = false) {
+            const isOwnComment = String(c.user_id) === String(currentUserId);
+            const replyHtml = !isReply ? `
+                <div class="comment-replies" id="replies-${c.id}">
+                    ${c.replies.map(r => renderCommentItem(r, annId, true)).join('')}
+                </div>
+            ` : '';
+
+            return `
+                <div class="comment-item" id="comment-${c.id}">
+                    <img src="${c.user_pic || '../images/default_avatar.png'}" class="comment-pfp">
+                    <div style="flex:1;">
+                        <div class="comment-bubble">
+                            <div class="comment-author">${escapeHtml(c.user_name)}</div>
+                            <div class="comment-text">${escapeHtml(c.text)}</div>
+                        </div>
+                        <div class="comment-actions">
+                            <span class="comment-action-btn ${c.user_liked ? 'comment-liked' : ''}" onclick="toggleLikeComment(${c.id}, ${annId})">
+                                ${c.user_liked ? 'Liked' : 'Like'}
+                            </span>
+                            ${!isReply ? `<span class="comment-action-btn" onclick="showReplyInput(${c.id}, ${annId})">Reply</span>` : ''}
+                            <span style="font-size:11px; color:var(--text-muted);">${c.time_ago}</span>
+                            ${isOwnComment ? `<span class="comment-action-btn" style="color:var(--danger);" onclick="deleteComment(${c.id}, ${annId})">Delete</span>` : ''}
+                            ${c.likes > 0 ? `
+                                <div class="comment-like-count">
+                                    <i class="fas fa-thumbs-up"></i> ${c.likes}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div id="reply-input-container-${c.id}" style="display:none; margin-top:10px;">
+                            <div class="comment-input-group">
+                                <input type="text" class="comment-input" placeholder="Write a reply..." id="reply-input-${c.id}"
+                                    onkeyup="if(event.key==='Enter') postComment(${annId}, ${c.id})">
+                                <button class="comment-send-btn" onclick="postComment(${annId}, ${c.id})">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                        ${replyHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function showReplyInput(commentId, annId) {
+            const container = document.getElementById(`reply-input-container-${commentId}`);
+            const isHidden = container.style.display === 'none';
+            document.querySelectorAll('[id^="reply-input-container-"]').forEach(c => c.style.display = 'none');
+            if (isHidden) {
+                container.style.display = 'block';
+                document.getElementById(`reply-input-${commentId}`).focus();
+            }
+        }
+
+        async function toggleLikeComment(commentId, annId) {
+            try {
+                const res = await fetch('../php/like_comment.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `comment_id=${commentId}`
+                });
+                const data = await res.json();
+                if (data.success) {
+                    loadComments(annId);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function deleteComment(commentId, annId) {
+            showConfirm('Delete Comment', 'Are you sure you want to delete your comment?', async () => {
+                try {
+                    const res = await fetch('../php/manage_comment.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `action=delete&comment_id=${commentId}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        loadComments(annId);
+                        const card = document.querySelector(`.announcement-card[data-id="${annId}"]`);
+                        if (card) {
+                            const countSpan = card.querySelector('.comment-btn .count');
+                            if (countSpan) countSpan.textContent = Math.max(0, parseInt(countSpan.textContent) - 1);
+                        }
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                } catch (e) { console.error(e); }
+            });
+        }
+
+        async function postComment(annId, parentId = null) {
+            const inputId = parentId ? `reply-input-${parentId}` : `comment-input-${annId}`;
+            const input = document.getElementById(inputId);
+            const text = input.value.trim();
+            if (!text) return;
+
+            try {
+                const body = new URLSearchParams();
+                body.append('announcement_id', annId);
+                body.append('comment_text', text);
+                if (parentId) body.append('parent_id', parentId);
+
+                const res = await fetch('../php/post_comment.php', {
+                    method: 'POST',
+                    body: body
+                });
+                const data = await res.json();
+                if (data.success) {
+                    input.value = '';
+                    loadComments(annId);
+                    const card = document.querySelector(`.announcement-card[data-id="${annId}"]`);
+                    if (card && !parentId) {
+                        const countSpan = card.querySelector('button[onclick*="toggleComments"] .count');
+                        if (countSpan) countSpan.textContent = parseInt(countSpan.textContent) + 1;
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function shareAnnouncement(btn, id) {
+            try {
+                const res = await fetch('../php/share_announcement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `announcement_id=${id}`
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('Shared successfully!');
+                    const countSpan = btn.querySelector('.count');
+                    if (countSpan) countSpan.textContent = parseInt(countSpan.textContent) + 1;
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function syncAnnouncementStats() {
+            const cards = document.querySelectorAll('.announcement-card');
+            const ids = Array.from(cards).map(c => c.dataset.id);
+            if (ids.length === 0) return;
+            try {
+                const res = await fetch(`../php/get_interaction_updates.php?ids=${ids.join(',')}`);
+                const data = await res.json();
+                if (data.success && data.updates) {
+                    data.updates.forEach(upd => {
+                        const card = document.querySelector(`.announcement-card[data-id="${upd.id}"]`);
+                        if (!card) return;
+                        const likeBtn = card.querySelector('button[onclick*="toggleLike"]');
+                        if (likeBtn) {
+                            const countSpan = likeBtn.querySelector('.count');
+                            if (countSpan && parseInt(countSpan.textContent) !== upd.likes) countSpan.textContent = upd.likes;
+                        }
+                        const commBtn = card.querySelector('button[onclick*="toggleComments"]');
+                        if (commBtn) {
+                            const countSpan = commBtn.querySelector('.count');
+                            if (countSpan && parseInt(countSpan.textContent) !== upd.comments) {
+                                countSpan.textContent = upd.comments;
+                                const section = document.getElementById(`comment-section-${upd.id}`);
+                                if (section && section.style.display === 'block') refreshCommentsSilent(upd.id);
+                            }
+                        }
+                        const shareBtn = card.querySelector('button[onclick*="shareAnnouncement"]');
+                        if (shareBtn) {
+                            const countSpan = shareBtn.querySelector('.count');
+                            if (countSpan && parseInt(countSpan.textContent) !== upd.shares) countSpan.textContent = upd.shares;
+                        }
+                    });
+                }
+            } catch (e) { console.error('Sync error:', e); }
+        }
+
+        async function refreshCommentsSilent(id) {
+            try {
+                const res = await fetch(`../php/get_announcement_comments.php?announcement_id=${id}`);
+                const data = await res.json();
+                if (data.success) {
+                    const list = document.getElementById(`comment-list-${id}`);
+                    if (!list) return;
+
+                    // Call loadComments to preserve structure
+                    loadComments(id);
+                }
+            } catch (e) { }
+        }
+
+        // Post Announcement
+        async function postAnnouncement() {
+            const title = document.getElementById('annTitle').value.trim();
+            const content = document.getElementById('annContent').value.trim();
+            const imageFile = document.getElementById('annImage').files[0];
+            const result = document.getElementById('postResult');
+
+            if (!title || !content) {
+                result.innerHTML = '<div style="color:var(--danger); padding:8px; background:#fef2f2; border-radius:6px;">Please fill in both title and content</div>';
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('content', content);
+                formData.append('is_pinned', '0');
+                if (imageFile) formData.append('ann_image', imageFile);
+
+                const res = await fetch('../php/post_announcement.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success) {
+                    result.innerHTML = '<div style="color:var(--primary); padding:8px; background:var(--primary-lightest, #ecfdf5); border-radius:6px;">Announcement posted successfully!</div>';
+                    document.getElementById('annTitle').value = '';
+                    document.getElementById('annContent').value = '';
+                    clearImageInput();
+                    loadAnnouncements();
+                    setTimeout(() => result.innerHTML = '', 3000);
+                } else {
+                    result.innerHTML = `<div style="color:var(--danger); padding:8px; background:#fef2f2; border-radius:6px;">${data.message}</div>`;
+                }
+            } catch (e) {
+                result.innerHTML = '<div style="color:var(--danger); padding:8px; background:#fef2f2; border-radius:6px;">Network error</div>';
+            }
+        }
+
+        // View full announcement in modal
+        function viewAnnouncement(id) {
+            const ann = allAnnouncements.find(a => a.announcement_id == id);
+            if (!ann) return;
+            const modal = document.getElementById('announcementModal');
+            const body = document.getElementById('announcementModalBody');
+            body.innerHTML = `
+                <div class="announcement-header" style="margin-bottom:20px;">
+                    <img src="${ann.author_picture || '../images/default_avatar.png'}" class="announcement-avatar" alt="">
+                    <div class="announcement-meta">
+                        <div class="announcement-author">
+                            ${escapeHtml(ann.author_name)}
+                            <span class="announcement-badge ${ann.author_type}">${ann.author_type.replace('_', ' ')}</span>
+                        </div>
+                        <div class="announcement-time" title="${ann.created_at}">
+                            <i class="far fa-clock"></i>
+                            ${ann.time_ago}
+                        </div>
+                    </div>
+                    ${ann.is_pinned ? '<i class="fas fa-thumbtack announcement-pin"></i>' : ''}
+                </div>
+                
+                <div class="announcement-body">
+                    ${ann.title ? `<div class="announcement-title" style="font-size:1.8rem;">${escapeHtml(ann.title)}</div>` : ''}
+                    <div class="announcement-content" style="font-size:16px; line-height:1.8; white-space:pre-wrap;">${escapeHtml(ann.content)}</div>
+                </div>
+
+                <div class="announcement-actions" style="margin-top:20px;">
+                    <button class="action-btn like-btn ${ann.user_liked ? 'liked' : ''}" onclick="toggleLike(this, ${ann.announcement_id})">
+                        <i class="${ann.user_liked ? 'fas' : 'far'} fa-heart"></i>
+                        <span class="count">${ann.likes || 0}</span> <span>Likes</span>
+                    </button>
+                    <button class="action-btn comment-btn" onclick="toggleComments(${ann.announcement_id})">
+                        <i class="far fa-comment-alt"></i>
+                        <span class="count">${ann.comments || 0}</span> <span>Comments</span>
+                    </button>
+                    <button class="action-btn share-btn" onclick="shareAnnouncement(this, ${ann.announcement_id})">
+                        <i class="far fa-share-square"></i>
+                        <span class="count">${ann.shares || 0}</span> <span>Shares</span>
+                    </button>
+                </div>
+                
+                <div id="modal-comment-section" class="comment-section" style="display:block;">
+                    <div id="comment-list-${ann.announcement_id}" class="comment-list"></div>
+                    <div class="comment-input-group">
+                        <img src="${document.getElementById('headerProfilePic')?.src || '../images/default_avatar.png'}" class="comment-pfp">
+                        <input type="text" class="comment-input" placeholder="Write a comment..." id="comment-input-${ann.announcement_id}"
+                            onkeyup="if(event.key==='Enter') postComment(${ann.announcement_id})">
+                        <button class="comment-send-btn" onclick="postComment(${ann.announcement_id})">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            modal.style.display = 'flex';
+            loadComments(ann.announcement_id);
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById('announcementModal').style.display = 'none';
+        }
+
+        // Filter announcements
+        function filterAnnouncements(filter, btn) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            else if (event && event.target) event.target.classList.add('active');
+            renderAnnouncements();
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer') || createToastContainer();
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-times-circle' : 'fa-exclamation-circle');
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <div class="toast-message">${message}</div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+            return container;
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            const overlay = document.createElement('div');
+            overlay.className = 'custom-confirm-overlay';
+            overlay.innerHTML = `
+                <div class="custom-confirm-content">
+                    <div class="custom-confirm-header">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="custom-confirm-body">${message}</div>
+                    <div class="custom-confirm-footer">
+                        <button class="btn-confirm-no">Cancel</button>
+                        <button class="btn-confirm-yes">Confirm</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            overlay.querySelector('.btn-confirm-no').onclick = () => overlay.remove();
+            overlay.querySelector('.btn-confirm-yes').onclick = () => {
+                onConfirm();
+                overlay.remove();
+            };
+        }
+
+        function logout() {
+            showConfirm('Sign Out', 'Are you sure you want to sign out of your account?', () => {
+                location.href = '../php/logout.php';
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            getCurrentUser();
+            loadAnnouncements();
+        });
+    </script>
+</body>
+
+</html>

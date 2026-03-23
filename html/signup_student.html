@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Sign Up | CITE App</title>
+  <meta name="description" content="Register as a CITE student to access academic resources, appointments, and announcements.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/theme.css">
+  <style>
+    /* ============================================
+       STUDENT SIGN-UP FORM VALIDATION STYLES
+       ============================================ */
+
+    .form-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .form-group label .required-star {
+      color: var(--danger);
+      margin-left: 2px;
+    }
+
+    .form-group .hint-text {
+      display: block;
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 4px;
+      transition: var(--transition-fast);
+    }
+
+    .form-group .error-message {
+      display: none;
+      font-size: 11px;
+      color: var(--danger);
+      margin-top: 4px;
+      align-items: center;
+      gap: 4px;
+      animation: errorSlideIn 0.3s ease;
+    }
+
+    .form-group .error-message i {
+      font-size: 10px;
+    }
+
+    .form-group.has-error .error-message {
+      display: flex;
+    }
+
+    .form-group.has-error .hint-text {
+      display: none;
+    }
+
+    .form-group.has-error input,
+    .form-group.has-error select {
+      border-color: var(--danger) !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    }
+
+    .form-group.is-valid input,
+    .form-group.is-valid select {
+      border-color: var(--success) !important;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+    }
+
+    .form-group .input-icon-wrapper {
+      position: relative;
+    }
+
+    .form-group .input-icon-wrapper .field-status-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      opacity: 0;
+      transition: var(--transition-fast);
+    }
+
+    .form-group.has-error .field-status-icon.icon-error {
+      opacity: 1;
+      color: var(--danger);
+    }
+
+    .form-group.is-valid .field-status-icon.icon-valid {
+      opacity: 1;
+      color: var(--success);
+    }
+
+    @keyframes errorSlideIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Password strength meter */
+    .password-strength-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .password-strength-bar .strength-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.3s ease, background 0.3s ease;
+      width: 0%;
+    }
+
+    .password-strength-label {
+      font-size: 11px;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Form row for side-by-side fields */
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    /* Submit button disabled state */
+    .login-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Result message styling */
+    #res {
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+  </style>
+</head>
+
+<body class="auth-page">
+
+  <!-- Background Decorations -->
+  <div class="bg-decoration decoration-1"></div>
+  <div class="bg-decoration decoration-2"></div>
+  <div class="bg-decoration decoration-3"></div>
+
+  <!-- Registration Box -->
+  <div class="login-box" style="max-width: 580px;">
+
+    <div class="icon-wrapper">
+      <img src="../images/logo.png.png" alt="CITE Logo" class="brand-logo">
+    </div>
+
+    <h1>Student Registration</h1>
+    <div class="subtitle">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M4.26 10.147L12 15l7.74-4.853a4.5 4.5 0 00-4.897-7.407L12 4.5l-2.843-1.76a4.5 4.5 0 00-4.897 7.407z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v6M12 21H9m3 0h3" />
+      </svg>
+      <span>Join our CITE academic community</span>
+    </div>
+
+    <form id="studentSignupForm" onsubmit="event.preventDefault(); handleSubmit();" novalidate>
+
+      <!-- Student ID -->
+      <div class="form-group" id="group-SchoolID">
+        <label for="SchoolID">Student ID <span class="required-star">*</span></label>
+        <div class="input-icon-wrapper">
+          <input type="text" id="SchoolID" placeholder="e.g. 02-2425-123456"
+                 maxlength="14" required autocomplete="off">
+          <i class="fas fa-check-circle field-status-icon icon-valid"></i>
+          <i class="fas fa-exclamation-circle field-status-icon icon-error"></i>
+        </div>
+        <span class="hint-text">Format: 02-XXXX-XXXXXX (4 digits, dash, 6 digits)</span>
+        <div class="error-message" id="error-SchoolID">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Student ID must follow format: 02-XXXX-XXXXXX</span>
+        </div>
+      </div>
+
+      <!-- Full Name (First + Last side by side) -->
+      <div class="form-row">
+        <div class="form-group" id="group-Firstname">
+          <label for="Firstname">First Name <span class="required-star">*</span></label>
+          <div class="input-icon-wrapper">
+            <input type="text" id="Firstname" placeholder="e.g. Juan" required autocomplete="given-name">
+            <i class="fas fa-check-circle field-status-icon icon-valid"></i>
+            <i class="fas fa-exclamation-circle field-status-icon icon-error"></i>
+          </div>
+          <div class="error-message" id="error-Firstname">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Letters, spaces, and hyphens only</span>
+          </div>
+        </div>
+        <div class="form-group" id="group-Lastname">
+          <label for="Lastname">Last Name <span class="required-star">*</span></label>
+          <div class="input-icon-wrapper">
+            <input type="text" id="Lastname" placeholder="e.g. Dela Cruz" required autocomplete="family-name">
+            <i class="fas fa-check-circle field-status-icon icon-valid"></i>
+            <i class="fas fa-exclamation-circle field-status-icon icon-error"></i>
+          </div>
+          <div class="error-message" id="error-Lastname">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Letters, spaces, and hyphens only</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Middle Name (Optional) -->
+      <div class="form-group" id="group-Middlename">
+        <label for="Middlename">Middle Name <span style="color:var(--text-light); font-weight:400;">(Optional)</span></label>
+        <div class="input-icon-wrapper">
+          <input type="text" id="Middlename" placeholder="e.g. Santos" autocomplete="additional-name">
+          <i class="fas fa-check-circle field-status-icon icon-valid"></i>
+          <i class="fas fa-exclamation-circle field-status-icon icon-error"></i>
+        </div>
+        <div class="error-message" id="error-Middlename">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Letters, spaces, and hyphens only</span>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group" id="group-Email">
+        <label for="Email">PHINMAed Email <span class="required-star">*</span></label>
+        <div class="input-icon-wrapper">
+          <input type="email" id="Email" placeholder="e.g. juan.delacruz.coc@phinmaed.com"
+                 required autocomplete="email">
+          <i class="fas fa-check-circle field-status-icon icon-valid"></i>
+          <i class="fas fa-exclamation-circle field-status-icon icon-error"></i>
+        </div>
+        <span class="hint-text">Format: xxxx.xxxxx.coc@phinmaed.com (lowercase only)</span>
+        <div class="error-message" id="error-Email">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Email must follow format: xxxx.xxxxx.coc@phinmaed.com</span>
+        </div>
+      </div>
+
+      <!-- Contact Number -->
+      <div class="form-group" id="group-ContactNumber">
+        <label for="ContactNumber">Contact Number <span class="required-star">*</span></label>
+        <div class="input-icon-wrapper">
+          <input type="tel" id="ContactNumber" placeholder="e.g. +639123456789"
+                 maxlength="13" required autocomplete="tel">
+          <i class="fas fa-check-circle field-status-icon icon-valid"></i>
+          <i class="fas fa-exclamation-circle field-status-icon icon-error"></i>
+        </div>
+        <span class="hint-text">Philippine format: +639XXXXXXXXX (13 characters)</span>
+        <div class="error-message" id="error-ContactNumber">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Must start with +639 followed by 9 digits</span>
+        </div>
+      </div>
+
+      <!-- Username -->
+      <div class="form-group" id="group-Username">
+        <label for="Username">Username <span class="required-star">*</span></label>
+        <div class="input-icon-wrapper">
+          <input type="text" id="Username" placeholder="e.g. juandelacruz" required autocomplete="username">
+          <i class="fas fa-check-circle field-status-icon icon-valid"></i>
+          <i class="fas fa-exclamation-circle field-status-icon icon-error"></i>
+        </div>
+        <span class="hint-text">Choose a unique username</span>
+        <div class="error-message" id="error-Username">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Username is required</span>
+        </div>
+      </div>
+
+      <!-- Department & Year Level -->
+      <div class="form-row">
+        <div class="form-group" id="group-Course">
+          <label for="Course">Department / Course <span class="required-star">*</span></label>
+          <select id="Course" required
+            style="width:100%; height:48px; padding:0 16px; border:2px solid var(--border); border-radius:var(--radius-lg); font-family:inherit; font-size:14px; color:var(--text-main); background:var(--bg-surface);">
+            <option value="">Select Course</option>
+            <option value="BSIT">BS Information Technology</option>
+            <option value="BSCS">BS Computer Science</option>
+            <option value="BSEMC">BS Entertainment & Multimedia Computing</option>
+            <option value="BSIS">BS Information Systems</option>
+            <option value="ACT">Associate in Computer Technology</option>
+          </select>
+          <div class="error-message" id="error-Course">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Please select a department/course</span>
+          </div>
+        </div>
+        <div class="form-group" id="group-YearLevel">
+          <label for="YearLevel">Year Level <span class="required-star">*</span></label>
+          <select id="YearLevel" required
+            style="width:100%; height:48px; padding:0 16px; border:2px solid var(--border); border-radius:var(--radius-lg); font-family:inherit; font-size:14px; color:var(--text-main); background:var(--bg-surface);">
+            <option value="">Year Level</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+          </select>
+          <div class="error-message" id="error-YearLevel">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Please select a year level</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group" id="group-Password">
+        <label for="Password">Password <span class="required-star">*</span></label>
+        <div class="password-field-container">
+          <input type="password" id="Password" placeholder="Minimum 6 characters" required autocomplete="new-password">
+          <button type="button" class="password-toggle-icon" id="togglePassword"
+            onclick="togglePasswordVisibility('Password', 'togglePassword')">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+        <div class="password-strength-bar">
+          <div class="strength-fill" id="strengthFill"></div>
+        </div>
+        <div class="password-strength-label" id="strengthLabel"></div>
+        <span class="hint-text">Must be at least 6 characters</span>
+        <div class="error-message" id="error-Password">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Password must be at least 6 characters</span>
+        </div>
+      </div>
+
+      <!-- Result Message -->
+      <div id="res" style="display:none;"></div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="login-btn" id="submitBtn" style="margin-bottom: 20px;">
+        <span>Create Account</span>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+
+      <a href="signup_select.html" class="back-link"
+        style="display: flex; align-items: center; justify-content: center; margin-bottom: 24px; color: var(--text-muted); text-decoration: none; font-size: 14px; transition: color 0.2s; gap: 8px;">
+        <i class="fas fa-arrow-left"></i> Back to Selection
+      </a>
+    </form>
+
+    <div class="footer-badges">
+      <div class="badge">
+        <i class="fas fa-shield-alt"></i>
+        <span>Secure</span>
+      </div>
+      <div class="badge">
+        <i class="fas fa-check-circle"></i>
+        <span>Instant</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    //  TOGGLE PASSWORD VISIBILITY
+    // ============================================
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const btn = document.getElementById(iconId);
+      const icon = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+
+    // ============================================
+    //  VALIDATION RULES
+    // ============================================
+    const validationRules = {
+      SchoolID: {
+        validate: (val) => /^02-\d{4}-\d{6}$/.test(val),
+        message: 'Student ID must follow format: 02-XXXX-XXXXXX'
+      },
+      Firstname: {
+        validate: (val) => /^[A-Za-zÀ-ÿ\s\-]+$/.test(val) && val.length >= 1,
+        message: 'First name is required — letters, spaces, and hyphens only'
+      },
+      Lastname: {
+        validate: (val) => /^[A-Za-zÀ-ÿ\s\-]+$/.test(val) && val.length >= 1,
+        message: 'Last name is required — letters, spaces, and hyphens only'
+      },
+      Middlename: {
+        validate: (val) => val === '' || /^[A-Za-zÀ-ÿ\s\-]+$/.test(val),
+        message: 'Middle name must contain letters, spaces, and hyphens only',
+        optional: true
+      },
+      Email: {
+        validate: (val) => /^[a-z]+\.[a-z]+\.coc@phinmaed\.com$/.test(val),
+        message: 'Email must follow format: firstname.lastname.coc@phinmaed.com (lowercase)'
+      },
+      ContactNumber: {
+        validate: (val) => /^\+639\d{9}$/.test(val),
+        message: 'Must start with +639 followed by 9 digits (+639XXXXXXXXX)'
+      },
+      Username: {
+        validate: (val) => val.length >= 3,
+        message: 'Username must be at least 3 characters'
+      },
+      Course: {
+        validate: (val) => val !== '',
+        message: 'Please select a department/course'
+      },
+      YearLevel: {
+        validate: (val) => val !== '',
+        message: 'Please select a year level'
+      },
+      Password: {
+        validate: (val) => val.length >= 6,
+        message: 'Password must be at least 6 characters'
+      }
+    };
+
+    // ============================================
+    //  FIELD VALIDATION FUNCTION
+    // ============================================
+    function validateField(fieldId) {
+      const el = document.getElementById(fieldId);
+      if (!el) return true;
+
+      const group = document.getElementById('group-' + fieldId);
+      const errorEl = document.getElementById('error-' + fieldId);
+      const rule = validationRules[fieldId];
+
+      if (!rule) return true;
+
+      let value = el.value;
+
+      // Sanitization: trim whitespace
+      if (el.type !== 'password') {
+        value = value.trim();
+      }
+
+      // For email: force lowercase
+      if (fieldId === 'Email') {
+        value = value.toLowerCase();
+        el.value = value;
+      }
+
+      // If optional and empty, clear state
+      if (rule.optional && value === '') {
+        group.classList.remove('has-error', 'is-valid');
+        return true;
+      }
+
+      // Required check
+      if (!rule.optional && value === '') {
+        group.classList.add('has-error');
+        group.classList.remove('is-valid');
+        if (errorEl) {
+          const span = errorEl.querySelector('span');
+          if (span) span.textContent = fieldId === 'Course' || fieldId === 'YearLevel'
+            ? rule.message
+            : `${el.parentElement?.parentElement?.querySelector('label')?.textContent?.replace(' *', '') || fieldId} is required`;
+        }
+        return false;
+      }
+
+      // Format check
+      const isValid = rule.validate(value);
+      if (isValid) {
+        group.classList.remove('has-error');
+        group.classList.add('is-valid');
+      } else {
+        group.classList.add('has-error');
+        group.classList.remove('is-valid');
+        if (errorEl) {
+          const span = errorEl.querySelector('span');
+          if (span) span.textContent = rule.message;
+        }
+      }
+      return isValid;
+    }
+
+    // ============================================
+    //  PASSWORD STRENGTH METER
+    // ============================================
+    function updatePasswordStrength() {
+      const pw = document.getElementById('Password').value;
+      const fill = document.getElementById('strengthFill');
+      const label = document.getElementById('strengthLabel');
+
+      if (!pw) {
+        fill.style.width = '0%';
+        fill.style.background = 'transparent';
+        label.textContent = '';
+        return;
+      }
+
+      let score = 0;
+      if (pw.length >= 6) score++;
+      if (pw.length >= 8) score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+      const levels = [
+        { width: '20%',  bg: '#ef4444', text: 'Very Weak', color: '#ef4444' },
+        { width: '40%',  bg: '#f59e0b', text: 'Weak',      color: '#f59e0b' },
+        { width: '60%',  bg: '#eab308', text: 'Fair',      color: '#eab308' },
+        { width: '80%',  bg: '#22c55e', text: 'Strong',    color: '#22c55e' },
+        { width: '100%', bg: '#10b981', text: 'Very Strong', color: '#10b981' },
+      ];
+
+      const level = levels[Math.min(score, levels.length) - 1] || levels[0];
+      fill.style.width = level.width;
+      fill.style.background = level.bg;
+      label.textContent = level.text;
+      label.style.color = level.color;
+    }
+
+    // ============================================
+    //  ATTACH REAL-TIME VALIDATION LISTENERS
+    // ============================================
+    const fieldIds = ['SchoolID', 'Firstname', 'Lastname', 'Middlename', 'Email',
+                      'ContactNumber', 'Username', 'Course', 'YearLevel', 'Password'];
+
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      // Validate on blur
+      el.addEventListener('blur', () => validateField(id));
+
+      // Validate on input (for real-time feedback)
+      el.addEventListener('input', () => {
+        // Only show valid state on input, wait for blur on error
+        const group = document.getElementById('group-' + id);
+        const rule = validationRules[id];
+        let val = el.value;
+        if (el.type !== 'password') val = val.trim();
+        if (id === 'Email') {
+          val = val.toLowerCase();
+          el.value = val;
+        }
+
+        if (rule && rule.validate(val)) {
+          group.classList.remove('has-error');
+          group.classList.add('is-valid');
+        } else if (group.classList.contains('has-error')) {
+          // Re-validate if already in error state
+          validateField(id);
+        }
+
+        // Update password strength
+        if (id === 'Password') updatePasswordStrength();
+      });
+
+      // For selects, validate on change
+      if (el.tagName === 'SELECT') {
+        el.addEventListener('change', () => validateField(id));
+      }
+    });
+
+    // ============================================
+    //  VALIDATE ALL FIELDS
+    // ============================================
+    function validateAll() {
+      let allValid = true;
+      fieldIds.forEach(id => {
+        if (!validateField(id)) allValid = false;
+      });
+      return allValid;
+    }
+
+    // ============================================
+    //  HANDLE FORM SUBMISSION
+    // ============================================
+    function handleSubmit() {
+      if (!validateAll()) {
+        // Scroll to first error
+        const firstError = document.querySelector('.form-group.has-error');
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      // Sanitize & collect data
+      const data = {
+        SchoolID:      document.getElementById('SchoolID').value.trim(),
+        Firstname:     document.getElementById('Firstname').value.trim(),
+        Middlename:    document.getElementById('Middlename').value.trim(),
+        Lastname:      document.getElementById('Lastname').value.trim(),
+        Email:         document.getElementById('Email').value.trim().toLowerCase(),
+        ContactNumber: document.getElementById('ContactNumber').value.trim(),
+        Username:      document.getElementById('Username').value.trim(),
+        Password:      document.getElementById('Password').value,
+        Course:        document.getElementById('Course').value,
+        YearLevel:     document.getElementById('YearLevel').value
+      };
+
+      const r = document.getElementById('res');
+      r.textContent = '';
+      r.style.display = 'none';
+
+      // Disable button and show loading
+      const btn = document.getElementById('submitBtn');
+      const btnSpan = btn.querySelector('span');
+      const originalText = btnSpan.textContent;
+      btnSpan.textContent = 'Registering...';
+      btn.disabled = true;
+
+      fetch('../php/register_student.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: Object.keys(data).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k])).join('&')
+      })
+        .then(res => res.json())
+        .then(j => {
+          btnSpan.textContent = originalText;
+          btn.disabled = false;
+          r.style.display = 'block';
+
+          if (j.success) {
+            r.style.color = 'var(--success-text)';
+            r.style.background = 'var(--success-bg)';
+            r.style.border = '1px solid var(--success)';
+            r.textContent = '✓ Registration successful! Redirecting to login...';
+            setTimeout(() => location.href = 'login.html', 1500);
+          } else {
+            r.style.color = 'var(--danger)';
+            r.style.background = '#fef2f2';
+            r.style.border = '1px solid #fee2e2';
+            r.textContent = j.message || 'Registration failed';
+          }
+        })
+        .catch(e => {
+          btnSpan.textContent = originalText;
+          btn.disabled = false;
+          r.style.display = 'block';
+          r.style.color = 'var(--danger)';
+          r.style.background = '#fef2f2';
+          r.style.border = '1px solid #fee2e2';
+          r.textContent = 'Network error occurred. Please try again.';
+        });
+    }
+  </script>
+
+</body>
+
+</html>

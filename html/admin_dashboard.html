@@ -1,0 +1,3268 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard | CiteApp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/professional_chat.css">
+    <link rel="stylesheet" href="../css/announcements.css">
+    <link rel="stylesheet" href="../css/consultation.css">
+    <style>
+        /* --- Page Landing Animation --- */
+        .dashboard-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeSlideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sequential animation for dashboard elements */
+        .dashboard-hero,
+        .stat-card,
+        .card {
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeSlideIn 0.5s ease-out forwards;
+        }
+
+        .dashboard-hero {
+            animation-delay: 0.1s;
+        }
+
+        .stats-grid .stat-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .stats-grid .stat-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .stats-grid .stat-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .stats-grid .stat-card:nth-child(4) {
+            animation-delay: 0.5s;
+        }
+
+        .content-layout-grid>.card:nth-child(1) {
+            animation-delay: 0.6s;
+        }
+
+        .content-layout-grid>.card:nth-child(2) {
+            animation-delay: 0.7s;
+        }
+
+        .table-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border);
+            vertical-align: middle;
+            margin-right: 12px;
+        }
+
+        .avatar-mini {
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+        }
+
+        /* Icon Button Styles */
+        .icon-btn {
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .icon-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon-btn.btn-success:hover {
+            background: #059669 !important;
+        }
+
+        .icon-btn.btn-danger:hover {
+            background: #dc2626 !important;
+        }
+
+        /* ── Modern Dashboard Hero ────────────────── */
+        .dashboard-hero {
+            background: linear-gradient(135deg, #065f46 0%, #064e3b 100%);
+            padding: 40px;
+            border-radius: var(--radius-2xl);
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .dashboard-hero h2 {
+            color: white !important;
+            font-size: 32px !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.02em;
+        }
+
+        .dashboard-hero p {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-size: 16px !important;
+        }
+
+        /* ── Professional Search Bar ───────────────── */
+        .search-area {
+            width: 100%;
+            margin-top: 24px;
+        }
+
+        .search-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-xl);
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 600px;
+            margin: 0;
+            height: 60px;
+        }
+
+        .search-card:focus-within {
+            background: rgba(255, 255, 255, 1);
+            border-color: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .search-card:focus-within .search-icon,
+        .search-card:focus-within input {
+            color: var(--text-main) !important;
+        }
+
+        .search-card:focus-within input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-card .search-icon {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            margin-left: 20px;
+        }
+
+        .search-card input {
+            flex: 1;
+            background: transparent !important;
+            border: none !important;
+            color: white !important;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 0 16px;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .search-card input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-card .search-btn {
+            background: white;
+            color: var(--primary);
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: 0 24px;
+            height: 100%;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-card .search-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ── Enhanced Profile Card ────────────────── */
+        .profile-container {
+            max-width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .profile-card {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: var(--radius-2xl);
+            padding: 32px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            display: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .profile-card.show {
+            display: block;
+            animation: pcPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes pcPopIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .pc-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+            padding-bottom: 0;
+            border: none;
+        }
+
+        .pc-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 24px;
+            object-fit: cover;
+            border: none;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transform: rotate(-3deg);
+            transition: transform 0.3s;
+        }
+
+        .profile-card:hover .pc-avatar {
+            transform: rotate(0deg) scale(1.05);
+        }
+
+        .pc-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        .pc-role {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.8;
+        }
+
+        .pc-id {
+            background: var(--bg-body);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+            margin-top: 8px;
+        }
+
+        .pc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .pc-field {
+            padding: 16px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s;
+        }
+
+        .pc-field:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-4px);
+        }
+
+        .pc-field label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .pc-field span {
+            font-size: 15px;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .pc-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .pc-actions .btn {
+            height: 38px;
+            padding: 0 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .pc-actions .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #059669);
+            color: #fff;
+            border: none;
+            box-shadow: 0 4px 10px rgba(6, 95, 70, 0.2);
+        }
+
+        .pc-actions .btn-primary:hover {
+            box-shadow: 0 6px 15px rgba(5, 150, 105, 0.3);
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .pc-actions .btn-outline {
+            background: #fff;
+            color: var(--text-main);
+            border: 1.5px solid var(--border);
+        }
+
+        .pc-actions .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-lightest);
+            transform: translateY(-1px);
+        }
+
+        .pc-actions .btn:active {
+            transform: scale(0.97);
+        }
+
+        .pc-dismiss-btn {
+            margin-left: auto;
+            color: var(--text-light);
+            font-size: 16px;
+            padding: 8px;
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .pc-dismiss-btn:hover {
+            color: var(--danger);
+        }
+    </style>
+</head>
+
+<body class="dashboard-page">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <img src="../images/citeneww.png" alt="CITE Logo" class="sidebar-logo">
+            <span class="logoAdmin">Admin</span>
+        </div>
+
+        <nav class="nav-links">
+            <a href="admin_dashboard.html" class="nav-item active"><i class="fas fa-home"></i>
+                <span>Dashboard</span></a>
+            <a href="admin_manage_instructors.html" class="nav-item"><i class="fas fa-chalkboard-teacher"></i>
+                <span>Manage Instructors</span></a>
+            <a href="admin_manage_students.html" class="nav-item"><i class="fas fa-user-graduate"></i>
+                <span>Manage Students</span></a>
+            <a href="admin_announcements.html" class="nav-item"><i class="fas fa-bullhorn"></i>
+                <span>Announcements</span></a>
+            <a href="javascript:void(0)" onclick="showBooking()" class="nav-item"><i class="fas fa-user-plus"></i>
+                <span>Walk-in Booking</span></a>
+            <a href="javascript:void(0)" onclick="showRequests()" class="nav-item"><i class="fas fa-clipboard-list"></i>
+                <span>Manage Requests</span></a>
+            <a href="admin_records.html" class="nav-item"><i class="fas fa-database"></i>
+                <span>Records</span></a>
+            <a href="admin_reports.html" class="nav-item"><i class="fas fa-chart-line"></i>
+                <span>Report Summary</span></a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <header class="top-header">
+            <div style="display:flex; align-items:center; gap:16px;">
+                <button class="menu-toggle" id="sidebarToggle" title="Toggle Sidebar">
+                    <i class="fas fa-bars"></i>
+                    <i class="fas fa-times" style="display:none;"></i>
+                </button>
+                <div class="page-title">Overview</div>
+            </div>
+
+            <div class="header-actions">
+                <span id="currentTime"
+                    style="color:var(--text-muted); font-size:13px; font-weight:500; margin-right:8px;"></span>
+
+                <div class="header-divider"></div>
+
+                <!-- Chat Icon -->
+                <button class="header-btn" onclick="toggleChatPanel()" title="Messages">
+                    <i class="fas fa-comments"></i>
+                    <span id="chatBadge" class="notif-badge-sleek has-count"
+                        style="display:none; background:var(--primary);"></span>
+                </button>
+
+                <!-- Notification Bell -->
+                <div style="position:relative;">
+                    <button class="header-btn" onclick="toggleNotifications()" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span id="notifBadge" class="notif-badge-sleek has-count" style="display:none;"></span>
+                    </button>
+                    <!-- Notifications Dropdown -->
+                    <div id="notificationsPanel" class="dropdown-menu-sleek">
+                        <div
+                            style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700; font-size:15px; color:var(--text-main);">Notifications</span>
+                            <button onclick="markAllRead()"
+                                style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer; width:auto; padding:0; box-shadow:none;">Mark
+                                all as read</button>
+                        </div>
+                        <div id="notificationsList" style="max-height:380px; overflow-y:auto; padding:8px 0;">
+                            <div style="padding:40px 20px; text-align:center; color:var(--text-muted); font-size:13px;">
+                                <i class="fas fa-bell-slash"
+                                    style="display:block; font-size:24px; margin-bottom:12px; opacity:0.3;"></i>
+                                No new notifications
+                            </div>
+                        </div>
+                        <div style="padding:12px; border-top:1px solid var(--border); text-align:center;">
+                            <a href="admin_notifications.html"
+                                style="font-size:12px; color:var(--primary); font-weight:600; text-decoration:none;">View
+                                all activity</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-divider"></div>
+
+                <!-- User Profile Dropdown Area -->
+                <div style="position:relative;">
+                    <div class="header-user" id="profileDropdownBtn">
+                        <div class="header-user-info" style="text-align:right;">
+                            <span id="headerAdminName" class="header-user-name">Admin</span>
+                            <span class="header-user-role">System Administrator</span>
+                        </div>
+                        <img id="headerProfilePic" src="../images/default_avatar.png" alt="Profile">
+                        <i class="fas fa-chevron-down"
+                            style="font-size:10px; color:var(--text-light); transition: transform 0.2s;"
+                            id="profileChevron"></i>
+                    </div>
+
+                    <!-- Profile Dropdown Menu -->
+                    <div id="profileDropdown" class="dropdown-menu-sleek">
+                        <div style="padding: 12px 14px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--text-main);"
+                                id="dropdownAdminName">Admin Name</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">administrator@cite.edu</div>
+                        </div>
+                        <button class="dropdown-item-sleek" onclick="openEditProfile()">
+                            <i class="fas fa-user-circle"></i>Profile Settings
+                        </button>
+
+                        <div class="dropdown-divider-sleek"></div>
+                        <button class="dropdown-item-sleek danger" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <script>
+            // Dropdown Toggle Logic
+            document.addEventListener('DOMContentLoaded', () => {
+                const profileBtn = document.getElementById('profileDropdownBtn');
+                const profileDropdown = document.getElementById('profileDropdown');
+                const chevron = document.getElementById('profileChevron');
+
+                if (profileBtn && profileDropdown) {
+                    profileBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isShow = profileDropdown.classList.contains('show');
+
+                        // Close other dropdowns if any
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+
+                        if (!isShow) {
+                            profileDropdown.classList.add('show');
+                            if (chevron) chevron.style.transform = 'rotate(180deg)';
+                        } else {
+                            profileDropdown.classList.remove('show');
+                            if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        }
+                    });
+                }
+
+                // Sidebar Toggle logic
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                const barsIcon = sidebarToggle ? sidebarToggle.querySelector('.fa-bars') : null;
+                const timesIcon = sidebarToggle ? sidebarToggle.querySelector('.fa-times') : null;
+
+                if (sidebarToggle && sidebar) {
+                    sidebarToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (window.innerWidth > 768) {
+                            sidebar.classList.toggle('collapsed');
+                            if (mainContent) mainContent.classList.toggle('expanded');
+                        } else {
+                            sidebar.classList.toggle('mobile-open');
+                            if (barsIcon && timesIcon) {
+                                if (sidebar.classList.contains('mobile-open')) {
+                                    barsIcon.style.display = 'none';
+                                    timesIcon.style.display = 'block';
+                                } else {
+                                    barsIcon.style.display = 'block';
+                                    timesIcon.style.display = 'none';
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Chat Toggle
+                const chatToggle = document.querySelector('.header-btn[onclick*="toggleChatPanel"]');
+                if (chatToggle) {
+                    chatToggle.removeAttribute('onclick');
+                    chatToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleChatPanel();
+                    });
+                }
+
+                // Notification Toggle
+                const notifToggle = document.querySelector('.header-btn[onclick*="toggleNotifications"]');
+                if (notifToggle) {
+                    notifToggle.removeAttribute('onclick');
+                    notifToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleNotifications();
+                    });
+                }
+
+                // Close sidebar on outside click (mobile)
+                document.addEventListener('click', (e) => {
+                    const profileDropdown = document.getElementById('profileDropdown');
+                    const chevron = document.getElementById('profileChevron');
+
+                    if (!e.target.closest('.dropdown-menu-sleek') && !e.target.closest('.header-user') && !e.target.closest('.header-btn')) {
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                        if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        const notifPanel = document.getElementById('notificationsPanel');
+                        if (notifPanel) notifPanel.classList.remove('show');
+                    }
+
+                    if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('mobile-open') && !e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('mobile-open');
+                        if (barsIcon && timesIcon) {
+                            barsIcon.style.display = 'block';
+                            timesIcon.style.display = 'none';
+                        }
+                    }
+                });
+            });
+
+            // Override window.onclick if exists to not conflict
+            const oldOnclick = window.onclick;
+            window.onclick = function (event) {
+                if (oldOnclick) oldOnclick(event);
+            };
+        </script>
+
+        <!-- Search Section -->
+        <div class="dashboard-search-section">
+            <div class="search-input-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="globalSearchInput" placeholder="Search student or instructor..."
+                    onkeyup="if(event.key==='Enter') dashPerformSearch()">
+                <button class="search-confirm-btn" id="searchBtn" onclick="dashPerformSearch()">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div id="searchLoader" class="search-loader-spinner" style="display:none;"></div>
+            </div>
+            <div id="dashSearchError" class="search-error" style="display:none; margin:0 auto; max-width:800px;">
+                <i class="fas fa-exclamation-circle"></i><span></span>
+            </div>
+        </div>
+
+
+        <!-- 1. Statistics Section (4 Summary Cards) -->
+        <div class="dashboard-container">
+            <div class="stats-grid-modern">
+                <div class="stat-card-modern">
+                    <div class="stat-icon-box blue">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Total Faculty</div>
+                        <div class="stat-value" id="totalInstructors">0</div>
+                    </div>
+                </div>
+                <div class="stat-card-modern">
+                    <div class="stat-icon-box green">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Total Schedules</div>
+                        <div class="stat-value" id="systemHours">0</div>
+                    </div>
+                </div>
+                <div class="stat-card-modern">
+                    <div class="stat-icon-box orange">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Pending Requests</div>
+                        <div class="stat-value" id="pendingRequests">0</div>
+                    </div>
+                </div>
+                <div class="stat-card-modern">
+                    <div class="stat-icon-box purple">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Approved Requests</div>
+                        <div class="stat-value" id="totalCompleted">0</div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- 2.5 Walk-in Booking Section -->
+            <div id="walkinBookingCard" class="content-card mb-32"
+                style="display:none; border:2px solid var(--primary-light);">
+                <div class="content-card-header" style="background: var(--primary-lightest);">
+                    <h3 style="color: var(--primary);"><i class="fas fa-user-plus"></i> New Walk-in Appointment</h3>
+                    <button class="close-btn"
+                        onclick="document.getElementById('walkinBookingCard').style.display='none'">&times;</button>
+                </div>
+                <div style="padding: 24px;">
+                    <form id="walkinForm" onsubmit="event.preventDefault(); bookWalkIn()" class="modern-form">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            <div class="form-group">
+                                <label class="form-label">Student</label>
+                                <select id="studentSelect" class="form-control" required>
+                                    <option value="">-- Select Student --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Instructor</label>
+                                <select id="instructorSelect" class="form-control" required
+                                    onchange="loadInstructorSlots()">
+                                    <option value="">-- Select Instructor --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            <div class="form-group">
+                                <label class="form-label">Available Slot</label>
+                                <select id="slotSelect" class="form-control" required>
+                                    <option value="">Select instructor first</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Initial Status</label>
+                                <select id="initialStatus" class="form-control">
+                                    <option value="Approved">Approved (Immediate)</option>
+                                    <option value="Pending">Pending (Wait for Instructor)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="bookingMsg" style="margin-bottom: 15px; font-size: 13px; font-weight: 500;"></div>
+                        <div style="text-align: right;">
+                            <button type="submit" class="btn btn-primary" style="padding: 12px 32px;">
+                                <i class="fas fa-check-circle"></i> Create Walk-in Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Fallback hidden input for any legacy scripts -->
+            <input type="hidden" id="dashSearch">
+            <div id="searchLoaderAlt" class="search-loading" style="display:none;"></div>
+
+            <!-- 3. Main Content Grid -->
+            <div class="main-dashboard-grid">
+                <!-- Left Column -->
+                <div class="dashboard-left">
+                    <div class="content-card" id="active-appointments-section">
+                        <div class="content-card-header">
+                            <h3>Active Appointments</h3>
+                            <button class="card-action-btn" onclick="showBooking()">+ New Booking</button>
+                        </div>
+                        <div class="table-responsive-modern" id="pendingList">
+                            <div class="loader-placeholder">Loading appointments...</div>
+                        </div>
+                    </div>
+
+                    <div class="content-card mt-24">
+                        <div class="content-card-header">
+                            <h3>Instructor Monitoring</h3>
+                        </div>
+                        <div class="table-responsive-modern" id="instructorMonitoringTable">
+                            <div class="loader-placeholder">Loading monitoring data...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-right">
+                    <div class="content-card">
+                        <div class="content-card-header">
+                            <h3>Calendar</h3>
+                        </div>
+                        <div class="calendar-wrapper-modern">
+                            <div id="calendarMonth" class="calendar-month-label"></div>
+                            <div id="calendar" class="calendar-widget-modern"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ANALYTICS SECTION -->
+            <div style="margin-top:24px;">
+                <h3
+                    style="font-size:18px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                    <i class="fas fa-chart-bar" style="color:var(--primary);"></i> Analytics
+                </h3>
+                <div class="analytics-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">Instructor Hours Comparison</div>
+                        <div id="barChartArea" class="css-bar-chart" style="min-height:200px;"></div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Face-to-Face vs Online</div>
+                        <div id="pieChartArea" class="css-pie-container"></div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Weekly Performance Summary (Last 4 Weeks)</div>
+                    <div id="weeklySummaryTable"></div>
+                </div>
+            </div>
+
+            <!-- LATEST ANNOUNCEMENTS SECTION (Moved to Bottom) -->
+            <div style="margin-top:24px;">
+                <h3
+                    style="font-size:18px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                    <i class="fas fa-bullhorn" style="color:var(--primary);"></i> Latest Announcements
+                </h3>
+                <div class="content-card">
+                    <div class="announcements-mini-feed" id="announcementFeed"
+                        style="max-height: 400px; overflow-y: auto;">
+                        <div class="loader-placeholder">Loading announcements...</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Complete Appointment Modal (with Report) -->
+        <div id="completeApptModal" class="modal"
+            style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.4);justify-content:center;align-items:center;z-index:1000;">
+            <div class="modal-content"
+                style="background:white;width:100%;max-width:560px;border-radius:8px;overflow:hidden;margin:20px;">
+                <div class="modal-header"
+                    style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--primary); color:white;">
+                    <h3 style="color:white;margin:0;"><i class="fas fa-clipboard-check"
+                            style="margin-right:8px;"></i>Complete Consultation</h3>
+                    <button class="close-btn" onclick="closeModal('completeApptModal')"
+                        style="background:none; border:none; font-size:24px; cursor:pointer;color:white;">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:24px;">
+                    <form id="completeApptForm" onsubmit="submitCompleteAppt(event)">
+                        <input type="hidden" id="completeApptId" name="appointment_id">
+                        <div
+                            style="background:rgba(6, 95, 70, 0.05); padding:12px; border-radius:8px; margin-bottom:20px; border-left:4px solid var(--primary);">
+                            <div style="font-size:12px; color:var(--text-muted); font-weight:600;">CONSULTATION DETAILS
+                            </div>
+                            <div id="completeApptDetails" style="font-size:14px; margin-top:4px; font-weight:500;">
+                            </div>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <label style="display:block;margin-bottom:8px;font-weight:500;">Summary of Discussion <span
+                                    style="color:red">*</span></label>
+                            <textarea name="summary_of_discussion"
+                                style="width:100%; height:100px; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); resize:none; font-family:inherit;"
+                                required placeholder="What was discussed?"></textarea>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <label style="display:block;margin-bottom:8px;font-weight:500;">Action Taken <span
+                                    style="color:red">*</span></label>
+                            <textarea name="action_taken"
+                                style="width:100%; height:60px; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); resize:none; font-family:inherit;"
+                                required placeholder="Steps taken during or after session..."></textarea>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                            <div>
+                                <label style="display:block;margin-bottom:8px;font-weight:500;">Consultation
+                                    Type</label>
+                                <select name="consultation_type"
+                                    style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                                    <option value="Face-to-Face">Face-to-Face</option>
+                                    <option value="Online">Online</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display:block;margin-bottom:8px;font-weight:500;">Outcome</label>
+                                <select name="outcome_status"
+                                    style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                                    <option value="Completed">Completed</option>
+                                    <option value="Needs Follow-Up">Needs Follow-Up</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <label style="display:block;margin-bottom:8px;font-weight:500;">Recommendations
+                                (Optional)</label>
+                            <textarea name="recommendations"
+                                style="width:100%; height:60px; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); resize:none; font-family:inherit;"
+                                placeholder="Future steps for the student..."></textarea>
+                        </div>
+                        <div id="completeApptResult" style="margin-bottom:12px"></div>
+                        <div style="display:flex; gap:12px; margin-top:20px;">
+                            <button type="submit" class="btn btn-primary" style="flex:1">Submit Report &
+                                Complete</button>
+                            <button type="button" class="btn btn-outline" onclick="closeModal('completeApptModal')"
+                                style="flex:1">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div id="editProfileModal" class="modal"
+            style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.4);justify-content:center;align-items:center;z-index:1000;">
+            <div class="modal-content"
+                style="background:white;width:100%;max-width:500px;border-radius:8px;overflow:hidden;margin:20px;">
+                <div class="modal-header"
+                    style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                    <h3>Edit Profile</h3>
+                    <button class="close-btn" onclick="closeEditProfile()"
+                        style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:24px;">
+                    <form id="editProfileForm" onsubmit="submitProfile(event)" enctype="multipart/form-data">
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
+                            <div class="form-group">
+                                <label class="form-label"
+                                    style="display:block; margin-bottom:8px; font-weight:500;">First
+                                    Name</label>
+                                <input type="text" class="form-control" id="editFirstname" name="firstname" required
+                                    minlength="2" placeholder="e.g. John"
+                                    style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"
+                                    style="display:block; margin-bottom:8px; font-weight:500;">Middle
+                                    Name</label>
+                                <input type="text" class="form-control" id="editMiddlename" name="middlename"
+                                    placeholder="Optional"
+                                    style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"
+                                    style="display:block; margin-bottom:8px; font-weight:500;">Last
+                                    Name</label>
+                                <input type="text" class="form-control" id="editLastname" name="lastname" required
+                                    minlength="2" placeholder="e.g. Doe"
+                                    style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label class="form-label"
+                                style="display:block; margin-bottom:8px; font-weight:500;">Username</label>
+                            <input type="text" class="form-control" id="editUsername" name="username" required
+                                minlength="4" placeholder="Enter username"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Email
+                                Address</label>
+                            <input type="email" class="form-control" id="editEmail" name="email" required
+                                placeholder="admin@example.com"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Contact
+                                Number</label>
+                            <input type="text" class="form-control" id="editContactNumber" name="contact_number"
+                                placeholder="+639XXXXXXXXX"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">New
+                                Password (leave blank to keep current)</label>
+                            <input type="password" class="form-control" id="editPassword" name="new_password"
+                                minlength="8" placeholder="New password (min. 8 characters)"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Profile
+                                Picture</label>
+                            <div onclick="document.getElementById('profileUpload').click()"
+                                style="padding: 16px; border: 2px dashed var(--border); border-radius: 6px; text-align: center; cursor: pointer; transition: 0.2s;"
+                                onmouseover="this.style.borderColor='var(--primary)'"
+                                onmouseout="this.style.borderColor='var(--border)'">
+                                <i class="fas fa-cloud-upload-alt"
+                                    style="color:var(--text-muted); font-size:24px; margin-bottom:8px;"></i>
+                                <div id="fileName" style="font-size:13px; color:var(--text-muted);">Click to
+                                    upload
+                                    new
+                                    image</div>
+                                <input type="file" id="profileUpload" name="profilePic" accept="image/*"
+                                    style="display: none"
+                                    onchange="document.getElementById('fileName').textContent = this.files[0].name">
+                            </div>
+                        </div>
+                        <div style="text-align:right;margin-top:24px;">
+                            <button type="button" class="btn btn-outline" onclick="closeEditProfile()"
+                                style="margin-right:8px;">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Chat Panel -->
+        <div id="chatPanel" class="chat-panel">
+            <div class="chat-header">
+                <h3>Messages</h3>
+                <button onclick="toggleChatPanel()" class="chat-close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-body">
+                <!-- User List View -->
+                <div id="chatUserView" class="chat-user-view">
+                    <div class="chat-search-bar">
+                        <div class="chat-search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="chatSearchInput" class="chat-search-input"
+                                placeholder="Search conversations..." oninput="searchUsers(this.value)">
+                        </div>
+                    </div>
+                    <div id="chatUserListContainer" class="chat-user-list">
+                        <div class="empty-chat"><i class="fas fa-comments"></i>
+                            <p>Loading conversations...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversation View -->
+                <div id="chatConversation" class="conversation-view">
+                    <div class="conv-header">
+                        <button onclick="backToUserList()" class="conv-back-btn"><i
+                                class="fas fa-chevron-left"></i></button>
+                        <div class="conv-user-info">
+                            <img id="chatConvAvatar" src="default_avatar.png" class="conv-avatar">
+                            <span id="chatConvName" class="conv-name">Select User</span>
+                        </div>
+                    </div>
+                    <div id="chatMessages" class="messages-container"></div>
+                    <div class="chat-footer">
+                        <form id="chatForm" onsubmit="sendChatMessage(event)">
+                            <div class="input-container">
+                                <textarea id="chatInput" class="chat-input-textarea"
+                                    placeholder="Type your message here..." rows="1"
+                                    onkeydown="handleChatKeydown(event)"></textarea>
+                                <button type="submit" class="send-button"><i class="fas fa-paper-plane"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcement View Modal -->
+        <div id="announcementModal"
+            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(4px);"
+            onclick="if(event.target===this) closeAnnouncementModal()">
+            <div
+                style="background:white; width:90%; max-width:700px; max-height:85vh; border-radius:16px; overflow-y:auto; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);">
+                <div
+                    style="padding:24px 24px 0; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; background:white; z-index:1; border-bottom:1px solid var(--border-light); padding-bottom:16px;">
+                    <h3 style="font-size:18px; font-weight:700; color:var(--text-main);">Announcement</h3>
+                    <button onclick="closeAnnouncementModal()"
+                        style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--text-muted); line-height: 1;">&times;</button>
+                </div>
+                <div id="announcementModalBody" style="padding:24px;"></div>
+            </div>
+        </div>
+
+        <script>
+            let currentData = {};
+
+            // Notification System Utilities
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toastContainer') || createToastContainer();
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-times-circle' : 'fa-exclamation-circle');
+                toast.innerHTML = `
+                    <i class="fas ${icon}"></i>
+                    <div class="toast-message">${message}</div>
+                `;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            }
+
+            function createToastContainer() {
+                const container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+                return container;
+            }
+
+            function showConfirm(title, message, onConfirm) {
+                const overlay = document.createElement('div');
+                overlay.className = 'custom-confirm-overlay';
+                overlay.innerHTML = `
+                <div class="custom-confirm-content">
+                    <div class="custom-confirm-header">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="custom-confirm-body">
+                        <p>${message}</p>
+                    </div>
+                    <div class="custom-confirm-footer">
+                        <button class="btn-confirm-no">Cancel</button>
+                        <button class="btn-confirm-yes">Confirm</button>
+                    </div>
+                </div>
+            `;
+                document.body.appendChild(overlay);
+                overlay.querySelector('.btn-confirm-no').onclick = () => overlay.remove();
+                overlay.querySelector('.btn-confirm-yes').onclick = () => {
+                    onConfirm();
+                    overlay.remove();
+                };
+            }
+
+            function showPrompt(title, message, onComplete) {
+                const overlay = document.createElement('div');
+                overlay.className = 'custom-confirm-overlay';
+                overlay.innerHTML = `
+                <div class="custom-confirm-content">
+                    <div class="custom-confirm-header">
+                        <i class="fas fa-edit"></i>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="custom-confirm-body">
+                        <p style="margin-bottom:16px;">${message}</p>
+                        <input type="text" id="customPromptInput" class="form-control" style="width:100%" placeholder="Type here...">
+                    </div>
+                    <div class="custom-confirm-footer">
+                        <button class="btn-confirm-no">Cancel</button>
+                        <button class="btn-confirm-yes">Submit</button>
+                    </div>
+                </div>
+            `;
+                document.body.appendChild(overlay);
+                const input = overlay.querySelector('#customPromptInput');
+                input.focus();
+                overlay.querySelector('.btn-confirm-no').onclick = () => overlay.remove();
+                overlay.querySelector('.btn-confirm-yes').onclick = () => {
+                    const val = input.value;
+                    if (val) {
+                        onComplete(val);
+                        overlay.remove();
+                    } else {
+                        input.style.borderColor = 'var(--danger)';
+                    }
+                };
+            }
+
+
+
+            // Notification System
+            function toggleNotifications() {
+                const panel = document.getElementById('notificationsPanel');
+                if (!panel) return;
+                const isShow = panel.classList.contains('show');
+
+                // Close other panels
+                document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                const profileChevron = document.getElementById('profileChevron');
+                if (profileChevron) profileChevron.style.transform = 'rotate(0deg)';
+
+                if (!isShow) {
+                    panel.classList.add('show');
+                    loadNotifications();
+                } else {
+                    panel.classList.remove('show');
+                }
+            }
+
+            function loadNotifications() {
+                fetch('../php/get_notifications.php')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) return;
+
+                        const badge = document.getElementById('notifBadge');
+                        const list = document.getElementById('notificationsList');
+
+                        if (j.unread_count > 0) {
+                            badge.textContent = j.unread_count;
+                            badge.style.display = 'block';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+
+                        if (j.notifications.length === 0) {
+                            list.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text-muted);">No notifications</div>';
+                            return;
+                        }
+
+                        let html = '';
+                        j.notifications.forEach(n => {
+                            const isUnread = n.is_read == 0;
+                            const avatar = n.sender_picture || '../images/default_avatar.png';
+                            const time = new Date(n.created_at).toLocaleString();
+
+                            let actionHtml = '';
+                            if (n.notification_type === 'new_message' && n.sender_id) {
+                                actionHtml = `<button onclick="event.stopPropagation(); replyToNotification(${n.sender_id})" style="margin-top:8px; padding:4px 12px; background:var(--primary); color:white; border:none; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">Reply</button>`;
+                            } else if (n.notification_type.startsWith('announcement_') && n.related_id) {
+                                actionHtml = `<button onclick="event.stopPropagation(); viewAnnouncementDashboard(${n.related_id})" style="margin-top:8px; padding:4px 12px; background:var(--primary-light); color:white; border:none; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">View</button>`;
+                            }
+
+                            html += `
+                        <div style="display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border); ${isUnread ? 'background:rgba(6,95,70,0.03);' : ''} cursor:pointer; align-items:flex-start;" onclick="handleNotificationClick(${n.id}, ${n.notification_type === 'new_message' ? n.sender_id : 'null'})">
+                            <img src="${avatar}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--border); flex-shrink:0;">
+                            <div style="flex:1;">
+                                <div style="font-size:13px; color:var(--text-main); line-height:1.4; ${isUnread ? 'font-weight:600;' : ''}">${n.message}</div>
+                                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${n.time_ago}</div>
+                                ${actionHtml}
+                            </div>
+                            ${isUnread ? '<div style="width:8px; height:8px; background:var(--primary); border-radius:50%; margin-top:4px; flex-shrink:0;"></div>' : ''}
+                        </div>`;
+                        });
+                        list.innerHTML = html;
+                    });
+            }
+
+            function handleNotificationClick(notifId, senderId) {
+                markNotificationRead(notifId);
+                if (senderId) {
+                    replyToNotification(senderId);
+                }
+            }
+
+            function markNotificationRead(id) {
+                fetch('../php/mark_notifications_read.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `notification_ids=${id}`
+                }).then(() => loadNotifications());
+            }
+
+            function markAllRead() {
+                fetch('../php/get_notifications.php')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (j.notifications && j.notifications.length > 0) {
+                            const ids = j.notifications.map(n => n.notification_id || n.id).join(',');
+                            fetch('../php/mark_notifications_read.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: `notification_ids=${ids}`
+                            }).then(() => loadNotifications());
+                        }
+                    });
+            }
+
+            // Helper to escape HTML and prevent XSS
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function formatTimeTo12Hour(t) {
+                if (!t) return '--:--';
+                if (t.includes(' - ')) {
+                    const parts = t.split(' - ');
+                    return formatSingleTime(parts[0]) + ' - ' + formatSingleTime(parts[1]);
+                }
+                return formatSingleTime(t);
+            }
+
+            function formatSingleTime(t) {
+                if (!t || !t.includes(':')) return t;
+                let [h, m] = t.split(':');
+                h = parseInt(h);
+                const a = h >= 12 ? 'PM' : 'AM';
+                h = h % 12 || 12;
+                return `${h}:${m.substring(0, 2)} ${a}`;
+            }
+
+            function loadAnnouncementFeed() {
+                fetch('../php/get_announcements.php?limit=5')
+                    .then(r => r.json())
+                    .then(j => {
+                        const container = document.getElementById('announcementFeed');
+                        container.classList.add('announcements-feed', 'compact');
+                        if (!j.success || !j.announcements || j.announcements.length === 0) {
+                            container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">No announcements yet.</div>';
+                            return;
+                        }
+                        let html = '';
+                        window.allDashboardAnnouncements = j.announcements;
+                        j.announcements.forEach(a => {
+                            html += `
+                            <div class="announcement-card ${a.is_pinned ? 'pinned' : ''}" data-id="${a.announcement_id}" style="margin-bottom: 20px;">
+                                <div class="announcement-header">
+                                    <img src="${a.author_picture}" class="announcement-avatar" alt="">
+                                    <div class="announcement-meta">
+                                        <div class="announcement-author">
+                                            ${escapeHtml(a.author_name)}
+                                            <span class="announcement-badge ${a.author_type}">${a.author_type}</span>
+                                        </div>
+                                        <div class="announcement-time">
+                                            <i class="fas fa-clock" style="font-size:11px;"></i>
+                                            ${a.time_ago}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="announcement-title" style="cursor:pointer;" onclick="viewAnnouncementDashboard(${a.announcement_id})">${escapeHtml(a.title)}</div>
+                                <div class="announcement-content" style="cursor:pointer;" onclick="viewAnnouncementDashboard(${a.announcement_id})">${escapeHtml(a.content)}</div>
+                                
+                                <div class="announcement-actions">
+                                    <button class="action-btn like-btn-${a.announcement_id} ${a.user_liked ? 'liked' : ''}" onclick="toggleLike(this, ${a.announcement_id})">
+                                        <i class="fa${a.user_liked ? 's' : 'r'} fa-heart"></i>
+                                        <span class="count like-count-${a.announcement_id}">${a.likes || 0}</span> Likes
+                                    </button>
+                                    <button class="action-btn" onclick="toggleComments(${a.announcement_id})">
+                                        <i class="far fa-comment-alt"></i>
+                                        <span class="count comment-count-${a.announcement_id}">${a.comments || 0}</span> Comments
+                                    </button>
+                                    <button class="action-btn" onclick="shareAnnouncement(this, ${a.announcement_id})">
+                                        <i class="far fa-share-square"></i>
+                                        <span class="count share-count-${a.announcement_id}">${a.shares || 0}</span> Shares
+                                    </button>
+                                </div>
+
+                                <div id="comment-section-${a.announcement_id}" class="comment-section">
+                                    <div id="comment-list-${a.announcement_id}" class="comment-list"></div>
+                                    <div class="comment-input-group">
+                                        <input type="text" class="comment-input" placeholder="Write a comment..." id="comment-input-${a.announcement_id}"
+                                            onkeyup="if(event.key==='Enter') postComment(${a.announcement_id})">
+                                        <button class="comment-send-btn" onclick="postComment(${a.announcement_id})">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        });
+                        container.innerHTML = html;
+
+                        // Start real-time sync if not already started
+                        if (!window.announcementSyncInterval) {
+                            window.announcementSyncInterval = setInterval(syncAnnouncementStats, 10000);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Announcement feed error:', err);
+                        const container = document.getElementById('announcementFeed');
+                        if (container) container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--danger);">Error loading announcements.</div>';
+                    });
+            }
+
+            async function syncAnnouncementStats() {
+                const cards = document.querySelectorAll('.announcement-card');
+                const ids = Array.from(cards).map(c => c.dataset.id);
+                if (ids.length === 0) return;
+
+                try {
+                    const res = await fetch(`../php/get_interaction_updates.php?ids=${ids.join(',')}`);
+                    const data = await res.json();
+                    if (data.success && data.updates) {
+                        data.updates.forEach(upd => {
+                            const card = document.querySelector(`.announcement-card[data-id="${upd.id}"]`);
+                            if (!card) return;
+
+                            // Update Likes
+                            const likeBtn = card.querySelector(`button.like-btn-${upd.id}`);
+                            if (likeBtn) {
+                                const countSpan = likeBtn.querySelector(`.like-count-${upd.id}`);
+                                if (countSpan && parseInt(countSpan.textContent) !== upd.likes) {
+                                    countSpan.textContent = upd.likes;
+                                }
+                            }
+
+                            // Update Comments Count
+                            const commBtn = card.querySelector('button[onclick*="toggleComments"]');
+                            if (commBtn) {
+                                const countSpan = commBtn.querySelector(`.comment-count-${upd.id}`);
+                                if (countSpan && parseInt(countSpan.textContent) !== upd.comments) {
+                                    countSpan.textContent = upd.comments;
+                                    // If comment section is open, maybe refresh it?
+                                    const section = document.getElementById(`comment-section-${upd.id}`);
+                                    if (section && section.style.display === 'block') {
+                                        refreshCommentsSilent(upd.id);
+                                    }
+                                }
+                            }
+
+                            // Update Shares
+                            const shareBtn = card.querySelector('button[onclick*="shareAnnouncement"]');
+                            if (shareBtn) {
+                                const countSpan = shareBtn.querySelector(`.share-count-${upd.id}`);
+                                if (countSpan && parseInt(countSpan.textContent) !== upd.shares) {
+                                    countSpan.textContent = upd.shares;
+                                }
+                            }
+                        });
+                    }
+                } catch (e) { console.error('Sync error:', e); }
+            }
+
+            async function refreshCommentsSilent(id) {
+                try {
+                    const res = await fetch(`../php/get_announcement_comments.php?announcement_id=${id}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        const listFeed = document.getElementById(`comment-list-${id}`);
+                        const listModal = document.getElementById(`modal-comment-list-${id}`);
+
+                        const newHtml = data.comments.map(c => `
+                        <div class="comment-item">
+                            <img src="${c.user_pic}" class="comment-pfp">
+                            <div style="flex:1;">
+                                <div class="comment-bubble">
+                                    <div class="comment-author">${c.user_name}</div>
+                                    <div class="comment-text">${c.text}</div>
+                                </div>
+                                <div style="font-size:11px; color:var(--text-muted); padding-left:12px; margin-top:4px;">${c.time_ago}</div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                        if (listFeed && listFeed.innerHTML !== newHtml) listFeed.innerHTML = newHtml;
+                        if (listModal && listModal.innerHTML !== newHtml) listModal.innerHTML = newHtml;
+                    }
+                } catch (e) { }
+            }
+
+            async function toggleLike(btn, id) {
+                try {
+                    const res = await fetch('../php/like_announcement.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `announcement_id=${id}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        const allLikeBtns = document.querySelectorAll(`.like-btn-${id}`);
+                        const allLikeCounts = document.querySelectorAll(`.like-count-${id}`);
+
+                        allLikeBtns.forEach(b => {
+                            if (data.liked) {
+                                b.classList.add('liked');
+                                b.querySelector('i').className = 'fas fa-heart';
+                            } else {
+                                b.classList.remove('liked');
+                                b.querySelector('i').className = 'far fa-heart';
+                            }
+                        });
+
+                        allLikeCounts.forEach(c => {
+                            let currentCount = parseInt(c.textContent);
+                            c.textContent = data.liked ? currentCount + 1 : currentCount - 1;
+                        });
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            function toggleComments(id) {
+                const section = document.getElementById(`comment-section-${id}`);
+                if (section.style.display === 'block') {
+                    section.style.display = 'none';
+                } else {
+                    section.style.display = 'block';
+                    loadComments(id);
+                }
+            }
+
+            // View full announcement in modal
+            async function viewAnnouncementDashboard(id, annData = null) {
+                let ann = annData;
+                if (!ann && window.allDashboardAnnouncements) {
+                    ann = window.allDashboardAnnouncements.find(a => a.announcement_id == id);
+                }
+
+                if (!ann) {
+                    // Fetch single announcement
+                    try {
+                        const res = await fetch(`../php/get_announcements.php?id=${id}`);
+                        const data = await res.json();
+                        if (data.success && data.announcements.length > 0) {
+                            ann = data.announcements[0];
+                        }
+                    } catch (e) { console.error(e); }
+                }
+
+                if (!ann) return;
+                const modal = document.getElementById('announcementModal');
+                const body = document.getElementById('announcementModalBody');
+                body.innerHTML = `
+                <div class="announcement-header" style="margin-bottom:20px;">
+                    <img src="${ann.author_picture || '../images/default_avatar.png'}" class="announcement-avatar" alt="">
+                    <div class="announcement-meta">
+                        <div class="announcement-author">
+                            ${escapeHtml(ann.author_name)}
+                            <span class="announcement-badge ${ann.author_type}">${ann.author_type}</span>
+                        </div>
+                        <div class="announcement-time">
+                            <i class="fas fa-clock" style="font-size:11px;"></i>
+                            ${ann.time_ago}
+                        </div>
+                    </div>
+                    ${ann.is_pinned ? '<i class="fas fa-thumbtack announcement-pin"></i>' : ''}
+                </div>
+                ${ann.title ? `<div class="announcement-title" style="font-size:20px; margin-bottom:16px;">${escapeHtml(ann.title)}</div>` : ''}
+                <div class="announcement-content" style="font-size:15px; line-height:1.8; white-space:pre-wrap; word-break:break-word;">${escapeHtml(ann.content)}</div>
+                <div class="announcement-actions" style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-light);">
+                    <button class="action-btn ${ann.user_liked ? 'liked' : ''}" onclick="toggleLike(this, ${ann.announcement_id})">
+                        <i class="fa${ann.user_liked ? 's' : 'r'} fa-heart"></i>
+                        <span class="count">${ann.likes || 0}</span> Likes
+                    </button>
+                    <button class="action-btn" onclick="toggleComments(${ann.announcement_id})">
+                        <i class="far fa-comment-alt"></i>
+                        <span class="count">${ann.comments || 0}</span> Comments
+                    </button>
+                    <button class="action-btn" onclick="shareAnnouncement(this, ${ann.announcement_id})">
+                        <i class="far fa-share-square"></i>
+                        <span class="count">${ann.shares || 0}</span> Shares
+                    </button>
+                </div>
+                <div id="comment-section-modal-${ann.announcement_id}" class="comment-section" style="display:block; margin-top:16px;">
+                    <div id="comment-list-modal-${ann.announcement_id}" class="comment-list"></div>
+                    <div class="comment-input-group">
+                        <input type="text" class="comment-input" placeholder="Write a comment..." id="comment-input-modal-${ann.announcement_id}"
+                            onkeyup="if(event.key==='Enter') postComment(${ann.announcement_id})">
+                        <button class="comment-send-btn" onclick="postComment(${ann.announcement_id})">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+                modal.style.display = 'flex';
+                loadComments(ann.announcement_id);
+            }
+
+            function closeAnnouncementModal() {
+                document.getElementById('announcementModal').style.display = 'none';
+            }
+
+            async function loadComments(id) {
+                const listFeed = document.getElementById(`comment-list-${id}`);
+                const listModal = document.getElementById(`modal-comment-list-${id}`);
+
+                const loadingHtml = '<div style="text-align:center; padding:10px; font-size:11px; color:var(--text-muted);">Loading...</div>';
+                if (listFeed) listFeed.innerHTML = loadingHtml;
+                if (listModal) listModal.innerHTML = loadingHtml;
+
+                try {
+                    const res = await fetch(`../php/get_announcement_comments.php?announcement_id=${id}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        if (data.comments.length === 0) {
+                            const noCommentsHtml = '<div style="text-align:center; padding:5px; font-size:11px; color:var(--text-muted);">No comments yet.</div>';
+                            if (listFeed) listFeed.innerHTML = noCommentsHtml;
+                            if (listModal) listModal.innerHTML = noCommentsHtml;
+                            return;
+                        }
+                        const commentsHtml = data.comments.map(c => `
+                        <div class="comment-item">
+                            <img src="${c.user_pic}" class="comment-pfp">
+                            <div style="flex:1;">
+                                <div class="comment-bubble">
+                                    <div class="comment-author">${c.user_name}</div>
+                                    <div class="comment-text">${c.text}</div>
+                                </div>
+                                <div style="font-size:11px; color:var(--text-muted); padding-left:12px; margin-top:4px;">${c.time_ago}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                        if (listFeed) listFeed.innerHTML = commentsHtml;
+                        if (listModal) listModal.innerHTML = commentsHtml;
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            async function postComment(id) {
+                const inputFeed = document.getElementById(`comment-input-${id}`);
+                const inputModal = document.getElementById(`modal-comment-input-${id}`);
+                const text = (inputModal && inputModal.value.trim()) || (inputFeed && inputFeed.value.trim()) || '';
+                if (!text) return;
+                try {
+                    const res = await fetch('../php/post_comment.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `announcement_id=${id}&comment_text=${encodeURIComponent(text)}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        if (inputFeed) inputFeed.value = '';
+                        if (inputModal) inputModal.value = '';
+                        loadComments(id);
+                        document.querySelectorAll(`.comment-count-${id}`).forEach(span => {
+                            span.textContent = parseInt(span.textContent || 0) + 1;
+                        });
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            async function shareAnnouncement(btn, id) {
+                try {
+                    const res = await fetch('../php/share_announcement.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `announcement_id=${id}`
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('Shared!');
+                        document.querySelectorAll(`.share-count-${id}`).forEach(span => {
+                            span.textContent = parseInt(span.textContent || 0) + 1;
+                        });
+                    }
+                } catch (e) { console.error(e); }
+            }
+
+            // Call notification check on load
+            setTimeout(loadNotifications, 1000);
+            setInterval(loadNotifications, 30000); // Check every 30 seconds
+
+            // Load dashboard
+            function loadDashboard() {
+                const errorReport = (msg) => {
+                    const el = document.getElementById('pendingList');
+                    if (el) el.innerHTML = `<div style="padding:24px; text-align:center; color:var(--danger); background:var(--danger-bg); border-radius:12px; margin:24px;">
+                        <strong>Dashboard Error:</strong><br>${msg}
+                    </div>`;
+                };
+
+                fetch('../php/admin_get_dashboard.php')
+                    .then(async r => {
+                        if (!r.ok) throw new Error(`HTTP Error ${r.status}`);
+                        const text = await r.text();
+                        try {
+                            return JSON.parse(text);
+                        } catch (e) {
+                            console.error('Admin Server non-JSON:', text);
+                            throw new Error('Invalid server response format.');
+                        }
+                    })
+                    .then(j => {
+                        if (!j.success) {
+                            showToast(j.message || 'Unauthorized', 'error');
+                            window.location.href = 'login.html';
+                            return;
+                        }
+
+                        currentData = j;
+                        const adminInfo = j.adminInfo || {};
+                        const fullName = (adminInfo.Firstname || '') + ' ' + (adminInfo.Lastname || '') || j.name || 'Admin';
+
+                        const nameEl = document.getElementById('adminName');
+                        if (nameEl) nameEl.textContent = fullName;
+                        const headerNameEl = document.getElementById('headerAdminName');
+                        if (headerNameEl) headerNameEl.textContent = fullName;
+                        const dropAdminName = document.getElementById('dropdownAdminName');
+                        if (dropAdminName) dropAdminName.textContent = fullName;
+
+                        let profilePic = adminInfo.profile_picture;
+                        if (profilePic && !profilePic.includes('/')) {
+                            profilePic = '../uploadsAdminProfilePic/' + profilePic;
+                        } else if (!profilePic) {
+                            profilePic = '../images/default_avatar.png';
+                        }
+
+                        const sidebarPic = document.getElementById('sidebarProfilePic');
+                        if (sidebarPic) sidebarPic.src = profilePic;
+                        const headPic = document.getElementById('headerProfilePic');
+                        if (headPic) headPic.src = profilePic;
+
+                        const stats = j.stats || {};
+                        const instEl = document.getElementById('totalInstructors');
+                        if (instEl) instEl.textContent = stats.totalInstructors || 0;
+
+                        const schedEl = document.getElementById('systemHours');
+                        if (schedEl) schedEl.textContent = stats.totalAppointments || 0;
+
+                        const pendingReqEl = document.getElementById('pendingRequests');
+                        if (pendingReqEl) pendingReqEl.textContent = stats.pendingRequests || 0;
+
+                        const approvedEl = document.getElementById('totalCompleted');
+                        if (approvedEl) approvedEl.textContent = stats.approvedRequests || 0;
+
+                        if (typeof renderPendingRequests === 'function') renderPendingRequests(j.pendingAppointments || []);
+                        if (typeof renderHistory === 'function') renderHistory(j.appointments || []);
+                        if (typeof renderCalendar === 'function') renderCalendar(j.appointments || []);
+                        if (typeof loadAnnouncementFeed === 'function') loadAnnouncementFeed();
+
+                        // Load monitoring
+                        loadWeeklyMonitoring();
+                    })
+                    .catch(err => {
+                        console.error('Dashboard error:', err);
+                        errorReport(err.message || 'Connection failed');
+                    });
+            }
+
+            // ===== INSTRUCTOR MONITORING =====
+            function loadWeeklyMonitoring() {
+                fetch('../php/get_weekly_hours.php')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) {
+                            console.error('Weekly monitoring error:', j.message);
+                            return;
+                        }
+
+                        // Stats are now primarily handled by loadDashboard() j.stats
+                        // But we can keep them for real-time monitoring feel if loadDashboard is not called
+                        // document.getElementById('totalInstructors').textContent = stats.total_instructors || 0;
+
+                        const rangeEl = document.getElementById('monitorWeekRange');
+                        if (rangeEl) rangeEl.textContent = j.week_start + ' — ' + j.week_end;
+
+                        const instructors = j.instructors || [];
+                        const container = document.getElementById('instructorMonitoringTable');
+                        if (!container) return;
+
+                        if (instructors.length === 0) {
+                            container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted);">No instructor data available this week.</div>';
+                            return;
+                        }
+
+                        // Populate filter dropdown for consultation records
+                        const filterSel = document.getElementById('filterInstructor');
+                        if (filterSel && filterSel.options.length <= 1) {
+                            instructors.forEach(inst => {
+                                filterSel.innerHTML += `<option value="${inst.instructor_id}">${inst.name}</option>`;
+                            });
+                        }
+
+                        let html = '<table class="data-table weekly-summary-table"><thead><tr>';
+                        html += '<th>Instructor</th><th>Hours Rendered</th><th>Remaining</th>';
+                        html += '<th>Completed</th><th>Follow-Ups</th><th>F2F</th><th>Online</th><th>Status</th>';
+                        html += '</tr></thead><tbody>';
+
+                        instructors.forEach(inst => {
+                            const pic = inst.profile_picture ? (inst.profile_picture.includes('/') ? inst.profile_picture : '../uploadsInstructorProfilePic/' + inst.profile_picture) : '../images/default_avatar.png';
+                            const statusClass = inst.status;
+                            const statusLabel = inst.status === 'completed' ? '✅ Complete' : (inst.status === 'near' ? '⚠️ Near' : '❌ Below');
+
+                            html += `<tr>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:10px;">
+                                        <img src="${pic}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
+                                        <span style="font-weight:500;">${escapeHtml(inst.name)}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong>${inst.hours_rendered}h</strong>
+                                    <div class="mini-progress"><div class="mini-progress-fill ${statusClass}" style="width:${inst.percentage}%"></div></div>
+                                </td>
+                                <td>${inst.remaining_hours}h</td>
+                                <td>${inst.completed_count}</td>
+                                <td>${inst.followup_count}</td>
+                                <td>${inst.f2f_count}</td>
+                                <td>${inst.online_count}</td>
+                                <td><span class="instructor-status-badge ${statusClass}">${statusLabel}</span></td>
+                            </tr>`;
+                        });
+
+                        html += '</tbody></table>';
+                        container.innerHTML = html;
+
+                        // Analytics calls
+                        if (typeof loadAnalytics === 'function') loadAnalytics();
+                    })
+                    .catch(err => console.error('WeeklyMonitoring Error:', err));
+            }
+
+            // ===== ANALYTICS =====
+            function loadAnalytics() {
+                fetch('../php/get_admin_analytics.php')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) return;
+                        renderBarChart(j.bar_chart);
+                        renderPieChart(j.pie_chart);
+                        renderWeeklySummary(j.weekly_summary);
+                    });
+            }
+
+            function renderBarChart(data) {
+                const container = document.getElementById('barChartArea');
+                if (!data || !data.labels || data.labels.length === 0) {
+                    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:var(--text-muted);">No data yet</div>';
+                    return;
+                }
+
+                const maxVal = Math.max(...data.data, 10);
+                const colors = ['#065f46', '#047857', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#064e3b', '#065f46'];
+                let html = '';
+
+                data.labels.forEach((label, i) => {
+                    const pct = (data.data[i] / maxVal) * 100;
+                    const color = colors[i % colors.length];
+                    html += `<div class="css-bar" style="height:${Math.max(pct, 4)}%; background:${color};" title="${label}: ${data.data[i]}h">
+                        <div class="css-bar-value">${data.data[i]}h</div>
+                        <div class="css-bar-label">${label.split(' ')[0]}</div>
+                    </div>`;
+                });
+
+                container.innerHTML = html;
+                container.style.paddingBottom = '40px';
+            }
+
+            function renderPieChart(data) {
+                const container = document.getElementById('pieChartArea');
+                const total = (data.data[0] || 0) + (data.data[1] || 0);
+
+                if (total === 0) {
+                    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;width:100%;height:160px;color:var(--text-muted);">No data yet</div>';
+                    return;
+                }
+
+                const f2fPct = ((data.data[0] / total) * 100).toFixed(1);
+                const onlinePct = ((data.data[1] / total) * 100).toFixed(1);
+                const f2fDeg = (data.data[0] / total) * 360;
+
+                container.innerHTML = `
+                    <div class="css-pie" style="background: conic-gradient(#065f46 0deg ${f2fDeg}deg, #10b981 ${f2fDeg}deg 360deg);"></div>
+                    <div class="css-pie-legend">
+                        <div class="css-pie-legend-item">
+                            <div class="css-pie-legend-color" style="background:#065f46;"></div>
+                            <span>👤 Face-to-Face: <strong>${data.data[0]}</strong> (${f2fPct}%)</span>
+                        </div>
+                        <div class="css-pie-legend-item">
+                            <div class="css-pie-legend-color" style="background:#10b981;"></div>
+                            <span>💻 Online: <strong>${data.data[1]}</strong> (${onlinePct}%)</span>
+                        </div>
+                        <div style="margin-top:8px; font-size:12px; color:var(--text-muted);">Total: ${total} consultations</div>
+                    </div>
+                `;
+            }
+
+            function renderWeeklySummary(data) {
+                const container = document.getElementById('weeklySummaryTable');
+                if (!container) return;
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);">No weekly data</div>';
+                    return;
+                }
+
+                let html = '<table class="data-table weekly-summary-table"><thead><tr>';
+                html += '<th>Week</th><th>Completed</th><th>Follow-Ups</th><th>Total Hours</th>';
+                html += '</tr></thead><tbody>';
+
+                data.forEach(w => {
+                    html += `<tr>
+                        <td style="font-weight:500;">${w.week_label}</td>
+                        <td><span style="color:#10b981; font-weight:600;">${w.completed}</span></td>
+                        <td><span style="color:var(--primary-light); font-weight:600;">${w.followups}</span></td>
+                        <td><span style="font-weight:700;">${w.hours}h</span></td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            }
+
+
+            // Load students for dropdown
+            function loadStudents() {
+                fetch('../php/get_all_students.php')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (j.success) {
+                            const sel = document.getElementById('studentSelect');
+                            sel.innerHTML = '<option value="">-- Select Student --</option>';
+                            j.students.forEach(s => {
+                                sel.innerHTML += `<option value="${s.user_id}">${s.name} (${s.school_id})</option>`;
+                            });
+                        }
+                    });
+            }
+
+            // Load instructors for dropdown
+            function loadInstructors() {
+                fetch('../php/get_all_instructors.php')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (j.success) {
+                            const sel = document.getElementById('instructorSelect');
+                            sel.innerHTML = '<option value="">-- Select Instructor --</option>';
+                            j.instructors.forEach(i => {
+                                sel.innerHTML += `<option value="${i.instructor_id}">${i.name}</option>`;
+                            });
+                        }
+                    });
+            }
+
+            // Load instructor slots
+            function loadInstructorSlots() {
+                const instructorId = document.getElementById('instructorSelect').value;
+                const slotSel = document.getElementById('slotSelect');
+
+                if (!instructorId) {
+                    slotSel.innerHTML = '<option value="">Select instructor first</option>';
+                    return;
+                }
+
+                slotSel.innerHTML = '<option value="">Loading slots...</option>';
+
+                fetch(`../php/get_slots.php?instructor_id=${instructorId}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        // Handle error response from PHP
+                        if (data && data.error) {
+                            console.error('Slots error:', data.error);
+                            slotSel.innerHTML = '<option value="">Error loading slots</option>';
+                            return;
+                        }
+
+                        const slots = Array.isArray(data) ? data : [];
+                        if (slots.length === 0) {
+                            slotSel.innerHTML = '<option value="">No available slots</option>';
+                            return;
+                        }
+
+                        slotSel.innerHTML = '<option value="">-- Select Slot --</option>';
+                        slots.forEach(s => {
+                            const capacityInfo = ` (${s.approved_count || 0}/${s.capacity} booked)`;
+                            const formattedTime = formatTimeTo12Hour(s.time_range);
+                            slotSel.innerHTML += `<option value="${s.slot_id}">${s.slot_date} - ${formattedTime} (${s.day_of_week})${capacityInfo}</option>`;
+                        });
+                    })
+                    .catch(err => {
+                        console.error('Slots error:', err);
+                        slotSel.innerHTML = '<option value="">Error loading slots</option>';
+                    });
+            }
+
+            // Book walk-in appointment
+            function bookWalkIn() {
+                const studentId = document.getElementById('studentSelect').value;
+                const slotId = document.getElementById('slotSelect').value;
+                const msg = document.getElementById('bookingMsg');
+
+                if (!studentId || !slotId) {
+                    msg.textContent = 'Please select both student and slot';
+                    msg.style.color = 'var(--danger)';
+                    return;
+                }
+
+                msg.textContent = 'Booking...';
+                msg.style.color = 'var(--primary)';
+
+                fetch('../php/admin_book_appointment.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `student_id=${studentId}&slot_id=${slotId}`
+                })
+                    .then(r => r.json())
+                    .then(j => {
+                        if (j.success) {
+                            msg.textContent = '✓ Appointment booked successfully!';
+                            msg.style.color = 'var(--success)';
+                            // Reset form
+                            document.getElementById('studentSelect').value = '';
+                            document.getElementById('instructorSelect').value = '';
+                            document.getElementById('slotSelect').innerHTML = '<option value="">Select instructor first</option>';
+                            // Reload dashboard
+                            setTimeout(() => {
+                                loadDashboard();
+                                msg.textContent = '';
+                            }, 2000);
+                        } else {
+                            msg.textContent = 'Error: ' + (j.message || 'Booking failed');
+                            msg.style.color = 'var(--danger)';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Booking error:', err);
+                        msg.textContent = 'Booking failed. Please try again.';
+                        msg.style.color = 'var(--danger)';
+                    });
+            }
+
+            // Manage appointment (approve/reject)
+            function manageAppointment(appointmentId, action) {
+                if (action === 'reject') {
+                    showPrompt('Decline Appointment', 'Enter the reason for declining:', (reason) => {
+                        executeManageAction(appointmentId, action, reason);
+                    });
+                } else {
+                    showConfirm('Confirm Action', `Are you sure you want to ${action} this appointment?`, () => {
+                        executeManageAction(appointmentId, action, '');
+                    });
+                }
+            }
+
+            function executeManageAction(appointmentId, action, reason) {
+                fetch('../php/manage_appointment_request.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `appointment_id=${appointmentId}&action=${action}&reason=${encodeURIComponent(reason)}`
+                })
+                    .then(r => r.json())
+                    .then(j => {
+                        if (j.success) {
+                            showToast(j.message || 'Action completed successfully');
+                            loadDashboard();
+                        } else {
+                            showToast('Error: ' + (j.message || 'Action failed'), 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Manage error:', err);
+                        showToast('Action failed. Please try again.', 'error');
+                    });
+            }
+
+            // Render pending requests table
+            function renderPendingRequests(pending) {
+                const el = document.getElementById('pendingList');
+                if (!el) return;
+                if (pending.length === 0) {
+                    el.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted);">No pending requests</div>';
+                    return;
+                }
+
+                let table = '<table class="data-table"><thead><tr><th>Student</th><th>Instructor</th><th>Date</th><th>Time</th><th>Capacity</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+                pending.forEach(a => {
+                    const sPic = a.student_picture || 'default_avatar.png';
+                    const iPic = a.instructor_picture || 'default_avatar.png';
+
+                    let statusBadge = '';
+                    let mainAction = '';
+
+                    const approvedCount = a.approved_count || 0;
+                    const capacity = a.capacity || 1;
+                    const capacityLabel = `<span style="font-size:12px; font-weight:600; color:${approvedCount >= capacity ? 'var(--danger)' : 'var(--primary)'}">${approvedCount}/${capacity}</span>`;
+
+                    if (a.status === 'Pending') {
+                        statusBadge = '<span class="badge badge-warning">Pending</span>';
+                        mainAction = `
+                            <button class="icon-btn btn-success" style="width:32px; height:32px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; background:var(--success);" 
+                                    onclick="manageAppointment(${a.appointment_id}, 'approve')" 
+                                    title="Approve Request">
+                                <i class="fas fa-check" style="color:white; font-size:12px;"></i>
+                            </button>`;
+                    } else if (a.status === 'Approved' || a.status === 'Accepted') {
+                        statusBadge = '<span class="badge badge-success">Approved</span>';
+                        mainAction = `
+                            <button class="icon-btn btn-success" style="width:32px; height:32px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; background:var(--success);" 
+                                    onclick="openCompleteAppt(${a.appointment_id}, '${escapeHtml(a.student_name)}', '${escapeHtml(a.instructor_name)}')" 
+                                    title="Complete Appointment">
+                                <i class="fas fa-check-double" style="color:white; font-size:12px;"></i>
+                            </button>`;
+                    }
+
+                    table += `<tr>
+          <td>
+            <div style="display:flex; align-items:center;">
+                <img src="${sPic}" class="table-avatar avatar-mini" alt="S">
+                <span style="font-weight:500;">${a.student_name}</span>
+            </div>
+          </td>
+          <td>
+            <div style="display:flex; align-items:center;">
+                <img src="${iPic}" class="table-avatar avatar-mini" alt="I">
+                <span style="font-weight:500;">${a.instructor_name}</span>
+            </div>
+          </td>
+          <td>${a.slot_date} (${a.day_of_week})</td>
+          <td>${formatTimeTo12Hour(a.time_range)}</td>
+          <td style="text-align:center">${capacityLabel}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <div style="display:flex; gap:6px; align-items:center">
+                ${mainAction}
+                <button class="icon-btn" style="width:32px; height:32px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; background:var(--primary-light);" 
+                        onclick="uaRescheduleAppt(${a.appointment_id}, '${a.instructor_id}')" 
+                        title="Reschedule">
+                    <i class="fas fa-calendar-alt" style="color:white; font-size:12px;"></i>
+                </button>
+                <button class="icon-btn btn-danger" style="width:32px; height:32px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; background:var(--danger);" 
+                        onclick="manageAppointment(${a.appointment_id}, 'reject')" 
+                        title="Decline Request">
+                    <i class="fas fa-times" style="color:white; font-size:12px;"></i>
+                </button>
+            </div>
+          </td>
+        </tr>`;
+                });
+                table += '</tbody></table>';
+                el.innerHTML = table;
+            }
+
+            // Render History
+            function renderHistory(appointments) {
+                const el = document.getElementById('historyList');
+                if (!el) return;
+                const historyItems = appointments.filter(a => a.status === 'Completed' || a.status === 'Declined' || a.status === 'Cancelled');
+
+                if (historyItems.length === 0) {
+                    el.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted);">No archived appointments</div>';
+                    return;
+                }
+
+                let table = '<table class="data-table"><thead><tr><th>Student</th><th>Instructor</th><th>Date</th><th>Time</th><th>Status</th></tr></thead><tbody>';
+                historyItems.forEach(a => {
+                    let cls = 'badge-danger';
+                    if (a.status === 'Completed') cls = 'badge-success';
+
+                    const sPic = a.student_profile_pic || 'default_avatar.png';
+                    const iPic = a.instructor_profile_pic || 'default_avatar.png';
+
+                    table += `<tr>
+                    <td>
+                        <div style="display:flex; align-items:center;">
+                            <img src="${sPic}" class="table-avatar avatar-mini" alt="S">
+                            <span style="font-weight:500;">${a.student_name}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display:flex; align-items:center;">
+                            <img src="${iPic}" class="table-avatar avatar-mini" alt="I">
+                            <span style="font-weight:500;">${a.instructor_name}</span>
+                        </div>
+                    </td>
+                    <td>${a.slot_date}</td>
+                    <td>${formatTimeTo12Hour(a.time_range)}</td>
+                    <td><span class="badge ${cls}">${a.status}</span></td>
+                </tr>`;
+                });
+                table += '</tbody></table>';
+                el.innerHTML = table;
+            }
+
+            // Render calendar
+            function renderCalendar(appointments) {
+                const calendarEl = document.getElementById('calendar');
+                if (!calendarEl) return;
+                const now = new Date();
+                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                const month = monthNames[now.getMonth()];
+                const year = now.getFullYear();
+
+                const labelEl = document.getElementById('calendarMonth');
+                if (labelEl) labelEl.textContent = `${month} ${year}`;
+
+                let html = `<table><tr><th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th></tr>`;
+                const firstDay = new Date(year, now.getMonth(), 1).getDay();
+                const daysInMonth = new Date(year, now.getMonth() + 1, 0).getDate();
+                let dayCount = 1;
+
+                for (let i = 0; i < 6; i++) {
+                    html += '<tr>';
+                    for (let j = 0; j < 7; j++) {
+                        if (i === 0 && j < firstDay) { html += '<td></td>'; continue; }
+                        if (dayCount > daysInMonth) { html += '<td></td>'; continue; }
+                        const today = now.getDate() === dayCount && now.getMonth() === now.getMonth() && now.getFullYear() === year;
+                        const hasAppointment = appointments.some(a => {
+                            const appDate = new Date(a.slot_date);
+                            return appDate.getDate() === dayCount && appDate.getMonth() === now.getMonth() && appDate.getFullYear() === year && a.status !== 'Declined';
+                        });
+                        const cls = today ? 'today' : hasAppointment ? 'appointment' : '';
+                        const title = hasAppointment ? appointments.filter(a => {
+                            const appDate = new Date(a.slot_date);
+                            return appDate.getDate() === dayCount && appDate.getMonth() === now.getMonth() && appDate.getFullYear() === year;
+                        }).map(a => a.time_range).join(', ') : '';
+                        html += `<td class="${cls}" title="${title}">${dayCount}</td>`;
+                        dayCount++;
+                    }
+                    html += '</tr>';
+                }
+                html += '</table>';
+                calendarEl.innerHTML = html;
+            }
+
+            function showBooking() {
+                const el = document.getElementById('walkinBookingCard');
+                if (el) {
+                    el.style.display = 'block';
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+
+            function showRequests() {
+                const el = document.getElementById('active-appointments-section');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function logout() {
+                showConfirm('Sign Out', 'Are you sure you want to sign out of your account?', () => {
+                    fetch('../php/logout.php').then(() => location.href = 'login.html').catch(() => location.href = '../html/login.html');
+                });
+            }
+
+            // Profile Functions
+            function openEditProfile() {
+                if (!currentData.adminInfo) return;
+                document.getElementById('editFirstname').value = currentData.adminInfo.Firstname || '';
+                document.getElementById('editMiddlename').value = currentData.adminInfo.Middlename || '';
+                document.getElementById('editLastname').value = currentData.adminInfo.Lastname || '';
+                document.getElementById('editUsername').value = currentData.adminInfo.username || '';
+                document.getElementById('editEmail').value = currentData.adminInfo.email || '';
+                document.getElementById('editContactNumber').value = currentData.adminInfo.contact_number || '';
+                document.getElementById('editPassword').value = '';
+                document.getElementById('editProfileModal').style.display = 'flex';
+            }
+
+            function closeEditProfile() {
+                document.getElementById('editProfileModal').style.display = 'none';
+                document.getElementById('editProfileForm').reset();
+                document.getElementById('fileName').textContent = "Click to upload new image";
+            }
+
+            function submitProfile(e) {
+                e.preventDefault();
+                const formData = new FormData(document.getElementById('editProfileForm'));
+                fetch('../php/update_admin_profile.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(r => r.json())
+                    .then(j => {
+                        if (j.success) {
+                            showToast(j.message || 'Profile updated successfully');
+                            closeEditProfile();
+                            loadDashboard(); // Refresh data
+                        } else {
+                            showToast('Error: ' + (j.message || 'Failed to update profile'), 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Update error:', err);
+                        showToast('Network error. Please try again.', 'error');
+                    });
+            }
+
+            function openModal(id) {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'flex';
+            }
+
+            function closeModal(id) {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            }
+
+            function openCompleteAppt(id, studentName, instructorName) {
+                document.getElementById('completeApptId').value = id;
+                document.getElementById('completeApptDetails').textContent = `${studentName} ➔ ${instructorName}`;
+                document.getElementById('completeApptForm').reset();
+                document.getElementById('completeApptResult').innerHTML = '';
+                openModal('completeApptModal');
+            }
+
+            async function submitCompleteAppt(e) {
+                e.preventDefault();
+                const form = document.getElementById('completeApptForm');
+                const fd = new FormData(form);
+                const resDiv = document.getElementById('completeApptResult');
+
+                resDiv.innerHTML = '<div style="color:var(--primary); font-size:13px;"><i class="fas fa-spinner fa-spin"></i> Submitting report...</div>';
+
+                try {
+                    const res = await fetch('../php/submit_session_report.php', { method: 'POST', body: fd });
+                    const j = await res.json();
+                    if (j.success) {
+                        showToast('Appointment completed and report saved.');
+                        closeModal('completeApptModal');
+                        loadDashboard();
+                    } else {
+                        resDiv.innerHTML = `<div style="color:var(--danger); font-size:13px;"><i class="fas fa-exclamation-circle"></i> ${j.message}</div>`;
+                    }
+                } catch (err) {
+                    resDiv.innerHTML = '<div style="color:var(--danger); font-size:13px;">Network error.</div>';
+                }
+            }
+
+            // ══════════════════════════════════════════════
+            //  DASHBOARD SEARCH
+            // ══════════════════════════════════════════════
+            const dashV = {
+                studentId: /^02-\d{4}-\d{6}$/,
+                instructorId: /^FAC-\d{4}-\d{4}$/
+            };
+            let dashSearchData = { students: [], instructors: [] };
+
+            const _dashSearchInput = document.getElementById('globalSearchInput');
+            if (_dashSearchInput) {
+                _dashSearchInput.addEventListener('keydown', e => { if (e.key === 'Enter') dashPerformSearch(); });
+            }
+
+            function loadSearchData() {
+                fetch('../php/get_all_records.php').then(r => r.json()).then(j => {
+                    if (j.success && j.data) {
+                        dashSearchData.students = j.data.students || [];
+                        dashSearchData.instructors = j.data.instructors || [];
+                    }
+                }).catch(() => { });
+            }
+            function dashPerformSearch() {
+                const searchInput = document.getElementById('globalSearchInput');
+                const q = searchInput ? searchInput.value.trim() : '';
+                const ql = q.toLowerCase();
+                const err = document.getElementById('dashSearchError');
+                const loader = document.getElementById('searchLoader');
+
+                if (err) {
+                    err.classList.remove('show');
+                    err.style.display = 'none';
+                }
+
+                if (!q) {
+                    if (err) {
+                        const s = err.querySelector('span');
+                        if (s) s.textContent = 'Please enter a Student ID, Instructor ID, or name';
+                        err.classList.add('show');
+                        err.style.display = 'flex';
+                    }
+                    return;
+                }
+
+                if (loader) loader.style.display = 'block';
+
+                // If data not loaded yet, fetch it first then search
+                const doSearch = () => {
+                    if (loader) loader.style.display = 'none';
+
+                    let found = null;
+
+                    // 1. Exact ID match
+                    found = dashSearchData.students.find(s =>
+                        (s.school_id && s.school_id.toLowerCase() === ql) ||
+                        (s.SchoolID && s.SchoolID.toLowerCase() === ql)
+                    );
+                    if (found) found._type = 'student';
+
+                    if (!found) {
+                        found = dashSearchData.instructors.find(i =>
+                            (i.faculty_id && i.faculty_id.toLowerCase() === ql) ||
+                            (i.employee_id && i.employee_id.toLowerCase() === ql)
+                        );
+                        if (found) found._type = 'instructor';
+                    }
+
+                    // 2. Partial name or ID match
+                    if (!found) {
+                        found = dashSearchData.students.find(s =>
+                            (s.name || '').toLowerCase().includes(ql) ||
+                            (s.school_id || '').toLowerCase().includes(ql) ||
+                            (s.SchoolID || '').toLowerCase().includes(ql) ||
+                            (s.Firstname || '').toLowerCase().includes(ql) ||
+                            (s.Lastname || '').toLowerCase().includes(ql)
+                        );
+                        if (found) found._type = 'student';
+                    }
+
+                    if (!found) {
+                        found = dashSearchData.instructors.find(i =>
+                            (i.name || '').toLowerCase().includes(ql) ||
+                            (i.faculty_id || '').toLowerCase().includes(ql) ||
+                            (i.employee_id || '').toLowerCase().includes(ql) ||
+                            (i.Firstname || '').toLowerCase().includes(ql) ||
+                            (i.Lastname || '').toLowerCase().includes(ql)
+                        );
+                        if (found) found._type = 'instructor';
+                    }
+
+                    if (!found) {
+                        if (err) {
+                            const s = err.querySelector('span');
+                            if (s) s.textContent = 'No record found matching "' + q + '"';
+                            err.classList.add('show');
+                            err.style.display = 'flex';
+                        }
+                        closeDashProfile();
+                        return;
+                    }
+
+                    showDashProfile(found);
+                };
+
+                if (dashSearchData.students.length === 0 && dashSearchData.instructors.length === 0) {
+                    // Data not cached yet — fetch live then search
+                    fetch('../php/get_all_records.php')
+                        .then(r => r.json())
+                        .then(j => {
+                            if (j.success && j.data) {
+                                dashSearchData.students = j.data.students || [];
+                                dashSearchData.instructors = j.data.instructors || [];
+                            }
+                            doSearch();
+                        })
+                        .catch(() => {
+                            if (loader) loader.style.display = 'none';
+                            if (err) {
+                                const s = err.querySelector('span');
+                                if (s) s.textContent = 'Failed to load records. Please try again.';
+                                err.classList.add('show');
+                                err.style.display = 'flex';
+                            }
+                        });
+                } else {
+                    doSearch();
+                }
+            }
+            function showDashProfile(u) {
+                const modal = document.getElementById('searchResultModal');
+                const avatar = document.getElementById('dpcAvatar');
+                const defaultAvatar = u._type === 'student'
+                    ? '../uploadsStudentProfilePic/default_avatar.png'
+                    : '../uploadsInstructorProfilePic/default_avatar.png';
+
+                // Profile picture
+                let profilePic = u.profile_picture || '';
+                if (profilePic && !profilePic.startsWith('http') && !profilePic.startsWith('../')) {
+                    const folder = u._type === 'student'
+                        ? '../uploadsStudentProfilePic/'
+                        : '../uploadsInstructorProfilePic/';
+                    profilePic = folder + profilePic;
+                }
+                avatar.src = profilePic || defaultAvatar;
+                avatar.onerror = function () { this.src = defaultAvatar; };
+
+                // Type badge
+                const badge = document.getElementById('srTypeBadge');
+                if (u._type === 'student') {
+                    badge.innerHTML = '<i class="fas fa-user-graduate"></i> Student';
+                } else {
+                    badge.innerHTML = '<i class="fas fa-chalkboard-teacher"></i> Faculty';
+                }
+
+                // Name & ID
+                const fullName = u.name ||
+                    ((u.Firstname || '') + ' ' + (u.Middlename ? u.Middlename + ' ' : '') + (u.Lastname || ''));
+                document.getElementById('dpcName').textContent = fullName.trim().toUpperCase() || '—';
+                document.getElementById('dpcId').textContent = u._type === 'student'
+                    ? ('ID: ' + (u.SchoolID || u.school_id || '—'))
+                    : ('Faculty ID: ' + (u.faculty_id || '—'));
+
+                // Fields
+                let fields = [];
+                if (u._type === 'student') {
+                    fields = [
+                        { l: 'Contact', v: u.contact_number || '—', i: 'fa-phone' },
+                        { l: 'Course', v: u.course || '—', i: 'fa-graduation-cap' },
+                        { l: 'Year Level', v: u.year_level || '—', i: 'fa-layer-group' },
+                        { l: 'Email', v: u.email || '—', i: 'fa-envelope' },
+                        { l: 'Consultations', v: (u.appointment_count || 0) + ' Records', i: 'fa-clipboard-list' },
+                        { l: 'Status', v: u.account_status || 'Active', i: 'fa-user-check' }
+                    ];
+                } else {
+                    fields = [
+                        { l: 'Contact', v: u.contact_number || '—', i: 'fa-phone' },
+                        { l: 'Department', v: u.department || '—', i: 'fa-building' },
+                        { l: 'Position', v: u.position || '—', i: 'fa-id-badge' },
+                        { l: 'Email', v: u.email || '—', i: 'fa-envelope' },
+                        { l: 'Appointments', v: (u.appointment_count || 0) + ' Records', i: 'fa-calendar-check' },
+                        { l: 'Open Slots', v: (u.available_slots || 0) + ' Available', i: 'fa-clock' }
+                    ];
+                }
+
+                document.getElementById('dpcFields').innerHTML = fields.map(f => `
+                    <div class="sr-field">
+                        <div class="sr-field-label"><i class="fas ${f.i}"></i>${f.l}</div>
+                        <div class="sr-field-value">${f.v}</div>
+                    </div>
+                `).join('');
+
+                // Action buttons
+                const btnBook = document.getElementById('btnBookFromSearch');
+                const btnHistory = document.getElementById('btnHistoryFromSearch');
+                const btnManage = document.getElementById('btnManageFromSearch');
+
+                btnHistory.onclick = () => {
+                    window.location.href = 'admin_records.html?user_id=' + u.user_id + '&view=history';
+                };
+                btnManage.onclick = () => {
+                    window.location.href = 'admin_records.html?user_id=' + u.user_id;
+                };
+
+                if (u._type === 'student') {
+                    btnBook.style.display = 'inline-flex';
+                    btnBook.onclick = () => {
+                        closeDashProfile();
+                        const sel = document.getElementById('studentSelect');
+                        if (sel) sel.value = u.user_id;
+                        showBooking();
+                    };
+                } else {
+                    btnBook.style.display = 'none';
+                }
+
+                // Show modal
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDashProfile() {
+                const modal = document.getElementById('searchResultModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            }
+
+            function viewRecords() {
+                window.location.href = 'admin_records.html';
+            }
+
+            // Initialize
+            loadDashboard();
+            loadStudents();
+            loadInstructors();
+            loadSearchData();
+
+            setInterval(() => {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateStr = now.toLocaleDateString([], { month: 'short', day: '2-digit' });
+                const el = document.getElementById('currentTime');
+                if (el) el.textContent = `${dateStr} | ${timeStr}`;
+            }, 1000);
+
+            // ============================================
+            // CHAT SYSTEM - ADMIN
+            // ============================================
+            let currentChatUser = null;
+            let chatPollingInterval = null;
+            let searchTimeout = null;
+            let lastMessagesJson = '';
+
+            function resolveAvatar(pic, role) {
+                if (!pic || pic === '../images/default_avatar.png') return '../images/default_avatar.png';
+                if (pic.includes('/')) return pic;
+                const map = {
+                    student: '../uploadsStudentProfilePic/',
+                    instructor: '../uploadsInstructorProfilePic/',
+                    admin: '../uploadsAdminProfilePic/',
+                    super_admin: '../uploadsAdminProfilePic/'
+                };
+                return (map[role] || '../images/') + pic;
+            }
+
+            function toggleChatPanel() {
+                const panel = document.getElementById('chatPanel');
+                panel.classList.toggle('open');
+                if (panel.classList.contains('open')) {
+                    loadChatUsers();
+                    if (!chatPollingInterval) {
+                        chatPollingInterval = setInterval(() => {
+                            if (currentChatUser) {
+                                loadMessages(currentChatUser.user_id, false);
+                            }
+                            const si = document.getElementById('chatSearchInput');
+                            if (!si || !si.value.trim()) loadChatUsers();
+                        }, 1000);
+                    }
+                } else {
+                    if (chatPollingInterval) {
+                        clearInterval(chatPollingInterval);
+                        chatPollingInterval = null;
+                    }
+                }
+            }
+
+            function loadChatUsers() {
+                fetch('../php/get_chat_users.php')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) return;
+                        const container = document.getElementById('chatUserListContainer');
+                        const badge = document.getElementById('chatBadge');
+                        const totalUnread = j.chat_users.reduce((sum, u) => sum + u.unread_count, 0);
+                        const oldUnread = parseInt(badge.textContent) || 0;
+
+                        if (totalUnread > oldUnread && totalUnread > 0) {
+                            playNotificationSound();
+                            const icon = document.querySelector('.fa-comments');
+                            if (icon) {
+                                icon.classList.add('pulse-notify');
+                                setTimeout(() => icon.classList.remove('pulse-notify'), 2000);
+                            }
+                        }
+
+                        if (totalUnread > 0) {
+                            badge.textContent = totalUnread;
+                            badge.style.display = 'block';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+
+                        if (j.chat_users.length === 0 && !document.getElementById('chatSearchInput').value) {
+                            container.innerHTML = '<div class="empty-chat"><i class="fas fa-comments"></i><p>No messages yet</p></div>';
+                            return;
+                        }
+
+                        let html = '';
+                        j.chat_users.forEach(u => {
+                            const avatar = resolveAvatar(u.profile_picture, u.role);
+                            html += `
+                            <div class="user-item" onclick="openConversation('${u.user_id}', '${u.user_type}', '${escapeHtmlChat(u.name)}', '${avatar}')">
+                                <img src="${avatar}" class="user-avatar">
+                                <div class="user-info">
+                                    <div class="user-name">${escapeHtmlChat(u.name)}</div>
+                                    <div class="user-last-msg">${escapeHtmlChat(u.last_message || 'No messages yet')}</div>
+                                </div>
+                                ${u.unread_count > 0 ? `<div class="unread-badge">${u.unread_count}</div>` : ''}
+                            </div>`;
+                        });
+                        container.innerHTML = html;
+                    })
+                    .catch(err => console.error('Error:', err));
+            }
+
+            function playNotificationSound() {
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                } catch (e) { }
+            }
+
+            function searchUsers(query) {
+                clearTimeout(searchTimeout);
+                if (query.trim().length === 0) { loadChatUsers(); return; }
+                searchTimeout = setTimeout(() => {
+                    fetch(`../php/search_users.php?q=${encodeURIComponent(query)}`)
+                        .then(r => r.json())
+                        .then(j => {
+                            if (!j.success) return;
+                            const container = document.getElementById('chatUserListContainer');
+                            if (j.users.length === 0) {
+                                container.innerHTML = '<div class="empty-chat"><i class="fas fa-search"></i><p>No results found</p></div>';
+                                return;
+                            }
+                            let html = '';
+                            j.users.forEach(u => {
+                                const avatar = resolveAvatar(u.profile_picture, u.role || u.user_type);
+                                html += `
+                                <div class="user-item" onclick="openConversation('${u.id || u.user_id}', '${u.user_type}', '${escapeHtmlChat(u.name)}', '${avatar}')">
+                                    <img src="${avatar}" class="user-avatar">
+                                    <div class="user-info">
+                                        <div class="user-name">${escapeHtmlChat(u.name)}</div>
+                                        <div class="user-last-msg" style="text-transform: capitalize;">${u.user_type}</div>
+                                    </div>
+                                </div>`;
+                            });
+                            container.innerHTML = html;
+                        });
+                }, 300);
+            }
+
+            function openConversation(userId, userType, userName, userAvatar) {
+                currentChatUser = { user_id: userId, user_type: userType, name: userName, avatar: userAvatar };
+                lastMessagesJson = ''; // Reset for new conversation
+                document.getElementById('chatConvName').textContent = userName;
+                document.getElementById('chatConvAvatar').src = userAvatar;
+                document.getElementById('chatUserView').style.display = 'none';
+                document.getElementById('chatConversation').classList.add('active');
+                loadMessages(userId, true);
+
+                // Auto-focus input
+                setTimeout(() => document.getElementById('chatInput').focus(), 300);
+            }
+
+            function backToUserList() {
+                currentChatUser = null;
+                lastMessagesJson = ''; // Clear state
+                document.getElementById('chatConversation').classList.remove('active');
+                document.getElementById('chatUserView').style.display = 'flex';
+                document.getElementById('chatSearchInput').value = '';
+                loadChatUsers();
+            }
+
+            function loadMessages(userId, scrollToBottom = true) {
+                fetch(`../php/get_messages.php?other_user_id=${userId}`)
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) return;
+
+                        const currentJson = JSON.stringify(j.messages);
+                        if (currentJson === lastMessagesJson && !scrollToBottom) return;
+                        lastMessagesJson = currentJson;
+
+                        const container = document.getElementById('chatMessages');
+                        const wasAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
+                        let html = '';
+
+                        j.messages.forEach((m, idx) => {
+                            const isSent = currentData.adminInfo && String(m.sender_id) == String(currentData.adminInfo.admin_id || currentData.adminInfo.user_id);
+                            const senderAvatar = resolveAvatar(m.profile_picture, m.sender_type);
+                            const messageClass = isSent ? 'sent' : 'received';
+
+                            // Format time
+                            const time = new Date(m.created_at);
+                            const timeStr = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const dateStr = time.toLocaleDateString([], { month: 'short', day: 'numeric' });
+
+                            // Date Header logic
+                            const prevMsg = idx > 0 ? j.messages[idx - 1] : null;
+                            const prevDate = prevMsg ? new Date(prevMsg.created_at).toLocaleDateString() : null;
+                            const currDate = time.toLocaleDateString();
+
+                            if (prevDate !== currDate) {
+                                html += `<div style="text-align:center; margin: 20px 0; font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">${dateStr}</div>`;
+                            }
+
+                            const seenStatus = isSent && m.is_read == 1 ? '<span style="font-size:10px; color:var(--primary); margin-left:4px; font-weight:700;">Seen</span>' : '';
+                            const deleteBtn = (isSent && currentData.adminInfo.role !== 'super_admin') ? `<button onclick="deleteMessage(${m.message_id})" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:10px; opacity:0.5; width:auto; padding:0; margin-left:8px;" title="Delete message"><i class="fas fa-trash"></i></button>` : '';
+
+
+                            html += `
+                            <div class="message-wrapper ${messageClass}">
+                                ${!isSent ? `<img src="${senderAvatar}" class="msg-avatar">` : ''}
+                                <div class="msg-content">
+                                    <div class="msg-bubble">
+                                        ${escapeHtmlChat(m.message_text)}
+                                        ${deleteBtn}
+                                    </div>
+                                    <div class="msg-time">${timeStr} ${seenStatus}</div>
+                                </div>
+                                ${isSent ? `<img src="${senderAvatar}" class="msg-avatar">` : ''}
+                            </div>`;
+                        });
+                        container.innerHTML = html;
+                        if (scrollToBottom || wasAtBottom) container.scrollTop = container.scrollHeight;
+                    });
+            }
+
+            function deleteMessage(messageId) {
+                if (!confirm('Delete this message?')) return;
+                fetch('../php/delete_message.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `message_id=${messageId}`
+                }).then(r => r.json()).then(j => {
+                    if (j.success) {
+                        loadMessages(currentChatUser.user_id, false);
+                        loadChatUsers();
+                    } else {
+                        showToast(j.message, 'error');
+                    }
+                });
+            }
+
+            function handleChatKeydown(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendChatMessage(e);
+                }
+                const target = e.target;
+                target.style.height = 'inherit';
+                target.style.height = `${target.scrollHeight}px`;
+            }
+
+            function sendChatMessage(event) {
+                if (event) event.preventDefault();
+                if (!currentChatUser) return;
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+                if (!message) return;
+
+                fetch('../php/send_message.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `receiver_id=${currentChatUser.user_id}&message=${encodeURIComponent(message)}`
+                }).then(r => r.json()).then(j => {
+                    if (j.success) {
+                        input.value = '';
+                        input.style.height = 'inherit';
+                        loadMessages(currentChatUser.user_id, true);
+                    }
+                });
+            }
+
+            function escapeHtmlChat(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function replyToNotification(senderId) {
+                document.getElementById('notificationsPanel').style.display = 'none';
+                if (!document.getElementById('chatPanel').classList.contains('open')) {
+                    toggleChatPanel();
+                }
+                fetch(`../php/get_user_info.php?user_id=${senderId}`)
+                    .then(r => r.json())
+                    .then(j => {
+                        if (j.success) {
+                            setTimeout(() => openConversation(String(j.user_id), j.user_type, j.name, j.profile_picture), 300);
+                        }
+                    })
+                    .catch(err => console.error('Error:', err));
+            }
+
+            setTimeout(loadChatUsers, 1500);
+
+            // Section navigation for instructors and announcements
+            function showSection(section) {
+                if (section === 'instructors') {
+                    window.location.href = 'admin_manage_instructors.html';
+                } else if (section === 'announcements') {
+                    window.location.href = 'admin_announcements.html';
+                }
+            }
+
+            // ══════════════════════════════════════════════
+            //  USER APPOINTMENT MANAGEMENT (SEARCH)
+            // ══════════════════════════════════════════════
+            let uaCurrentUser = null;
+            let uaTab = 'current';
+
+            function openUserApptModal(u, initialTab = 'current') {
+                uaCurrentUser = u;
+                uaTab = initialTab;
+
+                document.getElementById('uaModalAvatar').src = u.profile_picture || 'default_avatar.png';
+                document.getElementById('uaModalTitle').textContent = u.name;
+                document.getElementById('uaModalSubtitle').textContent = (u._type === 'student' ? 'Student ID: ' : 'Faculty ID: ') + (u.SchoolID || u.school_id || u.faculty_id || '—');
+
+                document.getElementById('userApptModal').style.display = 'flex';
+                switchUATab(uaTab);
+            }
+
+            function closeUserApptModal() {
+                document.getElementById('userApptModal').style.display = 'none';
+            }
+
+            function switchUATab(tab) {
+                uaTab = tab;
+                document.getElementById('tabCurrent').classList.toggle('active', tab === 'current');
+                document.getElementById('tabHistory').classList.toggle('active', tab === 'history');
+                loadUserAppointments();
+            }
+
+            function loadUserAppointments() {
+                const content = document.getElementById('uaListContent');
+                content.innerHTML = '<div style="padding:40px;text-align:center;"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+                fetch('../php/get_all_records.php?type=appointments')
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) { content.innerHTML = 'Error loading appointments'; return; }
+
+                        const u = uaCurrentUser;
+                        let list = j.data.appointments || [];
+
+                        if (u._type === 'student') {
+                            list = list.filter(a => String(a.student_id_number) === String(u.SchoolID || u.school_id));
+                        } else {
+                            list = list.filter(a => a.instructor_name === u.name || a.instructor_id === u.user_id);
+                        }
+
+                        if (uaTab === 'current') {
+                            list = list.filter(a => ['Pending', 'Approved', 'Accepted'].includes(a.status));
+                        } else {
+                            list = list.filter(a => ['Completed', 'Declined', 'Cancelled'].includes(a.status));
+                        }
+
+                        if (list.length === 0) {
+                            content.innerHTML = `<div style="padding:40px;text-align:center;color:var(--text-muted);">No ${uaTab === 'current' ? 'active' : 'past/archived'} appointments found</div>`;
+                            return;
+                        }
+
+                        let html = '<table class="data-table"><thead><tr><th>Date & Time</th><th>' + (u._type === 'student' ? 'Instructor' : 'Student') + '</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+                        list.forEach(a => {
+                            const otherName = u._type === 'student' ? a.instructor_name : a.student_name;
+                            const otherPic = u._type === 'student' ? (a.instructor_profile_pic || 'default_avatar.png') : (a.student_profile_pic || 'default_avatar.png');
+                            const statusCls = a.status === 'Pending' ? 'badge-warning' : (['Approved', 'Accepted', 'Completed'].includes(a.status) ? 'badge-success' : 'badge-danger');
+
+                            let actions = '';
+                            if (uaTab === 'current') {
+                                actions = `
+                                <div style="display:flex; gap:6px;">
+                                    <button class="btn btn-outline" style="padding:4px 8px; font-size:11px;" onclick="uaRescheduleAppt(${a.appointment_id}, '${a.instructor_id || ''}')" title="Edit/Reschedule"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-outline" style="padding:4px 8px; font-size:11px; color:var(--danger);" onclick="uaManageAction(${a.appointment_id}, 'cancel')" title="Cancel"><i class="fas fa-ban"></i></button>
+                                    <button class="btn btn-outline" style="padding:4px 8px; font-size:11px;" onclick="uaManageAction(${a.appointment_id}, 'complete')" title="Mark Completed"><i class="fas fa-check-double"></i></button>
+                                </div>`;
+                            } else {
+                                actions = `<button class="btn btn-outline" style="padding:4px 8px; font-size:11px; color:var(--danger); border-color:var(--danger);" onclick="uaManageAction(${a.appointment_id}, 'delete')" title="Delete Permanently"><i class="fas fa-trash-alt"></i></button>`;
+                            }
+
+                            html += `<tr>
+                            <td>
+                                <div style="font-weight:600;">${a.slot_date}</div>
+                                <div style="font-size:11px; color:var(--text-muted);">${a.time_range}</div>
+                            </td>
+                            <td>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <img src="${otherPic}" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">
+                                    <span style="font-size:13px;">${otherName}</span>
+                                </div>
+                            </td>
+                            <td><span class="badge ${statusCls}">${a.status}</span></td>
+                            <td>${actions}</td>
+                        </tr>`;
+                        });
+                        html += '</tbody></table>';
+                        content.innerHTML = html;
+                    });
+            }
+
+            function uaManageAction(id, action) {
+                const msgs = {
+                    cancel: 'Are you sure you want to CANCEL this appointment?',
+                    delete: 'DELETE PERMANENTLY? This cannot be undone.',
+                    complete: 'Mark this appointment as completed?'
+                };
+
+                showConfirm(action.toUpperCase(), msgs[action], () => {
+                    fetch('../php/admin_manage_appointment.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `appointment_id=${id}&action=${action}`
+                    }).then(r => r.json()).then(j => {
+                        if (j.success) {
+                            showToast(j.message);
+                            loadUserAppointments();
+                            loadDashboard();
+                        } else {
+                            showToast(j.message, 'error');
+                        }
+                    });
+                });
+            }
+
+            function uaRescheduleAppt(id, instructorId) {
+                // Create a proper reschedule modal with dropdown instead of text prompt
+                fetch(`../php/get_slots.php?instructor_id=${instructorId}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        const slots = Array.isArray(data) ? data : [];
+                        if (slots.length === 0) {
+                            showToast('No other available slots for this instructor', 'warning');
+                            return;
+                        }
+
+                        // Build options HTML for the dropdown
+                        let optionsHtml = '<option value="">-- Select New Slot --</option>';
+                        slots.forEach(s => {
+                            const capacityInfo = `(${s.approved_count || 0}/${s.capacity} booked)`;
+                            const formattedTime = formatTimeTo12Hour(s.time_range);
+                            optionsHtml += `<option value="${s.slot_id}">${s.slot_date} (${s.day_of_week}) — ${formattedTime} ${capacityInfo}</option>`;
+                        });
+
+                        // Create modal overlay
+                        const overlay = document.createElement('div');
+                        overlay.className = 'custom-confirm-overlay';
+                        overlay.innerHTML = `
+                            <div class="custom-confirm-content" style="max-width:480px; text-align:left;">
+                                <div class="custom-confirm-header" style="text-align:center;">
+                                    <i class="fas fa-calendar-alt" style="color:var(--primary)"></i>
+                                    <h3>Reschedule Appointment</h3>
+                                </div>
+                                <div class="custom-confirm-body" style="text-align:left;">
+                                    <div class="form-group" style="margin-bottom:16px;">
+                                        <label class="form-label" style="font-weight:600; font-size:13px; margin-bottom:8px; display:block;">Select New Slot</label>
+                                        <select id="reschedSlotSelect" class="form-control" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); font-size:14px;">
+                                            ${optionsHtml}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" style="font-weight:600; font-size:13px; margin-bottom:8px; display:block;">Reason (Optional)</label>
+                                        <textarea id="reschedReasonInput" class="form-control" placeholder="Enter reason for rescheduling..." style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md); font-size:14px; height:80px; resize:vertical;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="custom-confirm-footer">
+                                    <button class="btn-confirm-no">Cancel</button>
+                                    <button class="btn-confirm-yes">Reschedule</button>
+                                </div>
+                            </div>
+                        `;
+                        document.body.appendChild(overlay);
+
+                        overlay.querySelector('.btn-confirm-no').onclick = () => overlay.remove();
+                        overlay.querySelector('.btn-confirm-yes').onclick = () => {
+                            const slotId = document.getElementById('reschedSlotSelect').value;
+                            const reason = document.getElementById('reschedReasonInput').value;
+                            if (!slotId) {
+                                showToast('Please select a slot', 'warning');
+                                return;
+                            }
+                            fetch('../php/admin_manage_appointment.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: `appointment_id=${id}&action=reschedule&new_slot_id=${slotId}&reason=${encodeURIComponent(reason)}`
+                            }).then(r => r.json()).then(j => {
+                                if (j.success) {
+                                    showToast(j.message);
+                                    loadUserAppointments();
+                                    loadDashboard();
+                                } else {
+                                    showToast(j.message, 'error');
+                                }
+                                overlay.remove();
+                            });
+                        };
+                    })
+                    .catch(err => {
+                        console.error('Error loading slots:', err);
+                        showToast('Failed to load available slots', 'error');
+                    });
+            }
+
+            // ══════════════════════════════════════════════
+            //  OVERRIDE DASH PROFILE
+            // ══════════════════════════════════════════════
+            const originalShowDashProfile = showDashProfile;
+            showDashProfile = function (u) {
+                originalShowDashProfile(u);
+
+                const btnBook = document.getElementById('btnBookFromSearch');
+                const btnHistory = document.getElementById('btnHistoryFromSearch');
+
+                // 1. Walk-in: close modal, pre-select student, show & scroll to walk-in card
+                if (u._type === 'student') {
+                    btnBook.style.display = 'inline-flex';
+                    btnBook.onclick = () => {
+                        closeDashProfile();
+                        const sel = document.getElementById('studentSelect');
+                        if (sel) sel.value = u.user_id;
+                        const card = document.getElementById('walkinBookingCard');
+                        if (card) {
+                            card.style.display = 'block';
+                            setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+                        }
+                        showToast('Student pre-selected. Choose an instructor and slot.', 'info');
+                    };
+                } else {
+                    btnBook.style.display = 'none';
+                }
+
+                // 2. History: open appointment modal IN FRONT of search modal
+                btnHistory.onclick = () => openUserApptModal(u, 'history');
+            };
+
+            // Initial calls
+            loadDashboard();
+            loadSearchData();
+            loadStudents();
+            loadInstructors();
+        </script>
+
+        <!-- Appointment Management Modal -->
+        <div id="userApptModal" class="modal"
+            style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.55);justify-content:center;align-items:center;z-index:10000;backdrop-filter:blur(4px);">
+            <div class="modal-content"
+                style="background:white;width:100%;max-width:900px;border-radius:12px;overflow:hidden;margin:20px;max-height:90vh;display:flex;flex-direction:column;">
+                <div class="modal-header"
+                    style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <img id="uaModalAvatar" src="default_avatar.png"
+                            style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                        <div>
+                            <h3 id="uaModalTitle">User Appointments</h3>
+                            <p id="uaModalSubtitle" style="font-size:12px; color:var(--text-muted);"></p>
+                        </div>
+                    </div>
+                    <button class="close-btn" onclick="closeUserApptModal()"
+                        style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:24px; overflow-y:auto; flex:1;">
+                    <div style="display:flex; gap:12px; margin-bottom:20px;">
+                        <button class="tab-btn active" id="tabCurrent" onclick="switchUATab('current')">Current
+                            /
+                            Upcoming</button>
+                        <button class="tab-btn" id="tabHistory" onclick="switchUATab('history')">Past /
+                            Archived</button>
+                    </div>
+                    <div id="uaListContent" class="table-responsive">
+                        <div style="padding:40px;text-align:center;color:var(--text-muted);">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .tab-btn {
+                padding: 8px 16px;
+                border: 1px solid var(--border);
+                background: white;
+                color: black;
+                border-radius: var(--radius-md);
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                transition: 0.2s;
+            }
+
+            .tab-btn.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+        </style>
+
+        <!-- ══════════════════════════════════════════════
+             SEARCH RESULT MODAL
+             ══════════════════════════════════════════════ -->
+        <div id="searchResultModal" style="
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 22, 40, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 80px;
+            overflow-y: auto;
+        " onclick="if(event.target===this) closeDashProfile()">
+
+            <div id="searchResultCard" style="
+                background: #fff;
+                width: 100%;
+                max-width: 560px;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 32px 64px -12px rgba(0,0,0,0.3);
+                animation: srSlideDown 0.3s cubic-bezier(0.16,1,0.3,1);
+                margin: 0 16px 40px;
+            ">
+                <!-- Modal Header: gradient + avatar + name -->
+                <div id="srHeader" style="
+                    background: linear-gradient(135deg, #064e3b 0%, #065f46 60%, #10b981 100%);
+                    padding: 28px 28px 0;
+                    position: relative;
+                ">
+                    <!-- Close btn -->
+                    <button onclick="closeDashProfile()" style="
+                        position: absolute; top: 16px; right: 16px;
+                        background: rgba(255,255,255,0.15); border: none;
+                        width: 34px; height: 34px; border-radius: 50%;
+                        color: #fff; font-size: 16px; cursor: pointer;
+                        display: flex; align-items: center; justify-content: center;
+                        transition: background 0.2s;
+                    " onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+                        onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <!-- Type badge -->
+                    <div id="srTypeBadge" style="
+                        display: inline-flex; align-items: center; gap: 6px;
+                        background: rgba(255,255,255,0.18); color: #d1fae5;
+                        font-size: 11px; font-weight: 700; text-transform: uppercase;
+                        letter-spacing: 0.8px; padding: 4px 12px;
+                        border-radius: 99px; margin-bottom: 16px;
+                    "></div>
+
+                    <!-- Avatar + Name row -->
+                    <div style="display: flex; align-items: flex-end; gap: 20px; margin-bottom: -28px;">
+                        <img id="dpcAvatar" src="../images/default_avatar.png"
+                            style="width:80px;height:80px;border-radius:16px;object-fit:cover;border:4px solid rgba(255,255,255,0.5);box-shadow:0 4px 16px rgba(0,0,0,0.2); flex-shrink:0;">
+                        <div style="padding-bottom: 36px;">
+                            <div id="dpcName"
+                                style="font-size:20px;font-weight:800;color:#fff;line-height:1.2;letter-spacing:-0.01em;">
+                                —</div>
+                            <div id="dpcId"
+                                style="font-size:13px;color:rgba(255,255,255,0.65);margin-top:4px;font-weight:500;">—
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body -->
+                <div style="padding: 44px 28px 24px;">
+                    <!-- Fields grid -->
+                    <div id="dpcFields" style="
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 16px;
+                        margin-bottom: 24px;
+                    "></div>
+
+                    <!-- Divider -->
+                    <div style="height:1px;background:var(--border);margin-bottom:20px;"></div>
+
+                    <!-- Action buttons -->
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <button id="btnBookFromSearch" style="
+                            display: inline-flex; align-items: center; gap: 8px;
+                            background: var(--gradient-primary); color: #fff;
+                            border: none; border-radius: 10px;
+                            padding: 10px 18px; font-size: 14px; font-weight: 600;
+                            cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(6,95,70,0.3);
+                        " onmouseover="this.style.transform='translateY(-1px)'"
+                            onmouseout="this.style.transform='translateY(0)'">
+                            <i class="fas fa-calendar-plus"></i> Book Walk-in
+                        </button>
+                        <button id="btnHistoryFromSearch" style="
+                            display: inline-flex; align-items: center; gap: 8px;
+                            background: #f1f5f9; color: var(--text-main);
+                            border: 1px solid var(--border); border-radius: 10px;
+                            padding: 10px 18px; font-size: 14px; font-weight: 600;
+                            cursor: pointer; transition: 0.2s;
+                        " onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                            <i class="fas fa-history"></i> History
+                        </button>
+                        <button id="btnManageFromSearch" style="
+                            display: inline-flex; align-items: center; gap: 8px;
+                            background: #f1f5f9; color: var(--text-main);
+                            border: 1px solid var(--border); border-radius: 10px;
+                            padding: 10px 18px; font-size: 14px; font-weight: 600;
+                            cursor: pointer; transition: 0.2s;
+                        " onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                            <i class="fas fa-user-gear"></i> Manage
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            @keyframes srSlideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-24px) scale(0.97);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            #dpcFields .sr-field {
+                background: #f8fafc;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 12px 14px;
+            }
+
+            #dpcFields .sr-field-label {
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.4px;
+                color: var(--text-muted);
+                margin-bottom: 4px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            #dpcFields .sr-field-label i {
+                color: var(--primary);
+                opacity: 0.75;
+            }
+
+            #dpcFields .sr-field-value {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text-main);
+                word-break: break-word;
+            }
+
+            @media (max-width: 480px) {
+                #dpcFields {
+                    grid-template-columns: 1fr !important;
+                }
+
+                #searchResultCard {
+                    border-radius: 16px !important;
+                }
+            }
+        </style>
+</body>
+
+</html>

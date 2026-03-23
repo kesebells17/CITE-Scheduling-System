@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Profile | CiteApp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <style>
+        /* --- Page Landing Animation --- */
+        .dashboard-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeSlideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sequential animation for elements */
+        .card {
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeSlideIn 0.5s ease-out forwards;
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+    </style>
+</head>
+
+<body class="dashboard-page">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo-container">
+            <a href="student_dashboard.html" class="logo">
+                <img src="../images/citeneww.png" alt="CITE Logo" class="sidebar-logo">
+                <a href="#" class="logoInstructor">Student</a>
+            </a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="student_dashboard.html" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="student_profile.html" class="nav-item active"><i class="fas fa-user"></i> My Profile</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="#" onclick="logout()"
+                style="display:block; margin-top:12px; color:var(--sidebar-text); font-size:13px; text-decoration:none;">
+                <i class="fas fa-sign-out-alt"></i> Sign out
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="top-header">
+            <div class="page-title">My Profile</div>
+            <div class="header-actions">
+                <a href="student_dashboard.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+
+            <!-- Profile Information Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Profile Information</div>
+                    <button onclick="toggleEdit()" id="editBtn" class="btn btn-primary"
+                        style="padding:8px 16px; font-size:13px;">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </button>
+                </div>
+                <div style="padding:32px;">
+                    <form id="profileForm">
+                        <div
+                            style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" id="firstname" class="form-control" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" id="lastname" class="form-control" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Middle Name</label>
+                                <input type="text" id="middlename" class="form-control" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Student ID</label>
+                                <input type="text" id="schoolid" class="form-control" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" id="email" class="form-control" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Contact Number</label>
+                                <input type="tel" id="contact" class="form-control" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Course</label>
+                                <input type="text" id="course" class="form-control"
+                                    placeholder="e.g., BS Computer Science" disabled>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Year Level</label>
+                                <select id="yearlevel" class="form-select" disabled>
+                                    <option value="">Select Year</option>
+                                    <option value="1st Year">1st Year</option>
+                                    <option value="2nd Year">2nd Year</option>
+                                    <option value="3rd Year">3rd Year</option>
+                                    <option value="4th Year">4th Year</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div id="saveSection"
+                            style="display:none; margin-top:24px; padding-top:24px; border-top:1px solid var(--border);">
+                            <button type="button" onclick="saveProfile()" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                            <button type="button" onclick="cancelEdit()" class="btn btn-outline"
+                                style="margin-left:12px;">
+                                Cancel
+                            </button>
+                            <div id="saveMsg"
+                                style="display:inline-block; margin-left:16px; font-size:14px; font-weight:500;"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Appointment History Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Appointment History</div>
+                </div>
+                <div class="table-responsive" id="historyList">
+                    <div style="padding:40px;text-align:center;color:var(--text-muted);">Loading...</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let isEditing = false;
+
+        function toggleEdit() {
+            isEditing = true;
+            document.querySelectorAll('#profileForm input:not(#schoolid), #profileForm select').forEach(el => el.disabled = false);
+            document.getElementById('saveSection').style.display = 'block';
+            document.getElementById('editBtn').style.display = 'none';
+        }
+
+        function cancelEdit() {
+            isEditing = false;
+            loadProfile();
+            document.querySelectorAll('#profileForm input, #profileForm select').forEach(el => el.disabled = true);
+            document.getElementById('saveSection').style.display = 'none';
+            document.getElementById('editBtn').style.display = 'inline-flex';
+        }
+
+        function saveProfile() {
+            const data = {
+                firstname: document.getElementById('firstname').value,
+                lastname: document.getElementById('lastname').value,
+                middlename: document.getElementById('middlename').value,
+                email: document.getElementById('email').value,
+                contact_number: document.getElementById('contact').value,
+                course: document.getElementById('course').value,
+                year_level: document.getElementById('yearlevel').value
+            };
+
+            const msg = document.getElementById('saveMsg');
+            msg.textContent = 'Saving...';
+            msg.style.color = 'var(--primary)';
+
+            fetch('../php/update_student_profile.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(data)
+            })
+                .then(r => r.json())
+                .then(j => {
+                    if (j.success) {
+                        msg.textContent = '✓ Profile updated!';
+                        msg.style.color = 'var(--success)';
+                        setTimeout(() => {
+                            cancelEdit();
+                            msg.textContent = '';
+                        }, 2000);
+                    } else {
+                        msg.textContent = 'Error: ' + (j.message || 'Update failed');
+                        msg.style.color = 'var(--danger)';
+                    }
+                })
+                .catch(err => {
+                    msg.textContent = 'Update failed';
+                    msg.style.color = 'var(--danger)';
+                });
+        }
+
+        function loadProfile() {
+            fetch('../php/get_student_info.php')
+                .then(r => r.json())
+                .then(j => {
+                    if (!j.success) {
+                        alert('Session expired');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    document.getElementById('firstname').value = j.firstname || '';
+                    document.getElementById('lastname').value = j.lastname || '';
+                    document.getElementById('middlename').value = j.Middlename || '';
+                    document.getElementById('schoolid').value = j.SchoolID || '';
+                    document.getElementById('email').value = j.email || '';
+                    document.getElementById('contact').value = j.contact_number || '';
+                    document.getElementById('course').value = j.course || '';
+                    document.getElementById('yearlevel').value = j.year_level || '';
+                });
+        }
+
+        function loadHistory() {
+            fetch('../php/get_appointment_history.php')
+                .then(r => r.json())
+                .then(j => {
+                    if (!j.success) return;
+
+                    const appointments = j.appointments || [];
+                    const el = document.getElementById('historyList');
+
+                    if (appointments.length === 0) {
+                        el.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted);">No appointment history</div>';
+                        return;
+                    }
+
+                    let table = '<table class="data-table"><thead><tr><th>Instructor</th><th>Date</th><th>Time</th><th>Status</th><th>Notes</th></tr></thead><tbody>';
+                    appointments.forEach(a => {
+                        let badgeClass = 'badge-warning';
+                        if (a.status === 'Accepted' || a.status === 'Approved') badgeClass = 'badge-success';
+                        if (a.status === 'Declined') badgeClass = 'badge-danger';
+                        if (a.status === 'Completed') badgeClass = 'badge-success';
+
+                        table += `<tr>
+              <td style="font-weight:500;">${a.instructor_name}</td>
+              <td>${a.slot_date}</td>
+              <td>${a.time_range}</td>
+              <td><span class="badge ${badgeClass}">${a.status}</span></td>
+              <td style="font-size:12px; color:var(--text-muted);">${a.notes || '-'}</td>
+            </tr>`;
+                    });
+                    table += '</tbody></table>';
+                    el.innerHTML = table;
+                });
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            const overlay = document.createElement('div');
+            overlay.className = 'custom-confirm-overlay';
+            overlay.innerHTML = `
+                <div class="custom-confirm-content">
+                    <div class="custom-confirm-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="custom-confirm-body">
+                        <p>${message}</p>
+                    </div>
+                    <div class="custom-confirm-footer">
+                        <button class="btn-confirm-no">Cancel</button>
+                        <button class="btn-confirm-yes">Confirm</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            overlay.querySelector('.btn-confirm-no').onclick = () => overlay.remove();
+            overlay.querySelector('.btn-confirm-yes').onclick = () => {
+                onConfirm();
+                overlay.remove();
+            };
+        }
+
+        function logout() {
+            showConfirm('Logout', 'Are you sure you want to logout?', () => {
+                fetch('../php/logout.php').then(() => location.href = 'login.html').catch(() => location.href = '../html/login.html');
+            });
+        }
+
+        // Load data
+        loadProfile();
+        loadHistory();
+    </script>
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 CITE 2026 CITE Faculty & Staff Scheduling System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

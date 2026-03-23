@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manage Students | Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/professional_chat.css">
+    <link rel="stylesheet" href="../css/announcements.css">
+    <style>
+        /* --- Page Landing Animation --- */
+        .dashboard-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeSlideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sequential animation for dashboard elements */
+        .card {
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeSlideIn 0.5s ease-out forwards;
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .avatar-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            vertical-align: middle;
+            margin-right: 12px;
+        }
+
+        /* Toast Styles */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 10000;
+        }
+
+        .toast {
+            background: white;
+            color: var(--text-main);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid var(--primary);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Credentials Box */
+        .credentials-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #edf2f7;
+        }
+
+        .credential-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .credential-value {
+            font-family: monospace;
+            font-weight: 700;
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body class="dashboard-page">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-container">
+            <img src="../images/citeneww.png" alt="CITE Logo" class="sidebar-logo">
+            <span class="logoAdmin">Admin</span>
+        </div>
+
+        <nav class="nav-links">
+            <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+            <a href="admin_manage_instructors.html" class="nav-item"><i
+                    class="fas fa-chalkboard-teacher"></i><span>Manage Instructors</span></a>
+            <a href="admin_manage_students.html" class="nav-item active"><i
+                    class="fas fa-user-graduate"></i><span>Manage Students</span></a>
+            <a href="admin_announcements.html" class="nav-item"><i
+                    class="fas fa-bullhorn"></i><span>Announcements</span></a>
+            <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-user-plus"></i><span>Walk-in
+                    Booking</span></a>
+            <a href="admin_dashboard.html" class="nav-item"><i class="fas fa-clipboard-list"></i><span>Manage
+                    Requests</span></a>
+            <a href="admin_records.html" class="nav-item"><i class="fas fa-database"></i><span>Records</span></a>
+            <a href="admin_reports.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Report
+                    Summary</span></a>
+        </nav>
+
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <header class="top-header">
+            <div style="display:flex; align-items:center; gap:16px;">
+                <button class="menu-toggle" id="sidebarToggle" title="Toggle Sidebar">
+                    <i class="fas fa-bars"></i>
+                    <i class="fas fa-times" style="display:none;"></i>
+                </button>
+                <div class="page-title">Manage Students</div>
+            </div>
+
+            <div class="header-actions">
+                <span id="currentTime"
+                    style="color:var(--text-muted); font-size:13px; font-weight:500; margin-right:8px;"></span>
+
+                <div class="header-divider"></div>
+
+                <!-- Chat Icon -->
+                <button class="header-btn" onclick="toggleChatPanel()" title="Messages">
+                    <i class="fas fa-comments"></i>
+                    <span id="chatBadge" class="notif-badge-sleek has-count"
+                        style="display:none; background:var(--primary);"></span>
+                </button>
+
+                <!-- Notification Bell -->
+                <div style="position:relative;">
+                    <button class="header-btn" onclick="toggleNotifications()" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span id="notifBadge" class="notif-badge-sleek has-count" style="display:none;"></span>
+                    </button>
+                    <!-- Notifications Dropdown -->
+                    <div id="notificationsPanel"
+                        style="display:none; position:absolute; top:50px; right:0; width:340px; max-height:480px; background:white; border-radius:var(--radius-xl); box-shadow:var(--shadow-2xl); z-index:1100; border:1px solid var(--border); overflow:hidden;">
+                        <div
+                            style="padding:18px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700; font-size:15px; color:var(--text-main);">Notifications</span>
+                            <button onclick="markAllRead()"
+                                style="background:none; border:none; color:var(--primary); font-size:12px; font-weight:600; cursor:pointer; width:auto; padding:0; box-shadow:none;">Mark
+                                all as read</button>
+                        </div>
+                        <div id="notificationsList" style="max-height:380px; overflow-y:auto; padding:8px 0;">
+                            <div style="padding:40px 20px; text-align:center; color:var(--text-muted); font-size:13px;">
+                                <i class="fas fa-bell-slash"
+                                    style="display:block; font-size:24px; margin-bottom:12px; opacity:0.3;"></i>
+                                No new notifications
+                            </div>
+                        </div>
+                        <div style="padding:12px; border-top:1px solid var(--border); text-align:center;">
+                            <a href="admin_notifications.html"
+                                style="font-size:12px; color:var(--primary); font-weight:600; text-decoration:none;">View
+                                all activity</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-divider"></div>
+
+                <!-- User Profile Dropdown Area -->
+                <div style="position:relative;">
+                    <div class="header-user" id="profileDropdownBtn">
+                        <div class="header-user-info" style="text-align:right;">
+                            <span id="headerAdminName" class="header-user-name">Admin</span>
+                            <span class="header-user-role">System Administrator</span>
+                        </div>
+                        <img id="headerProfilePic" src="../images/default_avatar.png" alt="Profile">
+                        <i class="fas fa-chevron-down"
+                            style="font-size:10px; color:var(--text-light); transition: transform 0.2s;"
+                            id="profileChevron"></i>
+                    </div>
+
+                    <!-- Profile Dropdown Menu -->
+                    <div id="profileDropdown" class="dropdown-menu-sleek">
+                        <div style="padding: 12px 14px; border-bottom: 1px solid var(--border); margin-bottom: 6px;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--text-main);"
+                                id="dropdownAdminName">Admin Name</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">administrator@cite.edu</div>
+                        </div>
+                        <button class="dropdown-item-sleek" onclick="openEditProfile()">
+                            <i class="fas fa-user-circle"></i>Profile Settings
+                        </button>
+
+                        <div class="dropdown-divider-sleek"></div>
+                        <button class="dropdown-item-sleek danger" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <script>
+            // Dropdown Toggle Logic
+            document.addEventListener('DOMContentLoaded', () => {
+                const profileBtn = document.getElementById('profileDropdownBtn');
+                const profileDropdown = document.getElementById('profileDropdown');
+                const chevron = document.getElementById('profileChevron');
+
+                if (profileBtn && profileDropdown) {
+                    profileBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isShow = profileDropdown.classList.contains('show');
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                        if (!isShow) {
+                            profileDropdown.classList.add('show');
+                            if (chevron) chevron.style.transform = 'rotate(180deg)';
+                        } else {
+                            profileDropdown.classList.remove('show');
+                            if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        }
+                    });
+                }
+
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.dropdown-menu-sleek') && !e.target.closest('.header-user') && !e.target.closest('.header-btn')) {
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                        if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        const notifPanel = document.getElementById('notificationsPanel');
+                        if (notifPanel) notifPanel.style.display = 'none';
+                    }
+                });
+
+                // Sidebar Toggle logic
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                const barsIcon = sidebarToggle ? sidebarToggle.querySelector('.fa-bars') : null;
+                const timesIcon = sidebarToggle ? sidebarToggle.querySelector('.fa-times') : null;
+
+                if (sidebarToggle && sidebar) {
+                    sidebarToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (window.innerWidth > 768) {
+                            sidebar.classList.toggle('collapsed');
+                            if (mainContent) mainContent.classList.toggle('expanded');
+                        } else {
+                            sidebar.classList.toggle('mobile-open');
+                            if (barsIcon && timesIcon) {
+                                if (sidebar.classList.contains('mobile-open')) {
+                                    barsIcon.style.display = 'none';
+                                    timesIcon.style.display = 'block';
+                                } else {
+                                    barsIcon.style.display = 'block';
+                                    timesIcon.style.display = 'none';
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Close sidebar on outside click (mobile)
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.dropdown-menu-sleek') && !e.target.closest('.header-user') && !e.target.closest('.header-btn')) {
+                        document.querySelectorAll('.dropdown-menu-sleek').forEach(d => d.classList.remove('show'));
+                        if (chevron) chevron.style.transform = 'rotate(0deg)';
+                        const notifPanel = document.getElementById('notificationsPanel');
+                        if (notifPanel) notifPanel.style.display = 'none';
+                    }
+
+                    if (window.innerWidth <= 768 && sidebar && sidebar.classList.contains('mobile-open') && !e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('mobile-open');
+                        if (barsIcon && timesIcon) {
+                            barsIcon.style.display = 'block';
+                            timesIcon.style.display = 'none';
+                        }
+                    }
+                });
+
+                // Clock logic
+                setInterval(() => {
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const dateStr = now.toLocaleDateString([], { month: 'short', day: '2-digit' });
+                    const clockEl = document.getElementById('currentTime');
+                    if (clockEl) clockEl.textContent = `${dateStr} | ${timeStr}`;
+                }, 1000);
+            });
+        </script>
+        <div class="dashboard-container">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Create New Student</div>
+                </div>
+                <div style="padding:24px;">
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" id="newFirstname" class="form-control" placeholder="e.g. Ronald Ryan"
+                                required minlength="2">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Middle Name</label>
+                            <input type="text" id="newMiddlename" class="form-control" placeholder="Optional">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" id="newLastname" class="form-control" placeholder="e.g. Intud" required
+                                minlength="2">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">PHINMAed Email</label>
+                            <input type="email" id="newEmail" class="form-control"
+                                placeholder="rosa.intud.coc@phinmaed.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contact Number</label>
+                            <input type="text" id="newContactNumber" class="form-control" placeholder="+639XXXXXXXXX">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Department / Course</label>
+                            <select id="newCourse" class="form-select">
+                                <option value="">Select Course</option>
+                                <option value="BSIT">BSIT</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Year Level</label>
+                            <select id="newYearLevel" class="form-select">
+                                <option value="">Select Year Level</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                            </select>
+                        </div>
+                        <div class="form-group"
+                            style="background:rgba(var(--primary-rgb), 0.05); padding:16px; border-radius:12px; border:1px dashed var(--primary); display:flex; flex-direction:column; justify-content:center;">
+                            <div style="font-size:12px; color:var(--primary); font-weight:600;"><i
+                                    class="fas fa-info-circle"></i> AUTO-GENERATION RULE</div>
+                            <div style="font-size:11px; color:var(--text-muted);">The <b>School ID</b> and <b>Temporary
+                                    Password</b> will be auto-generated.</div>
+                        </div>
+                    </div>
+                    <div id="addResult" style="margin:16px 0;"></div>
+                    <div style="margin-top:24px;">
+                        <button class="btn btn-primary" onclick="addStudent()">
+                            <i class="fas fa-user-plus" style="margin-right:8px;"></i> Create Student Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students List -->
+            <div class="card" style="margin-top:24px;">
+                <div class="card-header">
+                    <div class="card-title">All Students</div>
+                    <div style="display:flex; gap:16px; align-items:center;">
+                        <input type="text" id="studentSearch" placeholder="Search by name or ID..."
+                            oninput="loadStudents()"
+                            style="padding:8px 16px; border:1px solid var(--border); border-radius:var(--radius-md); font-size:13px; width: 250px;">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table user-management-table">
+                        <thead>
+                            <tr>
+                                <th>School ID</th>
+                                <th>Name</th>
+                                <th>Course/Year</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align:center;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="editModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Student</h3>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <input type="hidden" id="editOriginalSchoolId">
+                <div class="form-group">
+                    <label class="form-label">School ID (Read-only)</label>
+                    <input type="text" id="editSchoolId" readonly style="background:#f1f5f9;">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" id="editFirstname">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" id="editLastname">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phinmaed Email</label>
+                    <input type="email" id="editEmail">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contact Number</label>
+                    <input type="text" id="editContactNumber" placeholder="+639XXXXXXXXX">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label class="form-label">Course</label>
+                        <select id="editCourse" class="form-select">
+                            <option value="">Select Course</option>
+                            <option value="BSIT">BSIT</option>
+                            <option value="BSCS">BSCS</option>
+                            <option value="BSIS">BSIS</option>
+                            <option value="BSEMC">BSEMC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Year Level</label>
+                        <select id="editYearLevel" class="form-select">
+                            <option value="">Select Year Level</option>
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="editResult" style="margin:16px 0;"></div>
+                <button class="btn btn-primary" onclick="saveStudent()" style="width:100%;">
+                    <i class="fas fa-save" style="margin-right:8px;"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+
+
+    <script>
+        async function loadStudents() {
+            const search = document.getElementById('studentSearch').value;
+            try {
+                const res = await fetch(`../php/get_all_students.php?search=${encodeURIComponent(search)}&detailed=true`);
+                const data = await res.json();
+                const tbody = document.getElementById('studentsTableBody');
+
+                if (!data.success || !data.students || data.students.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No students found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.students.map(s => {
+                    const fullName = s.Firstname ? `${escapeHtml(s.Firstname)} ${escapeHtml(s.Lastname)}` : escapeHtml(s.name);
+                    return `
+                    <tr>
+                        <td style="font-family:monospace; font-weight:600;">${s.school_id}</td>
+                        <td>
+                            <div style="display:flex; align-items:center;">
+                                <img src="${s.profile_picture || '../images/default_avatar.png'}" class="avatar-sm" alt="">
+                                <span>${fullName}</span>
+                            </div>
+                        </td>
+                        <td>${escapeHtml(s.course || '-')} / ${escapeHtml(s.year_level || '-')}</td>
+                        <td>${escapeHtml(s.email || '-')}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-outline" title="Edit" onclick="editStudent(${s.user_id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-outline" title="Reset Password" onclick="resetPassword(${s.user_id})">
+                                <i class="fas fa-key"></i>
+                            </button>
+                            <button class="btn btn-danger" title="Delete" onclick="deleteStudent(${s.user_id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `}).join('');
+            } catch (e) {
+                console.error('Error loading students:', e);
+            }
+        }
+
+        async function addStudent() {
+            const data = {
+                action: 'create',
+                Firstname: document.getElementById('newFirstname').value.trim(),
+                Middlename: document.getElementById('newMiddlename').value.trim(),
+                Lastname: document.getElementById('newLastname').value.trim(),
+                Email: document.getElementById('newEmail').value.trim(),
+                ContactNumber: document.getElementById('newContactNumber').value.trim(),
+                Course: document.getElementById('newCourse').value,
+                YearLevel: document.getElementById('newYearLevel').value
+            };
+
+            if (!data.Firstname || !data.Lastname || !data.Email) {
+                showToast('Name and Email are required', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('../php/admin_manage_student.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: Object.keys(data).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k])).join('&')
+                });
+                const json = await response.json();
+
+                if (json.success) {
+                    showToast('Student account created!');
+                    ['newFirstname', 'newMiddlename', 'newLastname', 'newEmail', 'newContactNumber', 'newCourse', 'newYearLevel'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = '';
+                    });
+                    showCredentialsModal(json.credentials);
+                    loadStudents();
+                } else {
+                    showToast(json.message, 'error');
+                }
+            } catch (e) {
+                showToast('Network error', 'error');
+            }
+        }
+
+        function showCredentialsModal(creds) {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal';
+            overlay.style.display = 'flex';
+            overlay.style.zIndex = '20000';
+            overlay.innerHTML = `
+                <div class="modal-content" style="max-width:400px; text-align:center;">
+                    <div class="modal-header">
+                        <h3 style="color:var(--success-text)"><i class="fas fa-check-circle"></i> Student Created</h3>
+                        <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div class="modal-body" style="padding:20px;">
+                        <p style="font-size:14px; color:var(--text-muted);">Please share these auto-generated credentials with the student.</p>
+                        <div class="credentials-box">
+                            <div class="credential-item">
+                                <span class="credential-label">School ID</span>
+                                <span class="credential-value">${creds.school_id}</span>
+                            </div>
+                            <div class="credential-item">
+                                <span class="credential-label">Username</span>
+                                <span class="credential-value">${creds.username}</span>
+                            </div>
+                            <div class="credential-item">
+                                <span class="credential-label">Temp Password</span>
+                                <span class="credential-value">${creds.password}</span>
+                            </div>
+                        </div>
+                        <div style="margin-top:20px; text-align:left;">
+                            <label style="font-size:11px; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Verification Link (Share this with student)</label>
+                            <div style="display:flex; gap:8px;">
+                                <input type="text" value="${creds.verification_link}" readonly style="flex:1; font-size:11px; padding:8px; border:1px solid #e2e8f0; border-radius:6px; background:#f8fafc; font-family:monospace;">
+                                <button class="btn btn-outline" onclick="copyToClipboard('${creds.verification_link}')" style="padding:6px 12px;"><i class="fas fa-copy"></i></button>
+                                <button class="btn btn-success" onclick="simulateEmailSend('${creds.username}', '${creds.verification_link}')" style="padding:6px 12px; font-size:11px;"><i class="fas fa-paper-plane"></i> Send</button>
+                            </div>
+                        </div>
+                        <div style="font-size:11px; color:#f59e0b; background:#fff7ed; padding:10px; border-radius:8px; border:1px solid #ffedd5; margin-top:20px;">
+                            <i class="fas fa-exclamation-circle"></i> User must verify their email before login.
+                        </div>
+                        <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="this.closest('.modal').remove()">Done</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            showToast('Link copied to clipboard!');
+        }
+
+        function simulateEmailSend(username, link) {
+            showToast('Simulating email to user...');
+            setTimeout(() => {
+                showToast(`Verification email successfully sent to student!`, 'success');
+            }, 1000);
+        }
+
+        async function editStudent(userId) {
+            try {
+                const res = await fetch(`../php/get_user_info.php?user_id=${userId}`);
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('editOriginalSchoolId').value = userId;
+                    document.getElementById('editSchoolId').value = data.school_id || '';
+                    document.getElementById('editFirstname').value = data.firstname || '';
+                    document.getElementById('editLastname').value = data.lastname || '';
+                    document.getElementById('editEmail').value = data.email || '';
+                    document.getElementById('editContactNumber').value = data.contact_number || '';
+                    document.getElementById('editCourse').value = data.course || '';
+                    document.getElementById('editYearLevel').value = data.year_level || '';
+                    document.getElementById('editModal').style.display = 'flex';
+                }
+            } catch (e) { showToast('Error fetching details', 'error'); }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        async function saveStudent() {
+            const data = {
+                action: 'update',
+                user_id: document.getElementById('editOriginalSchoolId').value,
+                Firstname: document.getElementById('editFirstname').value.trim(),
+                Lastname: document.getElementById('editLastname').value.trim(),
+                Email: document.getElementById('editEmail').value.trim(),
+                ContactNumber: document.getElementById('editContactNumber').value.trim(),
+                Course: document.getElementById('editCourse').value,
+                YearLevel: document.getElementById('editYearLevel').value
+            };
+            try {
+                const res = await fetch('../php/admin_manage_student.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: Object.keys(data).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k])).join('&')
+                });
+                const json = await res.json();
+                if (json.success) {
+                    showToast('Updated successfully');
+                    loadStudents();
+                    closeEditModal();
+                } else {
+                    showToast(json.message, 'error');
+                }
+            } catch (e) { showToast('Network error', 'error'); }
+        }
+
+        function deleteStudent(id) {
+            showConfirm('Delete Student', 'Are you sure you want to delete this student account?', async () => {
+                try {
+                    const res = await fetch('../php/admin_manage_student.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `action=delete&user_id=${id}`
+                    });
+                    const json = await res.json();
+                    showToast(json.message);
+                    loadStudents();
+                } catch (e) { }
+            });
+        }
+
+        function resetPassword(id) {
+            showPrompt('Reset Password', 'Enter new password for this student:', (pass) => {
+                fetch('../php/admin_manage_student.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `action=reset_password&user_id=${id}&new_password=${encodeURIComponent(pass)}`
+                }).then(r => r.json()).then(j => showToast(j.message));
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer') || createToastContainer();
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? 'fa-check-circle' : (type === 'error' ? 'fa-times-circle' : 'fa-exclamation-circle');
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <div class="toast-message">${message}</div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+            return container;
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            const overlay = document.createElement('div');
+            overlay.className = 'custom-confirm-overlay';
+            overlay.innerHTML = `
+                <div class="custom-confirm-content">
+                    <div class="custom-confirm-header">
+                        <i class="fas fa-question-circle"></i>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="custom-confirm-body">${message}</div>
+                    <div class="custom-confirm-footer">
+                        <button class="btn-confirm-no">Cancel</button>
+                        <button class="btn-confirm-yes">Confirm</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            overlay.querySelector('.btn-confirm-no').onclick = () => overlay.remove();
+            overlay.querySelector('.btn-confirm-yes').onclick = () => {
+                onConfirm();
+                overlay.remove();
+            };
+        }
+
+        function showPrompt(title, message, onComplete) {
+            const overlay = document.createElement('div');
+            overlay.className = 'custom-confirm-overlay';
+            overlay.innerHTML = `
+                <div class="custom-confirm-content">
+                    <div class="custom-confirm-header">
+                        <i class="fas fa-edit"></i>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="custom-confirm-body">
+                        <p style="margin-bottom:16px;">${message}</p>
+                        <input type="text" id="customPromptInput" class="form-control" style="width:100%" placeholder="Type here...">
+                    </div>
+                    <div class="custom-confirm-footer">
+                        <button class="btn-confirm-no">Cancel</button>
+                        <button class="btn-confirm-yes">Submit</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            const input = overlay.querySelector('#customPromptInput');
+            input.focus();
+            overlay.querySelector('.btn-confirm-no').onclick = () => overlay.remove();
+            overlay.querySelector('.btn-confirm-yes').onclick = () => {
+                const val = input.value;
+                if (val) {
+                    onComplete(val);
+                    overlay.remove();
+                } else {
+                    input.style.borderColor = 'var(--danger)';
+                }
+            };
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function logout() {
+            showConfirm('Sign Out', 'Are you sure you want to sign out of your account?', () => {
+                fetch('../php/logout.php').then(() => window.location.href = 'login.html').catch(() => window.location.href = '../html/admin_login.html');
+            });
+        }
+    </script>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal"
+        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.4);justify-content:center;align-items:center;z-index:20001;">
+        <div class="modal-content"
+            style="background:white;width:100%;max-width:500px;border-radius:8px;overflow:hidden;margin:20px;">
+            <div class="modal-header"
+                style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <h3>Edit Profile</h3>
+                <button class="close-btn" onclick="closeEditProfile()"
+                    style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:24px;">
+                <form id="editProfileForm" onsubmit="submitAdminProfile(event)" enctype="multipart/form-data">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px;">
+                        <div class="form-group">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">First
+                                Name</label>
+                            <input type="text" class="form-control" id="editAdminFirstname" name="firstname" required
+                                minlength="2" placeholder="e.g. John"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Middle
+                                Name</label>
+                            <input type="text" class="form-control" id="editAdminMiddlename" name="middlename"
+                                placeholder="Optional"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Last
+                                Name</label>
+                            <input type="text" class="form-control" id="editAdminLastname" name="lastname" required
+                                minlength="2" placeholder="e.g. Doe"
+                                style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label"
+                            style="display:block; margin-bottom:8px; font-weight:500;">Username</label>
+                        <input type="text" class="form-control" id="editAdminUsername" name="username" required
+                            minlength="4" placeholder="Enter username"
+                            style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Email
+                            Address</label>
+                        <input type="email" class="form-control" id="editAdminEmail" name="email" required
+                            placeholder="admin@example.com"
+                            style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Contact
+                            Number</label>
+                        <input type="text" class="form-control" id="editAdminContactNumber" name="contact_number"
+                            placeholder="+639XXXXXXXXX"
+                            style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">New
+                            Password (leave blank to keep current)</label>
+                        <input type="password" class="form-control" id="editAdminPassword" name="new_password"
+                            minlength="8" placeholder="New password (min. 8 characters)"
+                            style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-md);">
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label class="form-label" style="display:block; margin-bottom:8px; font-weight:500;">Profile
+                            Picture</label>
+                        <div onclick="document.getElementById('adminProfileUpload').click()"
+                            style="padding: 16px; border: 2px dashed var(--border); border-radius: 6px; text-align: center; cursor: pointer; transition: 0.2s;"
+                            onmouseover="this.style.borderColor='var(--primary)'"
+                            onmouseout="this.style.borderColor='var(--border)'">
+                            <i class="fas fa-cloud-upload-alt"
+                                style="color:var(--text-muted); font-size:24px; margin-bottom:8px;"></i>
+                            <div id="adminFileName" style="font-size:13px; color:var(--text-muted);">Click
+                                to upload new
+                                image</div>
+                            <input type="file" id="adminProfileUpload" name="profilePic" accept="image/*"
+                                style="display: none"
+                                onchange="document.getElementById('adminFileName').textContent = this.files[0].name">
+                        </div>
+                    </div>
+                    <div style="text-align:right;margin-top:24px;">
+                        <button type="button" class="btn btn-outline" onclick="closeEditProfile()"
+                            style="margin-right:8px;">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Chat Panel -->
+    <div id="chatPanel" class="chat-panel">
+        <div class="chat-header">
+            <h3>Messages</h3>
+            <button onclick="toggleChatPanel()" class="chat-close-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="chat-body">
+            <div id="chatUserView" class="chat-user-view">
+                <div class="chat-search-bar">
+                    <div class="chat-search-input-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="chatSearchInput" class="chat-search-input"
+                            placeholder="Search conversations..." oninput="searchUsers(this.value)">
+                    </div>
+                </div>
+                <div id="chatUserListContainer" class="chat-user-list">
+                    <div class="empty-chat"><i class="fas fa-comments"></i>
+                        <p>Loading conversations...</p>
+                    </div>
+                </div>
+            </div>
+            <div id="chatConversation" class="conversation-view">
+                <div class="conv-header">
+                    <button onclick="backToUserList()" class="conv-back-btn"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <div class="conv-user-info">
+                        <img id="chatConvAvatar" src="default_avatar.png" class="conv-avatar">
+                        <span id="chatConvName" class="conv-name">Select User</span>
+                    </div>
+                </div>
+                <div id="chatMessages" class="messages-container"></div>
+                <div class="chat-footer">
+                    <form id="chatForm" onsubmit="sendChatMessage(event)">
+                        <div class="input-container">
+                            <textarea id="chatInput" class="chat-input-textarea" placeholder="Type your message here..."
+                                rows="1" onkeydown="handleChatKeydown(event)"></textarea>
+                            <button type="submit" class="send-button"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAdminData = {};
+        let currentChatUser = null;
+        let chatPollingInterval = null;
+        let searchTimeout = null;
+        let lastMessagesJson = '';
+
+        function resolveAvatar(pic, role) {
+            if (!pic || pic === '../images/default_avatar.png') return '../images/default_avatar.png';
+            if (pic.includes('/')) return pic;
+            const map = {
+                student: '../uploadsStudentProfilePic/',
+                instructor: '../uploadsInstructorProfilePic/',
+                admin: '../uploadsAdminProfilePic/',
+                super_admin: '../uploadsAdminProfilePic/'
+            };
+            return (map[role] || '../images/') + pic;
+        }
+
+        // Notification System
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationsPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            if (panel.style.display === 'block') loadNotifications();
+        }
+
+        function loadNotifications() {
+            fetch('../php/get_notifications.php')
+                .then(r => r.json())
+                .then(j => {
+                    if (!j.success) return;
+                    const badge = document.getElementById('notifBadge');
+                    const list = document.getElementById('notificationsList');
+                    if (j.unread_count > 0) {
+                        badge.textContent = j.unread_count;
+                        badge.style.display = 'block';
+                    } else { badge.style.display = 'none'; }
+                    if (j.notifications.length === 0) {
+                        list.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text-muted);">No notifications</div>';
+                        return;
+                    }
+                    let html = '';
+                    j.notifications.forEach(n => {
+                        const isUnread = n.is_read == 0;
+                        const avatar = n.sender_picture || '../images/default_avatar.png';
+                        html += `
+                        <div style="display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border); ${isUnread ? 'background:rgba(6,95,70,0.03);' : ''} cursor:pointer; align-items:flex-start;" onclick="handleNotificationClick(${n.id}, ${n.notification_type === 'new_message' ? n.sender_id : 'null'})">
+                            <img src="${avatar}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--border); flex-shrink:0;">
+                            <div style="flex:1;">
+                                <div style="font-size:13px; color:var(--text-main); line-height:1.4; ${isUnread ? 'font-weight:600;' : ''}">${n.message}</div>
+                                <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${n.time_ago}</div>
+                            </div>
+                            ${isUnread ? '<div style="width:8px; height:8px; background:var(--primary); border-radius:50%; margin-top:4px; flex-shrink:0;"></div>' : ''}
+                        </div>`;
+                    });
+                    list.innerHTML = html;
+                });
+        }
+
+        function handleNotificationClick(notifId, senderId) {
+            markNotificationRead(notifId);
+            if (senderId) replyToNotification(senderId);
+        }
+
+        function markNotificationRead(id) {
+            fetch('../php/mark_notifications_read.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `notification_ids=${id}`
+            }).then(() => loadNotifications());
+        }
+
+        function markAllRead() {
+            fetch('../php/get_notifications.php')
+                .then(r => r.json())
+                .then(j => {
+                    if (j.notifications && j.notifications.length > 0) {
+                        const ids = j.notifications.map(n => n.id || n.notification_id).join(',');
+                        fetch('../php/mark_notifications_read.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `notification_ids=${ids}`
+                        }).then(() => loadNotifications());
+                    }
+                });
+        }
+
+        // Chat System
+        function toggleChatPanel() {
+            const panel = document.getElementById('chatPanel');
+            panel.classList.toggle('open');
+            if (panel.classList.contains('open')) {
+                loadChatUsers();
+                if (!chatPollingInterval) chatPollingInterval = setInterval(() => {
+                    if (currentChatUser) loadMessages(currentChatUser.user_id, false);
+                    if (!document.getElementById('chatSearchInput').value.trim()) loadChatUsers();
+                }, 2000);
+            } else if (chatPollingInterval) {
+                clearInterval(chatPollingInterval);
+                chatPollingInterval = null;
+            }
+        }
+
+        function loadChatUsers() {
+            fetch('../php/get_chat_users.php')
+                .then(r => r.json())
+                .then(j => {
+                    if (!j.success) return;
+                    const container = document.getElementById('chatUserListContainer');
+                    const badge = document.getElementById('chatBadge');
+                    const totalUnread = j.chat_users.reduce((sum, u) => sum + (u.unread_count || 0), 0);
+                    if (totalUnread > 0) {
+                        badge.textContent = totalUnread;
+                        badge.style.display = 'block';
+                    } else { badge.style.display = 'none'; }
+
+                    let html = '';
+                    j.chat_users.forEach(u => {
+                        const avatar = resolveAvatar(u.profile_picture, u.role);
+                        html += `
+                        <div class="user-item" onclick="openConversation('${u.user_id}', '${u.user_type}', '${escapeHtmlChat(u.name)}', '${avatar}')">
+                            <img src="${avatar}" class="user-avatar">
+                            <div class="user-info">
+                                <div class="user-name">${escapeHtmlChat(u.name)}</div>
+                                <div class="user-last-msg">${escapeHtmlChat(u.last_message || 'No messages yet')}</div>
+                            </div>
+                            ${u.unread_count > 0 ? `<div class="unread-badge">${u.unread_count}</div>` : ''}
+                        </div>`;
+                    });
+                    container.innerHTML = html || '<div class="empty-chat"><p>No conversations</p></div>';
+                });
+        }
+
+        function searchUsers(query) {
+            clearTimeout(searchTimeout);
+            if (!query.trim()) { loadChatUsers(); return; }
+            searchTimeout = setTimeout(() => {
+                fetch(`../php/search_users.php?q=${encodeURIComponent(query)}`)
+                    .then(r => r.json())
+                    .then(j => {
+                        if (!j.success) return;
+                        const container = document.getElementById('chatUserListContainer');
+                        let html = '';
+                        j.users.forEach(u => {
+                            const avatar = resolveAvatar(u.profile_picture, u.role || u.user_type);
+                            html += `
+                            <div class="user-item" onclick="openConversation('${u.id}', '${u.user_type}', '${escapeHtmlChat(u.name)}', '${avatar}')">
+                                <img src="${avatar}" class="user-avatar">
+                                <div class="user-info">
+                                    <div class="user-name">${escapeHtmlChat(u.name)}</div>
+                                    <div class="user-last-msg" style="text-transform:capitalize;">${u.user_type}</div>
+                                </div>
+                            </div>`;
+                        });
+                        container.innerHTML = html || '<div class="empty-chat"><p>No results found</p></div>';
+                    });
+            }, 300);
+        }
+
+        function openConversation(userId, userType, userName, userAvatar) {
+            currentChatUser = { user_id: userId, name: userName, avatar: userAvatar };
+            document.getElementById('chatConvName').textContent = userName;
+            document.getElementById('chatConvAvatar').src = userAvatar;
+            document.getElementById('chatUserView').style.display = 'none';
+            document.getElementById('chatConversation').classList.add('active');
+            lastMessagesJson = ''; // Reset for new conversation
+            loadMessages(userId, true);
+        }
+
+        function backToUserList() {
+            currentChatUser = null;
+            lastMessagesJson = ''; // Clear state
+            document.getElementById('chatConversation').classList.remove('active');
+            document.getElementById('chatUserView').style.display = 'flex';
+            loadChatUsers();
+        }
+
+        function loadMessages(userId, scroll = true) {
+            fetch(`../php/get_messages.php?other_user_id=${userId}`)
+                .then(r => r.json())
+                .then(j => {
+                    if (!j.success) return;
+
+                    const currentJson = JSON.stringify(j.messages);
+                    if (currentJson === lastMessagesJson && !scroll) return;
+                    lastMessagesJson = currentJson;
+
+                    const container = document.getElementById('chatMessages');
+                    let html = '';
+                    j.messages.forEach(m => {
+                        const isSent = String(m.sender_id) === String(currentAdminData.admin_id || currentAdminData.user_id);
+                        const senderAvatar = resolveAvatar(m.profile_picture, m.sender_type);
+
+                        html += `
+                        <div class="message-wrapper ${isSent ? 'sent' : 'received'}">
+                            ${!isSent ? `<img src="${senderAvatar}" class="msg-avatar">` : ''}
+                            <div class="msg-content">
+                                <div class="msg-bubble">${escapeHtmlChat(m.message_text)}</div>
+                                <div class="msg-time">${new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                            </div>
+                            ${isSent ? `<img src="${senderAvatar}" class="msg-avatar">` : ''}
+                        </div>`;
+                    });
+                    container.innerHTML = html;
+                    if (scroll) container.scrollTop = container.scrollHeight;
+                });
+        }
+
+        function sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg || !currentChatUser) return;
+            fetch('../php/send_message.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `receiver_id=${currentChatUser.user_id}&message=${encodeURIComponent(msg)}`
+            }).then(r => r.json()).then(j => {
+                if (j.success) { input.value = ''; loadMessages(currentChatUser.user_id, true); }
+            });
+        }
+
+        function handleChatKeydown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(e); }
+        }
+
+        function escapeHtmlChat(t) {
+            const d = document.createElement('div'); d.textContent = t; return d.innerHTML;
+        }
+
+        function replyToNotification(senderId) {
+            document.getElementById('notificationsPanel').style.display = 'none';
+            if (!document.getElementById('chatPanel').classList.contains('open')) toggleChatPanel();
+            fetch(`../php/get_user_info.php?senderId=${senderId}`)
+                .then(r => r.json())
+                .then(j => {
+                    if (j.success) openConversation(String(j.user_id), j.user_type, j.name, j.profile_picture);
+                });
+        }
+
+        // Profile Management
+        function openEditProfile() {
+            if (!currentAdminData.Firstname) {
+                loadAdminInfo().then(() => {
+                    populateAdminProfileForm();
+                    document.getElementById('editProfileModal').style.display = 'flex';
+                });
+            } else {
+                populateAdminProfileForm();
+                document.getElementById('editProfileModal').style.display = 'flex';
+            }
+        }
+
+        function populateAdminProfileForm() {
+            document.getElementById('editAdminFirstname').value = currentAdminData.Firstname || '';
+            document.getElementById('editAdminMiddlename').value = currentAdminData.Middlename || '';
+            document.getElementById('editAdminLastname').value = currentAdminData.Lastname || '';
+            document.getElementById('editAdminUsername').value = currentAdminData.username || '';
+            document.getElementById('editAdminEmail').value = currentAdminData.email || '';
+            document.getElementById('editAdminContactNumber').value = currentAdminData.contact_number || '';
+        }
+
+        function closeEditProfile() { document.getElementById('editProfileModal').style.display = 'none'; }
+
+        function submitAdminProfile(e) {
+            e.preventDefault();
+            const formData = new FormData(document.getElementById('editProfileForm'));
+            fetch('../php/update_admin_profile.php', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(j => {
+                    if (j.success) { showToast('Profile updated'); closeEditProfile(); loadAdminInfo(); }
+                    else { showToast(j.message, 'error'); }
+                });
+        }
+
+        async function loadAdminInfo() {
+            try {
+                const res = await fetch('../php/admin_get_dashboard.php');
+                const j = await res.json();
+                if (j.success && j.adminInfo) {
+                    currentAdminData = j.adminInfo;
+                    const fullName = currentAdminData.Firstname + ' ' + currentAdminData.Lastname;
+                    const nameEl = document.getElementById('adminName');
+                    if (nameEl) nameEl.textContent = fullName;
+                    const headerNameEl = document.getElementById('headerAdminName');
+                    if (headerNameEl) headerNameEl.textContent = fullName;
+
+                    let pfp = currentAdminData.profile_picture;
+                    if (pfp && !pfp.includes('/')) {
+                        pfp = '../uploadsAdminProfilePic/' + pfp;
+                    } else if (!pfp) {
+                        pfp = '../images/default_avatar.png';
+                    }
+                    const sidebarPic = document.getElementById('sidebarProfilePic');
+                    if (sidebarPic) sidebarPic.src = pfp;
+                    const headerPic = document.getElementById('headerProfilePic');
+                    if (headerPic) headerPic.src = pfp;
+                }
+            } catch (e) { }
+        }
+
+        setInterval(() => {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString([], { month: 'short', day: '2-digit' });
+            document.getElementById('currentTime').textContent = `${dateStr} | ${timeStr}`;
+        }, 1000);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStudents();
+            loadAdminInfo();
+            setTimeout(loadNotifications, 1000);
+        });
+    </script>
+</body>
+
+</html>

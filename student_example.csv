@@ -1,0 +1,4 @@
+password,firstname,lastname,middlename,email,contact_number,school_id,course,year_level
+,John,Doe,Smith,j.doe.coc@phinmaed.com,+639123456789,02-2101-00001,BSIT,1st Year
+,Alice,Smith,Brown,a.smith.coc@phinmaed.com,+639123456780,02-2101-00002,BSIT,2nd Year
+,Bob,White,,b.white.coc@phinmaed.com,+639123456781,02-2101-00003,BSIT,3rd Year

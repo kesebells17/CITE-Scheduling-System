@@ -1,0 +1,795 @@
+/* =====================================================
+   CONSULTATION MANAGEMENT SYSTEM STYLES
+   Session Reports, Weekly Hours, Analytics Charts
+   ===================================================== */
+
+/* ── Progress Ring / Circle ─── */
+.progress-ring-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+    fill: none;
+    stroke: #e2e8f0;
+    stroke-width: 8;
+}
+
+.progress-ring-fill {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s ease;
+}
+
+.progress-ring-text {
+    position: absolute;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* ── Consultation Cards ─── */
+.consultation-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.consult-stat-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.consult-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.consult-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+}
+
+.consult-stat-card.hours::before {
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+}
+
+.consult-stat-card.remaining::before {
+    background: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+
+.consult-stat-card.completed::before {
+    background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.consult-stat-card.followup::before {
+    background: linear-gradient(90deg, #3b82f6, #2563eb);
+}
+
+.consult-stat-card.students::before {
+    background: linear-gradient(90deg, #ec4899, #be185d);
+}
+
+.consult-stat-card.instructors::before {
+    background: linear-gradient(90deg, #14b8a6, #0d9488);
+}
+
+.consult-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+}
+
+.consult-stat-icon.hours {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+}
+
+.consult-stat-icon.remaining {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.consult-stat-icon.completed {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+.consult-stat-icon.followup {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.consult-stat-icon.students {
+    background: rgba(236, 72, 153, 0.1);
+    color: #ec4899;
+}
+
+.consult-stat-icon.instructors {
+    background: rgba(20, 184, 166, 0.1);
+    color: #14b8a6;
+}
+
+.consult-stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.1;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+}
+
+.consult-stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    opacity: 0.7;
+}
+
+/* ── Progress Bar ─── */
+.hours-progress-container {
+    margin: 20px 0;
+}
+
+.hours-progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.hours-progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.6s ease;
+    background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+    background-size: 300% 100%;
+}
+
+.hours-progress-fill.below {
+    background-position: 0% 50%;
+}
+
+.hours-progress-fill.near {
+    background-position: 50% 50%;
+}
+
+.hours-progress-fill.completed {
+    background-position: 100% 50%;
+}
+
+.hours-progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ── Status Indicators ─── */
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.status-dot.red {
+    background: #ef4444;
+}
+
+.status-dot.yellow {
+    background: #f59e0b;
+}
+
+.status-dot.green {
+    background: #10b981;
+}
+
+.instructor-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.instructor-status-badge.below {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.instructor-status-badge.near {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.instructor-status-badge.completed {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+/* ── Session Report Modal ─── */
+.session-report-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    z-index: 1200;
+}
+
+.session-report-modal.show {
+    display: flex;
+}
+
+.session-report-content {
+    background: white;
+    width: 100%;
+    max-width: 620px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.session-report-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #065f46, #047857);
+    color: white;
+}
+
+.session-report-header h3 {
+    color: white;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.session-report-body {
+    padding: 24px;
+}
+
+.session-report-body .form-group {
+    margin-bottom: 18px;
+}
+
+.session-report-body .form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-main);
+}
+
+.session-report-body textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    transition: border-color 0.2s;
+}
+
+.session-report-body textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(6, 95, 70, 0.1);
+}
+
+.radio-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.radio-option:hover {
+    border-color: var(--primary);
+    background: var(--primary-lightest);
+}
+
+.radio-option input[type="radio"] {
+    accent-color: var(--primary);
+}
+
+.radio-option input[type="radio"]:checked+span {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.followup-section {
+    display: none;
+    padding: 16px;
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: var(--radius-md);
+    margin-top: 12px;
+}
+
+.followup-section.show {
+    display: block;
+}
+
+/* ── Chart Containers ─── */
+.chart-container {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+}
+
+.chart-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+
+/* ── Record View Card ─── */
+.record-view-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.record-view-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.record-view-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.record-view-card.completed-record::before {
+    background: #10b981;
+}
+
+.record-view-card.followup-record::before {
+    background: #3b82f6;
+}
+
+.record-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.record-meta img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border);
+}
+
+.record-meta-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0;
+}
+
+.record-meta-info span {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.record-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.record-field label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.record-field p {
+    font-size: 13px;
+    color: var(--text-main);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.record-field.full-width {
+    grid-column: 1 / -1;
+}
+
+/* ── Filter Bar ─── */
+.filter-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-light);
+    align-items: flex-end;
+}
+
+.filter-bar .form-group {
+    flex: 1;
+    min-width: 150px;
+    margin-bottom: 0;
+}
+
+.filter-bar .form-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.filter-bar input,
+.filter-bar select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: inherit;
+}
+
+.filter-bar button {
+    flex-shrink: 0;
+}
+
+/* ── Weekly Summary Table ─── */
+.weekly-summary-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.weekly-summary-table th {
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+}
+
+.weekly-summary-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+/* ── Notification Alerts ─── */
+.alert-banner {
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-banner.warning {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #92400e;
+}
+
+.alert-banner.danger {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #991b1b;
+}
+
+.alert-banner.info {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #1e40af;
+}
+
+.alert-banner.success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #065f46;
+}
+
+/* ── Mini Progress Bar (for tables) ─── */
+.mini-progress {
+    width: 80px;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8px;
+}
+
+.mini-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+
+.mini-progress-fill.below {
+    background: #ef4444;
+}
+
+.mini-progress-fill.near {
+    background: #f59e0b;
+}
+
+.mini-progress-fill.completed {
+    background: #10b981;
+}
+
+/* ── Analytics Grid ─── */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .record-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .consultation-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ── Tabs for Consultation History ─── */
+.consult-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 20px;
+}
+
+.consult-tab {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.consult-tab:hover {
+    color: var(--text-main);
+}
+
+.consult-tab.active {
+    color: var(--primary);
+}
+
+.consult-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary);
+}
+
+.consult-tab-content {
+    display: none;
+}
+
+.consult-tab-content.active {
+    display: block;
+}
+
+/* Simple Bar Chart (Pure CSS) */
+.css-bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 200px;
+    padding: 20px 0;
+    border-bottom: 2px solid var(--border);
+}
+
+.css-bar {
+    flex: 1;
+    min-width: 40px;
+    border-radius: 6px 6px 0 0;
+    transition: height 0.6s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.css-bar:hover {
+    opacity: 0.85;
+}
+
+.css-bar-label {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 80px;
+    text-align: center;
+}
+
+.css-bar-value {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* Pie Chart (Pure CSS) */
+.css-pie-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+}
+
+.css-pie {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.css-pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.css-pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.css-pie-legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}

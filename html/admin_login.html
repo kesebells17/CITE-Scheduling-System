@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Administrator Login | CiteApp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+</head>
+
+<body class="auth-page">
+    <!-- Background Decorations -->
+    <div class="bg-decoration decoration-1"></div>
+    <div class="bg-decoration decoration-2"></div>
+    <div class="bg-decoration decoration-3"></div>
+
+    <div class="login-box">
+        <!-- <div class="icon-wrapper"> -->
+            <img src="../images/citenew.png" alt="CITE Logo" class="brand-logo">
+        <!-- </div> -->
+
+        <h1>Administrator Access</h1>
+        <div class="subtitle">
+            <i class="fas fa-user-shield"></i>
+            <span>Secure Control Panel Login</span>
+        </div>
+
+        <form id="adminLoginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <input type="text" id="username" name="username" placeholder="Username" required>
+            </div>
+
+            <div class="form-group">
+                <div class="password-field-container">
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <button type="button" class="password-toggle-icon" id="togglePassword"
+                        onclick="togglePasswordVisibility('password', 'togglePassword')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <script>
+                function togglePasswordVisibility(inputId, iconId) {
+                    const input = document.getElementById(inputId);
+                    const icon = document.getElementById(iconId).querySelector('i');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                }
+            </script>
+
+            <div id="errorMsg" style="min-height: 20px; margin-bottom: 16px; font-size: 13px; font-weight: 500;"></div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                <span>Sign In to Dashboard</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <div class="info-notice"
+            style="margin-top: 24px; text-align: left; padding: 12px; background: rgba(59, 130, 246, 0.05); border-radius: var(--radius-md); border: 1px solid rgba(59, 130, 246, 0.1);">
+            <p style="font-size: 11px; color: var(--text-muted); line-height: 1.5; margin: 0;">
+                <i class="fas fa-info-circle" style="color: var(--primary); margin-right: 4px;"></i>
+                This portal is for authorized administrators only. Unauthorized access attempts are logged.
+            </p>
+        </div>
+
+        <div class="signup-text" style="margin-top: 20px;">
+            Not an admin? <a href="login.html">Student/Instructor Login</a>
+        </div>
+    </div>
+
+
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const loginBtn = document.getElementById('loginBtn');
+            const btnSpan = loginBtn.querySelector('span');
+
+            if (!username || !password) {
+                errorMsg.textContent = 'Please fill in all fields';
+                errorMsg.style.color = 'var(--danger)';
+                return;
+            }
+
+            // UI feedback
+            errorMsg.textContent = '';
+            btnSpan.textContent = 'Authenticating...';
+            loginBtn.disabled = true;
+
+            fetch('../php/login.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+            })
+                .then(r => r.json())
+                .then(j => {
+                    if (j.success) {
+                        errorMsg.textContent = 'Identity verified. Redirecting...';
+                        errorMsg.style.color = 'var(--success-text)';
+
+                        // Redirect based on role returned by unified login
+                        setTimeout(() => {
+                            if (j.usertype === 'super_admin') {
+                                window.location.href = 'super_admin_dashboard.html';
+                            } else if (j.usertype === 'admin') {
+                                window.location.href = 'admin_dashboard.html';
+                            } else {
+                                // In case an instructor/student logs in here
+                                window.location.href = j.usertype + '_dashboard.html';
+                            }
+                        }, 800);
+                    } else {
+                        btnSpan.textContent = 'Sign In to Dashboard';
+                        loginBtn.disabled = false;
+                        errorMsg.textContent = j.message || 'Access denied. Please check your credentials.';
+                        errorMsg.style.color = 'var(--danger)';
+                    }
+                })
+                .catch(err => {
+                    btnSpan.textContent = 'Sign In to Dashboard';
+                    loginBtn.disabled = false;
+                    errorMsg.textContent = 'System connection error. Please try again later.';
+                    errorMsg.style.color = 'var(--danger)';
+                });
+        }
+    </script>
+</body>
+
+</html>

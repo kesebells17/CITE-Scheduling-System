@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CITE Appointment Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/theme.css">
+
+    <style>
+        /* --- Page Landing Animation --- */
+        .login-box {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeSlideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Sequential animation for elements inside login box */
+        .login-box img.brand-logo,
+        .login-box h1,
+        .login-box .subtitle,
+        .login-box .form-group,
+        .login-box .login-btn,
+        .login-box .signup-text,
+        .login-box .footer-badges {
+            opacity: 0;
+            transform: translateY(15px);
+            animation: fadeSlideIn 0.5s ease-out forwards;
+        }
+
+        .login-box img.brand-logo {
+            animation-delay: 0.2s;
+        }
+
+        .login-box h1 {
+            animation-delay: 0.4s;
+        }
+
+        .login-box .subtitle {
+            animation-delay: 0.6s;
+        }
+
+        .login-box .form-group:nth-child(1) {
+            animation-delay: 0.8s;
+        }
+
+        .login-box .form-group:nth-child(2) {
+            animation-delay: 1s;
+        }
+
+        .login-box .login-btn {
+            animation-delay: 1.2s;
+        }
+
+        .login-box .signup-text {
+            animation-delay: 1.4s;
+        }
+
+        .login-box .footer-badges {
+            animation-delay: 1.6s;
+        }
+    </style>
+</head>
+
+<body class="auth-page">
+
+    <!-- Background Decorations -->
+    <div class="bg-decoration decoration-1"></div>
+    <div class="bg-decoration decoration-2"></div>
+    <div class="bg-decoration decoration-3"></div>
+
+    <!-- Login Box -->
+    <div class="login-box">
+        <img src="../images/citenew.png" alt="CITE Logo" class="brand-logo">
+
+        <h1>CITE Faculty & Staff Scheduling</h1>
+
+        <div class="subtitle">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Schedule consultations efficiently</span>
+        </div>
+
+        <form id="loginForm" onsubmit="login(event)">
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Username" required>
+            </div>
+
+            <div class="form-group">
+                <div class="password-field-container">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="button" class="password-toggle-icon" id="togglePassword"
+                        onclick="togglePasswordVisibility('password', 'togglePassword')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="error-message"></div>
+
+            <button type="submit" class="login-btn">
+                <span>Sign In</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </form>
+
+        <div class="footer-badges">
+            <div class="badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>24/7 Access</span>
+            </div>
+            <div class="badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                </svg>
+                <span>Secure</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId).querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function login(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Clear previous error
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
+
+            if (username === '' || password === '') {
+                errorMessage.textContent = 'Please enter username and password.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Login API call
+            fetch('../php/login.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const type = data.usertype || data.user_type;
+
+                        if (type === 'super_admin' || type === 'superadmin') {
+                            window.location.href = 'super_admin_dashboard.html';
+                        } else if (type === 'admin') {
+                            window.location.href = 'admin_dashboard.html';
+                        } else if (type === 'instructor') {
+                            window.location.href = 'instructor_dashboard.html';
+                        } else if (type === 'student') {
+                            window.location.href = 'student_dashboard.html';
+                        } else {
+                            errorMessage.textContent = 'Unknown user type: ' + type;
+                            errorMessage.style.display = 'block';
+                        }
+                    } else {
+                        errorMessage.textContent = data.message || 'Login failed';
+                        errorMessage.style.display = 'block';
+                    }
+                })
+                .catch(err => {
+                    errorMessage.textContent = 'Error: ' + err.message;
+                    errorMessage.style.display = 'block';
+                });
+        }
+    </script>
+
+</body>
+
+</html>

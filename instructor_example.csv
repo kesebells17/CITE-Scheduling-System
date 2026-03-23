@@ -1,0 +1,4 @@
+password,firstname,lastname,middlename,email,contact_number,faculty_id,department,specialization,position
+,Richard,Black,M,r.black.coc@phinmaed.com,+639987654321,FAC-2026-0501,CITE,Networking,Instructor I
+,Sarah,Green,,s.green.coc@phinmaed.com,+639987654322,FAC-2026-0502,CITE,App Development,Instructor II
+,James,Brown,D,j.brown.coc@phinmaed.com,+639987654323,FAC-2026-0503,CITE,Web Design,Senior Instructor

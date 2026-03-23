@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Announcement Card | CITE System</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="../css/social_announcements.css">
+    <style>
+        body {
+            background-color: var(--bg-body);
+            margin: 0;
+            padding: 2rem 0;
+            color: var(--text-main);
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .demo-header h1 {
+            font-weight: 800;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-notice {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            padding: 1rem;
+            background: white;
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="demo-header">
+        <h1>CITE Announcements</h1>
+        <p>Premium Social-Media Style Interface</p>
+    </div>
+
+    <div class="demo-notice">
+        <i class="fas fa-info-circle"></i> <strong>Real-Time Simulation Active:</strong> Likes will occasionally increase automatically to simulate other users. You can like, comment, and delete your own comments. Hover over the timestamp to see the exact date.
+    </div>
+
+    <!-- The container where the announcement card will be rendered -->
+    <div id="announcement-attachment-point" class="social-announcement-container">
+        <!-- JS will populate this -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/social_announcements.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize the announcement card with mock data
+            initAnnouncement({
+                id: 101,
+                adminName: "CITE Admin Department",
+                adminAvatar: "../images/citelogo.png",
+                title: "Upcoming Midterm Examination Schedule 2026",
+                content: "Attention all students! The midterm examination schedule for the Second Semester has been finalized. \n\nPlease be guided accordingly and check your department's specific instructions. Ensure all pending requirements are settled before the examination date.\n\nGood luck with your studies!",
+                timestamp: new Date(Date.now() - 120000).toISOString(), // 2 minutes ago
+                likes: 42,
+                shares: 15,
+                comments: [
+                    {
+                        id: 1,
+                        userId: 2,
+                        userName: "Mark Oliver",
+                        userAvatar: "../images/default_avatar.png",
+                        text: "Thanks for the update! Looking forward to it.",
+                        timestamp: new Date(Date.now() - 3600000).toISOString() // 1 hour ago
+                    },
+                    {
+                        id: 2,
+                        userId: 1, // Current user ID (see js file)
+                        userName: "You",
+                        userAvatar: "../images/default_avatar.png",
+                        text: "This is a test comment by me.",
+                        timestamp: new Date(Date.now() - 1800000).toISOString() // 30 mins ago
+                    }
+                ],
+                currentUser: {
+                    id: 1,
+                    name: "Ryan (Student)",
+                    role: "Student"
+                }
+            });
+        });
+    </script>
+</body>
+</html>

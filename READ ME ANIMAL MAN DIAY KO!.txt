@@ -1,0 +1,65 @@
+System Enhancement Requirements:
+
+Login Page Update
+
+Remove the “Sign Up for Student” option from the login page UI.
+
+Only allow Admin and Instructor to log in.
+
+Disable or remove student registration in both frontend and backend.
+
+Automatic & Customizable Time Slot Scheduling
+
+Implement a flexible time slot system for instructors.
+
+When adding a schedule, allow users to choose between:
+
+Preset Weekly Schedule
+
+MWF (Monday, Wednesday, Friday)
+
+TTH (Tuesday, Thursday)
+
+Custom Schedule
+
+Users can manually select specific days (e.g., Mon, Tue, Sat)
+
+Inputs required:
+
+Start date
+
+End date (or auto apply for month/year)
+
+Time range (e.g., 8:00 AM – 5:00 PM)
+
+Slot interval (e.g., 30 mins / 1 hour)
+
+System behavior:
+
+Automatically generate time slots based on selected schedule
+
+Apply across the selected date range
+
+Prevent duplicate or overlapping time slots
+
+Allow editing or deleting generated slots
+
+Apply this feature in both:
+
+Admin Dashboard
+
+Instructor Dashboard
+
+Admin Dashboard – Records Management
+
+Add a checkbox selection system in the Records section.
+
+Enable:
+
+Multiple record selection
+
+Bulk delete action
+
+Include a confirmation modal before deletion.
+
+Ensure secure backend handling for batch deletion.

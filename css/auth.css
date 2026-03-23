@@ -1,0 +1,145 @@
+/* ============================================
+   CITEAPP - AUTH PAGE STYLES
+   ============================================ */
+
+/* Scope everything to auth pages */
+body.auth-page {
+  background: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  color: #065f46;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Background decorations (optional floating blobs) */
+.bg-decoration {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  opacity: 0.14;
+  z-index: 0;
+  animation: float 18s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-24px) scale(1.05); }
+}
+
+.decoration-1 { width: 420px; height: 420px; background: linear-gradient(135deg, #065f46, #065f46); top: 10%; left: 18%; }
+.decoration-2 { width: 320px; height: 320px; background: linear-gradient(135deg, #065f46, #065f46); bottom: 12%; right: 15%; animation-delay: 4s; }
+.decoration-3 { width: 280px; height: 280px; background: linear-gradient(135deg, #065f46, #065f46); top: 55%; right: 6%; animation-delay: 8s; }
+
+/* Auth card wrapper */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 80px;
+  border-radius: var(--radius-2xl);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  position: relative;
+  z-index: 10;
+  text-align: center;
+}
+
+/* Headings & subtitles */
+.auth-card h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.auth-card p {
+  font-size: 1rem;
+  color: rgba(0,0,0,0.6);
+  margin-bottom: 2rem;
+}
+
+/* Buttons */
+.auth-card button {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: var(--radius-lg);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  border: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+.auth-card button.primary {
+  background: linear-gradient(135deg, #065f46, #065f46);
+  color: #fff;
+}
+
+.auth-card button.secondary {
+  background: linear-gradient(135deg, #065f46, #065f46);
+  color: #fff;
+}
+
+.auth-card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+}
+
+/* Back link */
+.auth-card .back-link {
+  display: block;
+  margin-top: 1.5rem;
+  font-size: 13px;
+  color: #64748b;
+  text-decoration: none;
+}
+
+.auth-card .back-link:hover {
+  color: #0f172a;
+}
+
+/* Optional icon wrapper (for logo or illustration) */
+.icon-wrapper {
+  width: 64px; height: 64px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 28px;
+  box-shadow: 0 20px 40px rgba(59,130,246,0.25);
+  animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+@keyframes pulse {
+  0%,100% { opacity:1; }
+  50% { opacity:0.9; transform: scale(1.05); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 2rem;
+  }
+
+  .auth-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .auth-card p {
+    font-size: 0.95rem;
+  }
+
+  .auth-card button {
+    padding: 12px 16px;
+  }
+}
